@@ -54,7 +54,7 @@ def _get_credentials() -> Credentials:
                     "Faça o download em: Google Cloud Console > APIs & Services > Credentials"
                 )
             flow = InstalledAppFlow.from_client_secrets_file(credentials_path, SCOPES)
-            creds = flow.run_local_server(port=0)
+            creds = flow.run_local_server(port=8080, open_browser=True)
 
         # Salva o token para reutilização nas próximas execuções
         with open(token_path, "w") as token_file:
