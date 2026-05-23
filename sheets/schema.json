@@ -1,0 +1,100 @@
+{
+  "spreadsheet_name": "Sistema de Gestão - Personal Trainer",
+  "tabs": [
+    {
+      "name": "Alunos",
+      "description": "Cadastro de todos os alunos",
+      "columns": [
+        { "field": "id",                "type": "Text",    "description": "ID único do aluno (ex: ALU001)" },
+        { "field": "nome",              "type": "Text",    "description": "Nome completo do aluno" },
+        { "field": "idade",             "type": "Number",  "description": "Idade em anos" },
+        { "field": "sexo",              "type": "Enum",    "description": "Masculino ou Feminino" },
+        { "field": "whatsapp",          "type": "Phone",   "description": "Número WhatsApp com DDD" },
+        { "field": "email",             "type": "Email",   "description": "E-mail de contato" },
+        { "field": "data_inicio",       "type": "Date",    "description": "Data de início com o personal" },
+        { "field": "plano",             "type": "Enum",    "description": "mensal | trimestral | semestral" },
+        { "field": "frequencia_semanal","type": "Number",  "description": "Quantas vezes por semana treina" },
+        { "field": "status",            "type": "Enum",    "description": "ativo | inativo" },
+        { "field": "objetivo_principal","type": "Text",    "description": "Objetivo principal do aluno" },
+        { "field": "observacoes",       "type": "LongText","description": "Observações gerais do profissional" }
+      ]
+    },
+    {
+      "name": "Avaliacoes",
+      "description": "Avaliações físicas periódicas dos alunos",
+      "columns": [
+        { "field": "id",                  "type": "Text",   "description": "ID único da avaliação (ex: AVA001)" },
+        { "field": "id_aluno",            "type": "Ref",    "description": "Referência ao ID do aluno" },
+        { "field": "nome_aluno",          "type": "Text",   "description": "Nome do aluno (desnormalizado)" },
+        { "field": "data",                "type": "Date",   "description": "Data da avaliação" },
+        { "field": "peso_kg",             "type": "Decimal","description": "Peso corporal em kg" },
+        { "field": "percentual_gordura",  "type": "Decimal","description": "Percentual de gordura corporal (%)" },
+        { "field": "massa_magra_kg",      "type": "Decimal","description": "Massa magra em kg" },
+        { "field": "cintura_cm",          "type": "Decimal","description": "Circunferência da cintura em cm" },
+        { "field": "quadril_cm",          "type": "Decimal","description": "Circunferência do quadril em cm" },
+        { "field": "peito_cm",            "type": "Decimal","description": "Circunferência do peito em cm" },
+        { "field": "braco_d_cm",          "type": "Decimal","description": "Circunferência do braço direito em cm" },
+        { "field": "braco_e_cm",          "type": "Decimal","description": "Circunferência do braço esquerdo em cm" },
+        { "field": "coxa_d_cm",           "type": "Decimal","description": "Circunferência da coxa direita em cm" },
+        { "field": "coxa_e_cm",           "type": "Decimal","description": "Circunferência da coxa esquerda em cm" },
+        { "field": "observacoes",         "type": "LongText","description": "Observações da avaliação" }
+      ]
+    },
+    {
+      "name": "Planos_Treino",
+      "description": "Planos de treino criados para cada aluno",
+      "columns": [
+        { "field": "id",            "type": "Text",    "description": "ID único do plano (ex: PLN001)" },
+        { "field": "id_aluno",      "type": "Ref",     "description": "Referência ao ID do aluno" },
+        { "field": "nome_aluno",    "type": "Text",    "description": "Nome do aluno (desnormalizado)" },
+        { "field": "nome_treino",   "type": "Text",    "description": "Nome do plano (ex: Treino Hipertrofia - Fase 1)" },
+        { "field": "data_criacao",  "type": "Date",    "description": "Data de criação do plano" },
+        { "field": "fase",          "type": "Text",    "description": "Fase do treino (ex: Fase 1, Adaptação)" },
+        { "field": "objetivo_treino","type": "Text",   "description": "Objetivo específico do plano" },
+        { "field": "status",        "type": "Enum",    "description": "ativo | arquivado" }
+      ]
+    },
+    {
+      "name": "Exercicios",
+      "description": "Exercícios de cada plano de treino",
+      "columns": [
+        { "field": "id",             "type": "Text",    "description": "ID único do exercício (ex: EXE001)" },
+        { "field": "id_plano",       "type": "Ref",     "description": "Referência ao ID do plano de treino" },
+        { "field": "id_aluno",       "type": "Ref",     "description": "Referência ao ID do aluno" },
+        { "field": "grupo_muscular", "type": "Text",    "description": "Grupo muscular trabalhado (ex: Peito, Costas)" },
+        { "field": "exercicio",      "type": "Text",    "description": "Nome do exercício" },
+        { "field": "series",         "type": "Number",  "description": "Número de séries" },
+        { "field": "repeticoes",     "type": "Text",    "description": "Número de repetições (ex: 8-12)" },
+        { "field": "carga_kg",       "type": "Decimal", "description": "Carga em kg" },
+        { "field": "descanso_seg",   "type": "Number",  "description": "Tempo de descanso em segundos" },
+        { "field": "observacoes",    "type": "LongText","description": "Observações do exercício (forma, variações)" }
+      ]
+    },
+    {
+      "name": "Sessoes",
+      "description": "Registro de presença e observações de cada sessão de treino",
+      "columns": [
+        { "field": "id",                "type": "Text",    "description": "ID único da sessão (ex: SES001)" },
+        { "field": "id_aluno",          "type": "Ref",     "description": "Referência ao ID do aluno" },
+        { "field": "nome_aluno",        "type": "Text",    "description": "Nome do aluno (desnormalizado)" },
+        { "field": "data",              "type": "Date",    "description": "Data da sessão" },
+        { "field": "presente",          "type": "Enum",    "description": "sim | nao" },
+        { "field": "disposicao",        "type": "Number",  "description": "Disposição do aluno de 1 (ruim) a 5 (ótima)" },
+        { "field": "observacoes_sessao","type": "LongText","description": "Observações da sessão" }
+      ]
+    },
+    {
+      "name": "Follow_ups",
+      "description": "Follow-ups gerados pela IA para envio ao aluno",
+      "columns": [
+        { "field": "id",           "type": "Text",    "description": "ID único do follow-up (ex: FUP001)" },
+        { "field": "id_aluno",     "type": "Ref",     "description": "Referência ao ID do aluno" },
+        { "field": "nome_aluno",   "type": "Text",    "description": "Nome do aluno (desnormalizado)" },
+        { "field": "data",         "type": "Date",    "description": "Data de geração do follow-up" },
+        { "field": "tipo",         "type": "Enum",    "description": "mensagem | avaliacao | revisao_treino" },
+        { "field": "texto_gerado", "type": "LongText","description": "Texto gerado pela IA" },
+        { "field": "status",       "type": "Enum",    "description": "pendente | enviado" }
+      ]
+    }
+  ]
+}
