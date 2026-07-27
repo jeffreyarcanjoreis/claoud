@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Infância em Movimento — Criar para a Vida Inteira</title>
+<meta name="author" content="Jeffrey Arcanjo Reis · Kairos Movimento">
+<meta name="description" content="Como o movimento na infância constrói o adulto que vem depois. Um ebook do projeto Kairos Movimento.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,400;1,9..144,500;1,9..144,600&family=Archivo:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F5EFE3;
+    --card:#ECE3D2;
+    --ink:#1E1B15;
+    --body:#514C3F;
+    --faint:#8C846F;
+    --sage:#6B7A4E;
+    --sage-soft:#8A9A6C;
+    --amber:#C79447;
+    --terra:#C06A45;
+    --rule:#DAD0BC;
+    --shadow:rgba(30,27,21,.10);
+    --maxw:44rem;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:'Archivo',system-ui,sans-serif;
+    font-size:18px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+
+  /* soft ambient light */
+  body::before{
+    content:"";
+    position:fixed;inset:0;z-index:-1;
+    background:
+      radial-gradient(60rem 40rem at 78% -8%, rgba(199,148,71,.14), transparent 60%),
+      radial-gradient(52rem 40rem at 8% 108%, rgba(107,122,78,.12), transparent 60%);
+    pointer-events:none;
+  }
+
+  /* reading progress bar */
+  #progress{
+    position:fixed;top:0;left:0;height:4px;width:0%;
+    background:linear-gradient(90deg,var(--sage),var(--amber));
+    z-index:100;transition:width .12s ease-out;
+  }
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 1.6rem;}
+
+  /* ---------- COVER ---------- */
+  .cover{
+    min-height:100vh;
+    display:flex;flex-direction:column;justify-content:center;
+    padding:5rem 1.6rem 4rem;
+    position:relative;
+    text-align:center;
+  }
+  .cover-inner{max-width:40rem;margin:0 auto;}
+  .kicker{
+    font-family:'Archivo',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.34em;
+    font-size:.72rem;
+    font-weight:600;
+    color:var(--sage);
+    margin-bottom:2.4rem;
+  }
+  .cover h1{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(3rem,11vw,5.4rem);
+    line-height:.98;
+    color:var(--ink);
+    margin:0 0 1.2rem;
+    letter-spacing:-.015em;
+  }
+  .cover h1 em{font-style:italic;color:var(--sage);font-weight:500;}
+  .cover .sub{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-size:clamp(1.25rem,4.4vw,1.7rem);
+    color:var(--terra);
+    font-weight:500;
+    margin:0 0 2.2rem;
+  }
+  .cover .blurb{
+    font-size:1.02rem;
+    color:var(--body);
+    max-width:30rem;margin:0 auto 3rem;
+  }
+  .sprout{display:block;margin:0 auto 2.6rem;width:78px;height:78px;}
+  .byline{
+    font-size:.82rem;
+    letter-spacing:.06em;
+    color:var(--faint);
+    line-height:2;
+  }
+  .byline strong{color:var(--ink);font-weight:600;letter-spacing:.02em;}
+  .scroll-hint{
+    margin-top:3.2rem;font-size:.72rem;letter-spacing:.28em;text-transform:uppercase;color:var(--faint);
+  }
+
+  /* ---------- FOUNDING QUOTE ---------- */
+  .founding{
+    text-align:center;
+    padding:4.5rem 1.6rem;
+    border-top:1px solid var(--rule);
+    border-bottom:1px solid var(--rule);
+    background:linear-gradient(180deg,transparent,rgba(236,227,210,.4),transparent);
+  }
+  .founding p{
+    font-family:'Fraunces',serif;font-style:italic;
+    font-size:clamp(1.4rem,4.8vw,2rem);
+    color:var(--ink);line-height:1.4;max-width:34rem;margin:0 auto 1.4rem;font-weight:500;
+  }
+  .founding .attr{
+    font-family:'Archivo',sans-serif;font-style:normal;
+    font-size:.86rem;color:var(--faint);max-width:30rem;margin:0 auto;
+  }
+
+  /* ---------- BODY SECTIONS ---------- */
+  main{padding:3.5rem 0 2rem;}
+  section{margin-bottom:2.5rem;}
+
+  .chap-num{
+    display:inline-flex;align-items:center;gap:.7rem;
+    font-family:'Archivo',sans-serif;text-transform:uppercase;
+    letter-spacing:.24em;font-size:.7rem;font-weight:600;color:var(--sage);
+    margin-bottom:1rem;
+  }
+  .chap-num::before{
+    content:"";width:2.2rem;height:2px;background:var(--amber);border-radius:2px;
+  }
+
+  h2.chap{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(1.9rem,6vw,2.9rem);
+    line-height:1.08;color:var(--ink);
+    margin:.2rem 0 1.6rem;letter-spacing:-.01em;
+  }
+  h2.chap em{font-style:italic;color:var(--sage);font-weight:500;}
+
+  .intro-title,.close-title{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(2rem,6.4vw,3rem);line-height:1.06;color:var(--ink);
+    margin:.2rem 0 1.6rem;letter-spacing:-.01em;
+  }
+
+  p{margin:0 0 1.25rem;}
+  p .lead-drop{
+    /* first paragraph emphasis handled via .lede */
+  }
+  .lede{font-size:1.06rem;color:var(--ink);}
+  em{color:var(--ink);}
+  strong{color:var(--ink);font-weight:600;}
+
+  ul{margin:0 0 1.4rem;padding:0;list-style:none;}
+  ul li{
+    position:relative;padding-left:1.7rem;margin-bottom:.7rem;
+  }
+  ul li::before{
+    content:"";position:absolute;left:0;top:.62em;
+    width:.5rem;height:.5rem;border-radius:50%;
+    background:var(--sage);
+  }
+
+  /* pull number / stat */
+  .stat{
+    margin:2.2rem auto;padding:1.6rem 1.8rem;
+    background:var(--card);border-radius:18px;
+    border:1px solid var(--rule);
+    display:flex;align-items:baseline;gap:1.2rem;
+    box-shadow:0 10px 30px -18px var(--shadow);
+  }
+  .stat .num{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:clamp(2.6rem,9vw,3.6rem);line-height:.9;
+    color:var(--terra);flex-shrink:0;letter-spacing:-.02em;
+  }
+  .stat .num.sage{color:var(--sage);}
+  .stat .num.amber{color:var(--amber);}
+  .stat .cap{
+    font-size:.92rem;color:var(--body);line-height:1.5;
+  }
+  .stat .cap b{color:var(--ink);}
+
+  /* kairos translation blockquote */
+  blockquote.kairos{
+    margin:2.4rem 0;padding:1.8rem 1.9rem 1.8rem 2.1rem;
+    background:linear-gradient(180deg,rgba(107,122,78,.10),rgba(107,122,78,.04));
+    border-left:4px solid var(--sage);
+    border-radius:0 16px 16px 0;
+    position:relative;
+  }
+  blockquote.kairos .label{
+    display:block;font-family:'Archivo',sans-serif;
+    text-transform:uppercase;letter-spacing:.2em;font-size:.66rem;font-weight:600;
+    color:var(--sage);margin-bottom:.7rem;
+  }
+  blockquote.kairos p{
+    font-family:'Fraunces',serif;font-style:italic;font-size:1.18rem;
+    line-height:1.5;color:var(--ink);margin:0;font-weight:400;
+  }
+
+  /* first-letter for intro */
+  .dropcap::first-letter{
+    font-family:'Fraunces',serif;font-weight:600;
+    float:left;font-size:3.6rem;line-height:.78;
+    padding:.35rem .5rem 0 0;color:var(--terra);
+  }
+
+  hr.divider{
+    border:none;height:1px;background:var(--rule);
+    max-width:var(--maxw);margin:3rem auto;
+    position:relative;
+  }
+  hr.divider::after{
+    content:"❧";position:absolute;left:50%;top:50%;
+    transform:translate(-50%,-50%);
+    background:var(--paper);padding:0 1rem;
+    color:var(--amber);font-size:1rem;
+  }
+
+  /* practical checklist cards */
+  .do-item{
+    background:var(--card);border:1px solid var(--rule);
+    border-radius:16px;padding:1.3rem 1.5rem;margin-bottom:1rem;
+    box-shadow:0 8px 24px -20px var(--shadow);
+  }
+  .do-item h3{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1.2rem;
+    color:var(--ink);margin:0 0 .5rem;display:flex;gap:.7rem;align-items:baseline;
+  }
+  .do-item h3 .n{
+    font-family:'Fraunces',serif;color:var(--amber);font-size:1.3rem;flex-shrink:0;
+  }
+  .do-item p{margin:0;font-size:.98rem;}
+
+  /* closing */
+  .closing{
+    text-align:center;padding:4rem 1.6rem 3rem;
+    border-top:1px solid var(--rule);margin-top:2rem;
+    background:linear-gradient(180deg,transparent,rgba(199,148,71,.06));
+  }
+  .closing .final-line{
+    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
+    font-size:clamp(1.5rem,5.5vw,2.2rem);line-height:1.3;color:var(--ink);
+    max-width:32rem;margin:1.5rem auto 2rem;
+  }
+  .colophon{
+    font-size:.8rem;color:var(--faint);letter-spacing:.05em;line-height:1.9;
+    margin-top:2.5rem;
+  }
+  .colophon strong{color:var(--ink);}
+  .colophon em{font-family:'Fraunces',serif;font-style:italic;color:var(--terra);}
+
+  /* sources */
+  .sources{
+    max-width:var(--maxw);margin:0 auto;padding:2.5rem 1.6rem 4rem;
+  }
+  .sources h4{
+    font-family:'Archivo',sans-serif;text-transform:uppercase;letter-spacing:.2em;
+    font-size:.72rem;font-weight:600;color:var(--sage);margin:0 0 1.2rem;
+  }
+  .sources ul li{font-size:.82rem;color:var(--faint);line-height:1.55;margin-bottom:.6rem;}
+  .sources ul li::before{background:var(--amber);width:.35rem;height:.35rem;top:.6em;}
+  .sources ul li b{color:var(--body);font-weight:600;}
+
+  /* toc chip nav on cover-ish */
+  .toc{
+    max-width:var(--maxw);margin:2.5rem auto 0;padding:0 1.6rem;
+    display:flex;flex-wrap:wrap;gap:.5rem;justify-content:center;
+  }
+  .toc a{
+    text-decoration:none;font-size:.76rem;letter-spacing:.03em;
+    color:var(--body);background:var(--card);border:1px solid var(--rule);
+    padding:.4rem .85rem;border-radius:999px;transition:.2s;
+  }
+  .toc a:hover{background:var(--sage);color:#fff;border-color:var(--sage);}
+
+  @media (max-width:640px){
+    body{font-size:17px;}
+    .stat{flex-direction:column;gap:.5rem;align-items:flex-start;}
+  }
+
+  /* ---------- PRINT ---------- */
+  @media print{
+    :root{--paper:#fff;}
+    body{background:#fff;font-size:11.5pt;line-height:1.55;color:#33302a;}
+    body::before,#progress,.scroll-hint,.toc{display:none!important;}
+    .wrap,.sources{max-width:100%;padding:0 1.4cm;}
+    .cover{min-height:auto;page-break-after:always;padding:3cm 1.4cm;}
+    .founding{page-break-after:always;border:none;}
+    section{page-break-inside:avoid;}
+    h2.chap,.intro-title,.close-title{page-break-after:avoid;}
+    blockquote.kairos,.stat,.do-item{
+      page-break-inside:avoid;
+      box-shadow:none;
+      background:#f6f2e9!important;
+      -webkit-print-color-adjust:exact;print-color-adjust:exact;
+    }
+    blockquote.kairos{background:#eef0e6!important;}
+    .chap-num,.kicker{color:#5a6a3f!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    a{color:inherit;text-decoration:none;}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ===================== COVER ===================== -->
+<header class="cover">
+  <div class="cover-inner">
+    <div class="kicker">Kairos Movimento · Série Infância</div>
+
+    <svg class="sprout" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M40 72 V38" stroke="#6B7A4E" stroke-width="3" stroke-linecap="round"/>
+      <path d="M40 46 C40 32 26 30 20 26 C22 40 30 46 40 46 Z" fill="#8A9A6C"/>
+      <path d="M40 40 C40 24 56 22 62 17 C60 33 50 40 40 40 Z" fill="#6B7A4E"/>
+      <circle cx="40" cy="16" r="6.5" fill="#C79447"/>
+      <path d="M28 72 h24" stroke="#C06A45" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+
+    <h1>Infância <em>em</em> Movimento</h1>
+    <p class="sub">Criar para a Vida Inteira</p>
+    <p class="blurb">Como o movimento na infância constrói o adulto que vem depois — sem promessas mágicas, sem culpa, com a ciência do lado de dentro.</p>
+
+    <p class="byline">
+      <strong>Jeffrey Arcanjo Reis</strong><br>
+      Kairos Movimento · Lisboa · 2026
+    </p>
+
+    <p class="scroll-hint">role para ler ↓</p>
+  </div>
+</header>
+
+<nav class="toc" aria-label="Índice">
+  <a href="#intro">Introdução</a>
+  <a href="#c1">1 · Panorama</a>
+  <a href="#c2">2 · Alfabeto</a>
+  <a href="#c3">3 · Cérebro</a>
+  <a href="#c4">4 · Emoção</a>
+  <a href="#c5">5 · Diversificar</a>
+  <a href="#c6">6 · Brincar</a>
+  <a href="#c7">7 · O que fazer</a>
+  <a href="#close">Fechamento</a>
+</nav>
+
+<!-- ===================== FOUNDING QUOTE ===================== -->
+<div class="founding">
+  <p>"Não existe o treino certo. Existe o treino certo para esta pessoa, agora."</p>
+  <p class="attr">Aqui, aplicado ao começo da vida: cada criança é única, cada momento do desenvolvimento é irrepetível.</p>
+</div>
+
+<div class="wrap">
+<main>
+
+  <!-- INTRO -->
+  <section id="intro">
+    <div class="chap-num">Introdução</div>
+    <h1 class="intro-title">A infância é um <em style="font-style:italic;color:var(--sage)">kairos</em></h1>
+    <p class="lede dropcap">Você já se pegou pensando no futuro do seu filho. Na escola certa, na alimentação, no tempo de tela. São as preocupações de qualquer pai ou mãe que ama — e são preocupações boas. Mas existe uma pergunta que quase ninguém faz em voz alta, e é justamente ela que carrega mais consequência do que parece: <strong>e o movimento?</strong></p>
+    <p>Não o esporte. Não o treino. O movimento — correr, subir, cair, rolar, equilibrar, lançar. A coisa mais antiga que existe entre uma criança e o mundo.</p>
+    <p>Deixa eu te propor uma virada. Os gregos tinham duas palavras para o tempo. <strong>Chronos</strong> é o tempo do relógio: os minutos que passam, iguais, indiferentes, um atrás do outro. E <strong>Kairos</strong> é o outro tempo — o momento de oportunidade, aquele instante que, se você o percebe e o honra, muda o rumo das coisas. Chronos você conta. Kairos você reconhece.</p>
+    <p><em>A infância é um kairos.</em> Não porque exista um "trem que passa uma vez só" — você vai ver que eu não vou te vender esse medo. Mas porque a relação de uma criança com o próprio corpo está sendo escrita agora, nos anos em que ela ainda acha que está só brincando. O corpo é a porta de entrada. É por ele que entram a confiança, a atenção, a coragem de errar e tentar de novo, o prazer de estar com os outros. Cuidar do movimento na infância não é cuidar de um corpo melhor. É cuidar de uma pessoa melhor.</p>
+    <p>Este livro tem uma tese única, e ela é simples: <strong>o adulto que a criança vai ser começa a se mover agora.</strong></p>
+    <p>Nas próximas páginas você vai encontrar o que a ciência realmente diz — com nome e sobrenome das fontes, e com as ressalvas honestas que a maioria dos textos esconde para soar mais convincente. Eu prefiro que você confie em mim porque eu te contei a verdade inteira, inclusive as partes em que a evidência é modesta ou ainda debatida. Vamos com calma. Uma criança de cada vez. A sua.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CHAP 1 -->
+  <section id="c1">
+    <div class="chap-num">Capítulo 1</div>
+    <h2 class="chap">Nossas crianças pararam de se mover</h2>
+    <p class="lede">Você olha para o seu filho no sofá, tablet na mão, e sente uma pontada. Não é preguiça dele. É o mundo que foi desenhado assim — telas de mais, chão de menos. E aí vem a culpa: será que eu deixei isso acontecer?</p>
+    <p>Respira. O que a ciência mostra é que isto não é um problema seu. É um problema estrutural, e ele está medido.</p>
+
+    <div class="stat">
+      <span class="num terra">81%</span>
+      <span class="cap">dos <b>adolescentes de 11 a 17 anos</b> no mundo eram fisicamente inativos em 2016 (OMS / Guthold et al., <i>The Lancet</i>). Não uma minoria — a esmagadora maioria.</span>
+    </div>
+
+    <div class="stat">
+      <span class="num amber">1 em 10</span>
+      <span class="cap">Um estudo global de 2024: <b>apenas cerca de 1 em cada 10 crianças pequenas</b> cumpre as diretrizes combinadas de movimento, sono e tela. <b>86% dos pré-escolares</b> não cumprem todas as recomendações.</span>
+    </div>
+
+    <p>Repara numa coisa importante: esse padrão se repete em todos os níveis de renda. Não é sobre ter dinheiro para o clube. É sobre um mundo inteiro que trocou movimento por tela. Por isso a culpa individual não faz sentido aqui — quando quase todo mundo está no mesmo lugar, o problema não é o caráter de um pai. É o desenho do ambiente.</p>
+    <p>E o que se recomenda? As <strong>diretrizes da OMS de 2020</strong>, para crianças e adolescentes de 5 a 17 anos, são claras e alcançáveis:</p>
+    <ul>
+      <li><strong>Pelo menos 60 minutos por dia</strong>, em média, de atividade moderada a vigorosa, majoritariamente aeróbica, ao longo da semana.</li>
+      <li>Atividades vigorosas e <strong>que fortaleçam músculos e ossos</strong> ao menos <strong>3 dias por semana</strong>.</li>
+      <li>A regra de ouro: <strong>fazer alguma atividade é melhor que nenhuma.</strong></li>
+    </ul>
+    <p>Guarda essa última frase. Ela desarma a paralisia. Você não precisa acertar a "dose ótima" para começar — o maior salto de saúde acontece exatamente quando se sai da inatividade e se dá o primeiro passo. A própria OMS lista onde esses 60 minutos chegam: aptidão física, saúde cardiometabólica, saúde óssea, cognição, saúde mental (menos sintomas de depressão) e menor adiposidade. Um único hábito, muitas portas abertas.</p>
+
+    <blockquote class="kairos">
+      <span class="label">Tradução Kairos</span>
+      <p>O corpo é a porta de entrada para o desenvolvimento — e ela está sendo fechada cedo demais, não por falha sua, mas pelo mundo. A meta não é heroica: é garantir 60 minutos diários de movimento de verdade. Alguma coisa já é muito.</p>
+    </blockquote>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CHAP 2 -->
+  <section id="c2">
+    <div class="chap-num">Capítulo 2</div>
+    <h2 class="chap">O alfabeto do movimento <em>(e o mito da janela única)</em></h2>
+    <p class="lede">Talvez você já tenha ouvido que existe uma "janela" que fecha, uma idade limite depois da qual "já era". E o coração aperta: será que eu perdi o momento? Deixa eu te trazer uma notícia melhor — e mais verdadeira.</p>
+    <p>Existe, sim, um <strong>alfabeto do movimento</strong>. Os cientistas chamam de <strong>habilidades motoras fundamentais (HMF)</strong>, e elas são os blocos de construção de todo movimento mais complexo. São três famílias:</p>
+    <ul>
+      <li><strong>Locomotoras</strong> — correr, saltar, saltitar, galopar.</li>
+      <li><strong>De controle de objeto</strong> — lançar, pegar, chutar, quicar.</li>
+      <li><strong>De estabilidade</strong> — equilíbrio estático e dinâmico.</li>
+    </ul>
+    <p>Juntas, formam a <strong>alfabetização física</strong> (<i>physical literacy</i>): o repertório que permite participar de qualquer atividade. Correr, saltar, lançar e equilibrar são as letras. A vida toda a criança vai combiná-las em palavras diferentes — no futebol, na dança, na trilha, no simples brincar na rua.</p>
+    <p>E o que essas letras preveem? Aqui eu preciso ser exato com você. A competência motora na infância <strong>prevê o nível de atividade física na própria infância e adolescência</strong> — relações de baixa a moderada; num achado de <i>Barnett e colegas</i>, a competência de controle de objeto prevê o tempo em atividade moderada-vigorosa na adolescência.</p>
+
+    <div class="stat">
+      <span class="num sage">fraca</span>
+      <span class="cap"><b>Ressalva honesta:</b> a previsão <i>para a vida adulta</i> é fraca. A competência motora infantil, sozinha, <b>não garante</b> um adulto ativo. O que ela faz é <b>abrir a porta</b> — quem domina as letras cedo tem mais chance de continuar se movendo na infância e adolescência, a janela em que o hábito se forma.</span>
+    </div>
+
+    <p>E o mito da janela? O modelo <strong>LTAD (Long-Term Athlete Development)</strong>, de Balyi e Lloyd, descreve períodos favoráveis — "janelas de oportunidade" por volta dos 6–8 e 10–12 anos. É uma referência útil. Mas — e aqui está a honestidade que protege a sua confiança — há <strong>debate científico ativo</strong>. Um trabalho crítico no <i>Strength &amp; Conditioning Journal</i> (2020) argumenta que esses períodos podem representar apenas a <strong>aceleração natural do desenvolvimento</strong>, e não uma "sensibilidade" especial ao treino. A ideia de "janelas únicas que fecham para sempre" é <strong>questionada</strong>.</p>
+    <p>A leitura prudente: exponha a criança cedo e de forma ampla — mas <strong>não trate nenhuma idade como um trem que passa uma vez só</strong>. Você não perdeu nada. A porta continua aberta.</p>
+
+    <blockquote class="kairos">
+      <span class="label">Tradução Kairos</span>
+      <p>Ensinar correr, saltar, lançar e equilibrar cedo é dar à criança a chance de escrever a própria história de movimento — sem prometer um final garantido, e sem o medo de um prazo de validade. Exponha amplo; não idolatre "a janela".</p>
+    </blockquote>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CHAP 3 -->
+  <section id="c3">
+    <div class="chap-num">Capítulo 3</div>
+    <h2 class="chap">Corpo e cérebro: a base do aprender</h2>
+    <p class="lede">Você sente que precisa escolher. Ou a criança estuda, ou ela corre lá fora. Mexer o corpo parece um luxo que rouba minutos da coisa séria, que é aprender. Essa é a falsa escolha que eu quero desfazer com você.</p>
+    <p>A ciência dos últimos anos é clara: <strong>o movimento não rouba tempo da escola — ele constrói a base sobre a qual a escola acontece.</strong> E o mecanismo tem nome: <strong>função executiva</strong> — controle inibitório (segurar o impulso), memória de trabalho (segurar informação enquanto se pensa) e flexibilidade cognitiva. É a fundação do aprender. E o movimento a fortalece.</p>
+
+    <div class="stat">
+      <span class="num sage">23</span>
+      <span class="cap">estudos e <b>2.857 participantes</b> (meta-análise 2024, <i>Frontiers in Psychology</i>): a <b>atividade física cognitivamente engajada (CEPA)</b> — movimento que também desafia a mente — melhora a função executiva de crianças e adolescentes.</span>
+    </div>
+
+    <p>E uma segunda meta-análise multinível do mesmo ano (<strong>15 estudos, 1.671 participantes</strong>) foi além: a CEPA <strong>supera</strong> a atividade física tradicional para desenvolver a função executiva. Presta atenção nessa distinção, porque ela muda o que você vai valorizar: <strong>não é só mexer o corpo — é mexer o corpo resolvendo desafios.</strong> O jogo com regra, o esconde-esconde com estratégia, a queimada com leitura de espaço.</p>
+    <p>Isso não anula o aeróbico simples. Meta-análises de 2024 mostram que o exercício aeróbico melhora <strong>controle inibitório e memória de trabalho</strong> em crianças — com efeitos agudos (logo depois de uma sessão) e crônicos (ao longo de um programa). E há um dado que sempre me impressiona: a <strong>coordenação motora fina e olho-mão</strong> aparece como <strong>um dos preditores mais fortes</strong> de bom desempenho cognitivo — em alguns estudos, acima até de habilidades acadêmicas isoladas.</p>
+
+    <blockquote class="kairos">
+      <span class="label">Tradução Kairos</span>
+      <p>Corpo ativo, mente mais pronta. Não é escola <i>versus</i> movimento — é escola <i>sobre</i> movimento. Se puder escolher, prefira o movimento que também desafia a mente: é ele que mais constrói a base com que a criança vai aprender tudo o mais.</p>
+    </blockquote>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CHAP 4 -->
+  <section id="c4">
+    <div class="chap-num">Capítulo 4</div>
+    <h2 class="chap">Corpo e emoção: um aliado, não uma cura</h2>
+    <p class="lede">Você percebe a ansiedade chegando cada vez mais cedo nas crianças. A sua talvez. E o coração de pai pergunta, meio em silêncio: será que se ele se mexesse mais, isso passava?</p>
+    <p>Eu vou te responder com toda a honestidade que essa pergunta merece — porque aqui, mais do que em qualquer capítulo, exagerar seria uma crueldade.</p>
+    <p>O que a evidência mostra é real e é bom. Revisões e meta-análises recentes (2023–2025) associam a atividade física a melhoras em <strong>depressão, ansiedade, autoestima, autoconfiança e competência social</strong>. Em quadros depressivos, uma <strong>network meta-análise de 2025</strong> (<i>BMC Public Health</i>) apontou o <strong>treino de força</strong> como o mais eficaz, seguido de aeróbico, exercícios mente-corpo e treino combinado.</p>
+
+    <div class="stat">
+      <span class="num terra">modesto</span>
+      <span class="cap"><b>Ressalva honesta:</b> os efeitos são positivos, <b>porém em geral modestos</b>, e variam com idade e contexto. Dizer que "esporte cura ansiedade" seria falso. O movimento <b>compõe</b> o cuidado — não o substitui.</span>
+    </div>
+
+    <p>Em crianças, os ganhos aparecem mais claramente em ansiedade e depressão; em adolescentes, mais em autoestima. Se o seu filho precisa de apoio, o movimento caminha ao lado do profissional de saúde, nunca no lugar dele.</p>
+    <p>E há um valor que os números nem sempre capturam, mas que qualquer um que já viu uma criança jogar reconhece. Além do efeito no corpo, o movimento <strong>ensina a criança a lidar com</strong>:</p>
+    <ul>
+      <li>a <strong>frustração</strong> — errar o passe, cair, tentar de novo;</li>
+      <li>a <strong>regra do jogo</strong> — o limite, o turno, o que é justo;</li>
+      <li>o <strong>outro</strong> — cooperar, competir sem se destruir, pertencer a um time.</li>
+    </ul>
+    <p>É desenvolvimento socioemocional acontecendo pelo corpo, ao vivo. Por isso a forma importa tanto quanto a dose: uma relação positiva com o movimento é, ela mesma, parte do benefício. Força nunca; convide sempre.</p>
+
+    <blockquote class="kairos">
+      <span class="label">Tradução Kairos</span>
+      <p>Honestidade radical: mover-se é um aliado forte da saúde mental — não uma cura isolada. O maior presente emocional do movimento talvez não esteja na estatística, mas no que ele ensina em silêncio: cair, levantar, dividir, pertencer.</p>
+    </blockquote>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CHAP 5 -->
+  <section id="c5">
+    <div class="chap-num">Capítulo 5</div>
+    <h2 class="chap">Especializar cedo custa caro; brincar de tudo protege</h2>
+    <p class="lede">Chega uma idade em que o mundo começa a te pressionar. "Ele tem jeito, tem que focar." "Se não começar agora a sério, perde para os outros." E você, que só quer o melhor, se pergunta se está deixando o talento escapar.</p>
+    <p>Este é o capítulo em que a ciência está mais do seu lado — e do lado da calma. Aqui a evidência é consistente, e é, na minha opinião, a mais importante de todo este livro para você.</p>
+    <p>Primeiro, uma definição. A referência da <strong>AOSSM</strong> chama de <strong>especialização precoce</strong> o treino intenso, o ano todo (<strong>≥8 meses por ano</strong>), em <strong>um único esporte</strong>, com exclusão dos demais, iniciado <strong>antes dos 12 anos</strong>. O contrário é a <strong>diversificação</strong> (<i>sampling</i>): praticar várias atividades ao longo do ano, adiando a especialização.</p>
+    <p>E o que a evidência diz sobre os dois caminhos?</p>
+    <ul>
+      <li><strong>Diversificar reduz o risco de lesão.</strong> Atletas <i>samplers</i> têm risco <strong>significativamente menor</strong> que os especialistas precoces.</li>
+      <li><strong>Os atletas de elite tenderam a se especializar mais tarde.</strong> Nem para virar profissional a pressa compensa.</li>
+      <li><strong>Há pouca evidência de vantagem na especialização precoce</strong> — e evidência crescente de que ela aumenta lesão e <strong>desistência (burnout)</strong>.</li>
+    </ul>
+    <p>Por que a diversificação protege? Ela distribui a carga por diferentes padrões de movimento, reduzindo a sobrecarga repetitiva. Constrói um repertório motor mais amplo — um alfabeto mais rico. E preserva a motivação: menos monotonia, menos pressão precoce, mais prazer de continuar. É <strong>individualidade</strong> e <strong>impermanência</strong> aplicadas à infância. A criança que brinca de tudo não está atrasada; está se construindo mais completa e mais durável.</p>
+
+    <blockquote class="kairos">
+      <span class="label">Tradução Kairos</span>
+      <p>Brincar de tudo forma um corpo mais completo e mais durável. Não há pressa — até os profissionais se especializaram mais tarde. Variar preserva o prazer de se mover, que é o objetivo final de tudo isto.</p>
+    </blockquote>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CHAP 6 -->
+  <section id="c6">
+    <div class="chap-num">Capítulo 6</div>
+    <h2 class="chap">O brincar como método</h2>
+    <p class="lede">Você às vezes olha o seu filho brincando e sente, no fundo, que aquilo é o intervalo. A parte séria seria a aula, o dever. O brincar é o descanso entre uma coisa importante e outra.</p>
+    <p>Eu quero te oferecer a inversão mais libertadora deste livro: <strong>para a criança, brincar não é o oposto de desenvolvimento — é o método dele.</strong></p>
+    <p>O brincar livre e ao ar livre desenvolve, ao mesmo tempo, três dimensões que a gente costuma tratar em separado:</p>
+    <ul>
+      <li><strong>Motora</strong> — correr, subir, cair, rolar, equilibrar em terreno irregular; força, coordenação e consciência do espaço.</li>
+      <li><strong>Cognitiva</strong> — atenção, concentração, memória, resolução de problemas.</li>
+      <li><strong>Socioemocional</strong> — empatia, cooperação, negociação, autorregulação, resiliência e autoconfiança.</li>
+    </ul>
+    <p>E a evidência sustenta cada pedaço. Revisões sistemáticas associam o recreio e o jogo livre a ganhos em atenção, concentração, permanência na tarefa e memória. O brincar ao ar livre fortalece a resolução de problemas e de conflitos, reduz estresse e ansiedade, e melhora o humor. Um estudo sobre efeitos combinados mostrou que o <strong>jogo deliberado</strong> (<i>deliberate play</i>) somado à prática estruturada beneficia, em conjunto, o desenvolvimento motor e o cognitivo.</p>
+    <p>E tem uma peça que os pais de hoje, com razão, temem: o <strong>risco</strong>. A pesquisa aqui é delicada e importante — o <strong>risco controlado</strong> do brincar desenvolve resiliência e autoconfiança. Deixar arriscar com segurança não é negligência; é entregar à criança a chance de descobrir do que ela é capaz. Seu papel não é eliminar todo o risco. É calibrá-lo.</p>
+    <p>Do outro lado do brincar está o seu grande concorrente, e você já sabe o nome: a <strong>tela</strong>. Por isso a meta mais honesta e alcançável que eu conheço é uma troca simples: <strong>menos tela, mais chão.</strong> Mais quintal, mais rua, mais parque. É, provavelmente, o gesto de maior impacto e menor custo que existe.</p>
+
+    <blockquote class="kairos">
+      <span class="label">Tradução Kairos</span>
+      <p>O brincar é onde o corpo, a mente e o convívio crescem ao mesmo tempo. É o "treino" da criança — só que ela nem percebe que está treinando. Menos tela, mais chão.</p>
+    </blockquote>
+  </section>
+
+  <hr class="divider">
+
+  <!-- CHAP 7 -->
+  <section id="c7">
+    <div class="chap-num">Capítulo 7 · Guia prático</div>
+    <h2 class="chap">O que você pode fazer <em>(sem culpa)</em></h2>
+    <p class="lede">Você leu até aqui, e talvez sinta aquela vontade de fazer tudo certo a partir de amanhã. Segura essa vontade com carinho — não vamos transformar o movimento em mais uma cobrança. A ideia deste capítulo é o contrário: menos peso, não mais.</p>
+    <p>Nada aqui exige clube, dinheiro ou talento de treinador. Exige presença.</p>
+
+    <div class="do-item">
+      <h3><span class="n">1</span> Mire os 60 minutos — mas comece por qualquer coisa.</h3>
+      <p>Se hoje são zero, o alvo não é 60 amanhã. É mais que ontem. O maior salto está em sair da inatividade. E dá para somar ao longo do dia.</p>
+    </div>
+    <div class="do-item">
+      <h3><span class="n">2</span> Menos tela, mais chão.</h3>
+      <p>A troca mais simples e de maior impacto. Não é guerra contra a tela; é abrir espaço para o chão. Se o chão estiver disponível, a criança vai para ele.</p>
+    </div>
+    <div class="do-item">
+      <h3><span class="n">3</span> Diversifique. Sem pressa de escolher o esporte.</h3>
+      <p>Deixe brincar de tudo. Variar protege de lesão, de desistência, e constrói um alfabeto do movimento mais rico. Até por volta dos 12 anos, é o caminho mais seguro — e o dos atletas de elite.</p>
+    </div>
+    <div class="do-item">
+      <h3><span class="n">4</span> Ensine as letras do alfabeto do movimento.</h3>
+      <p>Sem formalidade. Correr, saltar por cima de coisas, lançar e pegar uma bola, equilibrar num muro baixo, girar. Aprende-se cedo, brincando, e serve para a vida toda.</p>
+    </div>
+    <div class="do-item">
+      <h3><span class="n">5</span> Prefira o movimento que desafia a mente.</h3>
+      <p>Jogos com regra, decisão e estratégia desenvolvem mais a função executiva do que a repetição mecânica. Movimento com miolo rende duplo.</p>
+    </div>
+    <div class="do-item">
+      <h3><span class="n">6</span> Respeite o tempo da sua criança. Não compare.</h3>
+      <p>Desenvolvimento não é corrida. Comparar mina a coisa mais preciosa: a confiança dela no próprio corpo. Não existe uma "janela" que fecha para sempre; você não está atrasado.</p>
+    </div>
+    <div class="do-item">
+      <h3><span class="n">7</span> Brinque junto, sempre que der.</h3>
+      <p>Você é o maior incentivo que existe. Dez minutos de bola no corredor, uma corrida até o portão. A criança que se move com quem ama associa o movimento a afeto — e é isso que dura a vida inteira.</p>
+    </div>
+    <div class="do-item">
+      <h3><span class="n">8</span> Deixe arriscar com segurança.</h3>
+      <p>Subir um pouco mais alto, tentar o que assusta um pouquinho. O risco controlado constrói resiliência. Seu papel é calibrar o risco, não apagá-lo.</p>
+    </div>
+
+    <p style="margin-top:1.8rem;">E o mais importante de todos: <strong>isto não é uma prova que você precisa passar.</strong> Você não vai acertar todos os dias, e não precisa. Nenhum dia perdido fecha uma porta. O que constrói é a direção, ao longo dos anos — não a perfeição, ao longo dos dias.</p>
+
+    <blockquote class="kairos">
+      <span class="label">Tradução Kairos</span>
+      <p>O momento certo (o kairos) não é uma data no calendário. É a próxima vez que você puder trocar a tela pelo chão, e ir junto. Ela chega hoje, e chega de novo amanhã.</p>
+    </blockquote>
+  </section>
+
+</main>
+</div>
+
+<!-- ===================== CLOSING ===================== -->
+<div class="closing" id="close">
+  <div class="wrap">
+    <div class="chap-num" style="justify-content:center;">Fechamento</div>
+    <h2 class="close-title">Criar para a vida inteira</h2>
+    <p style="max-width:38rem;margin:0 auto 1.2rem;">A infância é um kairos — não porque haja um prazo correndo contra você, mas porque é agora que uma criança aprende que o corpo é um lugar bom de se habitar. Que mover-se é prazer, e não obrigação. Que cair faz parte, que os outros são companhia, que ela é capaz.</p>
+    <p style="max-width:38rem;margin:0 auto 1.2rem;">Nada disto tem a ver com formar um atleta. Eu te contei as ressalvas de propósito — a competência motora prevê fraco o adulto ativo, os efeitos na saúde mental são modestos, a "janela única" é debatida. Porque o objetivo nunca foi te vender uma promessa. Foi te devolver a calma para fazer a coisa mais simples e poderosa: deixar a sua criança se mover, com prazer, ao seu lado.</p>
+    <p style="max-width:38rem;margin:0 auto 1.2rem;">O maior presente não é uma medalha, nem uma modalidade. É a <strong>relação da criança com o próprio corpo</strong> — porque é ela que sustenta a vida inteira que vem depois.</p>
+
+    <p class="final-line">O adulto que a sua criança vai ser começa a se mover agora. Comece pequeno. Comece junto. Comece agora — porque agora é o <em>kairos</em>.</p>
+
+    <div class="colophon">
+      <strong>Jeffrey Arcanjo Reis</strong> · Kairos Movimento · Lisboa · 2026<br>
+      <em>"Não por um corpo melhor, mas por uma pessoa melhor."</em>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== SOURCES ===================== -->
+<div class="sources">
+  <h4>Fontes citadas nesta obra</h4>
+  <ul>
+    <li><b>OMS (2020)</b> — Diretrizes de atividade física e comportamento sedentário para crianças e adolescentes de 5–17 anos.</li>
+    <li><b>Guthold et al. (The Lancet)</b> — prevalência global de inatividade em adolescentes (81%, dados de 2016).</li>
+    <li><b>Estudo global (2024)</b> — apenas ~1 em 10 crianças pequenas cumpre as diretrizes combinadas de movimento, tela e sono; 86% dos pré-escolares não cumprem todas.</li>
+    <li><b>Barnett et al.</b> — competência motora infantil como preditora de atividade física na adolescência.</li>
+    <li><b>Revisões sistemáticas sobre HMF e physical literacy</b> (Kinesiology Review, 2015; Frontiers, 2023).</li>
+    <li><b>Balyi &amp; Lloyd</b> — Long-Term Athlete Development (LTAD).</li>
+    <li><b>Strength &amp; Conditioning Journal (2020)</b> — "Sensitive Periods to Train General Motor Abilities in Children and Adolescents: Do They Exist? A Critical Appraisal".</li>
+    <li><b>Meta-análise (2024, Frontiers in Psychology)</b> — CEPA e função executiva (23 estudos, 2.857 participantes).</li>
+    <li><b>Meta-análise multinível (2024)</b> — CEPA vs. atividade física tradicional (15 estudos, 1.671 participantes).</li>
+    <li><b>Meta-análises (2024)</b> — exercício aeróbico, controle inibitório e memória de trabalho em crianças.</li>
+    <li><b>Network meta-análise (2025, BMC Public Health)</b> — exercício, depressão, ansiedade e autoestima.</li>
+    <li><b>Revisões e umbrella reviews (2023–2025)</b> — atividade física e saúde mental infantil.</li>
+    <li><b>AOSSM; Frontiers in Psychology (2022); ScienceDirect (2021)</b> — especialização esportiva precoce e risco de lesão.</li>
+    <li><b>Canadian Public Health Association; Encyclopedia on Early Childhood Development</b> — brincar livre/ao ar livre e desenvolvimento; "Deliberate Play and Preparation Jointly Benefit Motor and Cognitive Development".</li>
+  </ul>
+</div>
+
+<script>
+  (function(){
+    var bar=document.getElementById('progress');
+    function upd(){
+      var h=document.documentElement;
+      var st=h.scrollTop||document.body.scrollTop;
+      var sh=(h.scrollHeight-h.clientHeight);
+      var p=sh>0?(st/sh)*100:0;
+      bar.style.width=p+'%';
+    }
+    window.addEventListener('scroll',upd,{passive:true});
+    window.addEventListener('resize',upd);
+    upd();
+  })();
+</script>
+</body>
+</html>
