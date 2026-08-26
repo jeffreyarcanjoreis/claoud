@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A Arte do Treinamento — Kairos Movimento</title>
+<meta name="author" content="Jeffrey Arcanjo Reis">
+<meta name="description" content="Treinar é traduzir, não repetir. Um manual de ofício sobre a arte de adaptar o treino à pessoa — e ao momento. Kairos Movimento, Lisboa 2026.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Archivo:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#EDE7DB;
+    --card:#E3DBCC;
+    --ink:#161514;
+    --body:#4A463C;
+    --faint:#8A8272;
+    --terracota:#A8482A;
+    --aco:#3C5551;
+    --line:rgba(22,21,20,.14);
+    --line-strong:rgba(22,21,20,.28);
+    --measure:41rem;
+    --serif:'Fraunces',Georgia,serif;
+    --sans:'Archivo',system-ui,sans-serif;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--body);
+    font-family:var(--sans);
+    font-weight:400;
+    font-size:19px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+
+  /* ---------- progress bar ---------- */
+  #progress{
+    position:fixed;top:0;left:0;height:3px;width:0%;
+    background:var(--terracota);
+    z-index:100;
+    transition:width .1s linear;
+  }
+  #progress::after{
+    content:"";position:absolute;right:0;top:0;bottom:0;width:1px;
+    background:var(--aco);opacity:.6;
+  }
+
+  /* ---------- shell / grid ---------- */
+  .wrap{max-width:74rem;margin:0 auto;padding:0 clamp(1.1rem,4vw,3rem);}
+  .measure{max-width:var(--measure);margin-left:auto;margin-right:auto;}
+
+  /* ---------- eyebrow / labels ---------- */
+  .eyebrow{
+    font-family:var(--mono);
+    text-transform:uppercase;
+    letter-spacing:.28em;
+    font-size:.68rem;
+    font-weight:500;
+    color:var(--terracota);
+  }
+  .eyebrow.aco{color:var(--aco);}
+  .eyebrow.faint{color:var(--faint);}
+
+  /* ======================================================
+     COVER
+  ====================================================== */
+  .cover{
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    padding:clamp(1.4rem,4vw,3.2rem);
+    position:relative;
+    border-bottom:1px solid var(--line-strong);
+    background:
+      linear-gradient(180deg,var(--paper),var(--card));
+    overflow:hidden;
+  }
+  .cover-grid{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:clamp(48px,7vw,88px) clamp(48px,7vw,88px);
+    opacity:.5;
+    mask-image:radial-gradient(120% 90% at 70% 25%,#000 40%,transparent 100%);
+    -webkit-mask-image:radial-gradient(120% 90% at 70% 25%,#000 40%,transparent 100%);
+    pointer-events:none;
+  }
+  .cover-top{
+    position:relative;z-index:2;
+    display:flex;justify-content:space-between;align-items:flex-start;
+    gap:1rem;flex-wrap:wrap;
+    padding-bottom:2rem;
+    border-bottom:1px solid var(--line);
+  }
+  .brandmark{display:flex;align-items:center;gap:.7rem;}
+  .brandmark svg{display:block;flex:none;}
+  .brandmark .bm-text{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--ink);line-height:1.5;}
+  .brandmark .bm-text span{display:block;color:var(--faint);letter-spacing:.18em;}
+  .cover-serie{font-family:var(--mono);font-size:.68rem;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);text-align:right;}
+  .cover-serie b{color:var(--aco);font-weight:600;}
+
+  .cover-mid{
+    position:relative;z-index:2;
+    flex:1;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(2rem,6vh,5rem) 0;
+  }
+  .cover-kicker{margin-bottom:1.6rem;}
+  .cover h1{
+    font-family:var(--serif);
+    font-weight:340;
+    font-size:clamp(3.1rem,10vw,7.4rem);
+    line-height:.94;
+    letter-spacing:-.02em;
+    color:var(--ink);
+    margin:0;
+  }
+  .cover h1 em{
+    font-style:italic;
+    font-weight:400;
+    color:var(--terracota);
+  }
+  .cover-sub{
+    font-family:var(--serif);
+    font-style:italic;
+    font-weight:340;
+    font-size:clamp(1.3rem,3.4vw,2rem);
+    line-height:1.32;
+    color:var(--body);
+    margin:1.8rem 0 0;
+    max-width:34rem;
+  }
+  .cover-rule{height:1px;background:var(--line-strong);margin:2.4rem 0 1.6rem;max-width:34rem;}
+  .cover-lede{max-width:34rem;font-size:1.02rem;color:var(--body);}
+
+  .cover-bottom{
+    position:relative;z-index:2;
+    display:flex;justify-content:space-between;align-items:flex-end;
+    gap:1.4rem;flex-wrap:wrap;
+    padding-top:1.6rem;border-top:1px solid var(--line);
+  }
+  .cover-author{font-family:var(--sans);font-size:.96rem;color:var(--ink);}
+  .cover-author b{font-weight:600;}
+  .cover-author span{display:block;color:var(--faint);font-family:var(--mono);font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;margin-top:.35rem;}
+  .cover-spec{font-family:var(--mono);font-size:.7rem;color:var(--faint);text-align:right;letter-spacing:.06em;line-height:1.9;}
+  .cover-spec b{color:var(--aco);}
+
+  /* ======================================================
+     GENERAL TYPO
+  ====================================================== */
+  main{padding:clamp(3rem,8vw,6rem) 0 4rem;}
+  section{margin:0 auto;}
+  p{margin:0 0 1.25rem;}
+  main p{ max-width:var(--measure);margin-left:auto;margin-right:auto;}
+  strong{color:var(--ink);font-weight:600;}
+  em{color:var(--body);}
+  a{color:var(--terracota);text-decoration:none;border-bottom:1px solid var(--line-strong);}
+
+  /* intro block */
+  .lead-in{
+    max-width:var(--measure);margin:0 auto 3.4rem;
+  }
+  .lead-in .eyebrow{display:block;margin-bottom:1.1rem;}
+  .lead-in h2{margin-top:.2rem;}
+  .dropcap::first-letter{
+    font-family:var(--serif);
+    font-weight:400;
+    float:left;
+    font-size:4.6rem;
+    line-height:.78;
+    padding:.35rem .6rem .1rem 0;
+    color:var(--terracota);
+  }
+
+  /* section heading / chapter opener */
+  .chapter{margin:0 auto;padding-top:clamp(2.6rem,6vw,4.4rem);}
+  .chapter + .chapter{margin-top:1rem;}
+  .chapter-head{
+    max-width:74rem;margin:0 auto 2.4rem;
+    padding:0 clamp(1.1rem,4vw,3rem);
+  }
+  .chapter-head .num{
+    font-family:var(--mono);
+    font-size:clamp(2.4rem,7vw,4.2rem);
+    font-weight:400;
+    color:var(--terracota);
+    line-height:1;
+    display:block;
+  }
+  .chapter-head .num small{
+    display:inline-block;
+    font-size:.7rem;letter-spacing:.28em;
+    color:var(--faint);vertical-align:super;
+    margin-left:.6rem;text-transform:uppercase;
+  }
+  h2{
+    font-family:var(--serif);
+    font-weight:360;
+    font-size:clamp(2rem,5.2vw,3.3rem);
+    line-height:1.04;
+    letter-spacing:-.015em;
+    color:var(--ink);
+    margin:.8rem 0 0;
+  }
+  h2 em{font-style:italic;color:var(--terracota);font-weight:400;}
+  h3{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:1.5rem;
+    line-height:1.2;
+    color:var(--ink);
+    margin:2.6rem auto 1rem;
+    max-width:var(--measure);
+  }
+  .practice h3{
+    font-family:var(--sans);
+    font-weight:600;
+    font-size:1.18rem;
+    letter-spacing:-.01em;
+    display:flex;gap:.8rem;align-items:baseline;
+  }
+  .practice h3 .step{
+    font-family:var(--mono);
+    color:var(--terracota);
+    font-size:.9rem;
+    font-weight:600;
+    flex:none;
+  }
+
+  /* Estado / Ruptura / Convite tags */
+  .beat{
+    max-width:var(--measure);margin:1.6rem auto;
+    display:flex;gap:1rem;align-items:flex-start;
+  }
+  .beat .tag{
+    font-family:var(--mono);
+    font-size:.62rem;
+    letter-spacing:.2em;
+    text-transform:uppercase;
+    font-weight:600;
+    color:var(--aco);
+    flex:none;
+    width:5.6rem;
+    padding-top:.42rem;
+    border-top:2px solid var(--aco);
+  }
+  .beat.state .tag{color:var(--faint);border-color:var(--faint);}
+  .beat.rupture .tag{color:var(--terracota);border-color:var(--terracota);}
+  .beat p{margin:0;max-width:none;}
+  .beat .body{flex:1;}
+
+  /* ---------- FICHA TÉCNICA (data cards) ---------- */
+  .ficha-row{
+    max-width:74rem;margin:2.4rem auto;
+    padding:0 clamp(1.1rem,4vw,3rem);
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:1px;background:var(--line-strong);
+    border:1px solid var(--line-strong);
+  }
+  .ficha{
+    background:var(--card);
+    padding:1.5rem 1.4rem 1.3rem;
+    display:flex;flex-direction:column;gap:.5rem;
+  }
+  .ficha .ficha-label{
+    font-family:var(--mono);
+    font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--faint);
+  }
+  .ficha .ficha-num{
+    font-family:var(--mono);
+    font-weight:600;
+    font-size:clamp(2rem,4.4vw,2.9rem);
+    line-height:1;
+    color:var(--ink);
+    letter-spacing:-.02em;
+  }
+  .ficha .ficha-num .u{font-size:.9rem;color:var(--terracota);font-weight:500;letter-spacing:0;}
+  .ficha .ficha-desc{
+    font-size:.82rem;line-height:1.45;color:var(--body);
+  }
+  .ficha.accent{background:var(--aco);}
+  .ficha.accent .ficha-label{color:rgba(237,231,219,.7);}
+  .ficha.accent .ficha-num{color:#F2ECE0;}
+  .ficha.accent .ficha-num .u{color:#E6B9A6;}
+  .ficha.accent .ficha-desc{color:rgba(237,231,219,.82);}
+
+  /* single spec inline */
+  .spec-inline{
+    max-width:var(--measure);margin:1.8rem auto;
+    display:flex;align-items:center;gap:1.2rem;
+    padding:1.1rem 1.3rem;
+    background:var(--card);
+    border-left:3px solid var(--terracota);
+  }
+  .spec-inline .big{
+    font-family:var(--mono);font-weight:600;
+    font-size:2rem;color:var(--ink);line-height:1;flex:none;
+  }
+  .spec-inline .txt{font-size:.9rem;color:var(--body);line-height:1.5;}
+
+  /* ranking spec */
+  .rank{
+    max-width:var(--measure);margin:2rem auto;
+    border-top:1px solid var(--line-strong);
+  }
+  .rank .rank-cap{font-family:var(--mono);font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:.8rem 0 1rem;}
+  .rank-item{display:flex;align-items:center;gap:1rem;padding:.55rem 0;}
+  .rank-item .rk-name{font-family:var(--mono);font-size:.82rem;color:var(--ink);width:12rem;flex:none;text-transform:uppercase;letter-spacing:.04em;}
+  .rank-item .rk-bar{flex:1;height:10px;background:rgba(22,21,20,.08);position:relative;}
+  .rank-item .rk-bar i{position:absolute;left:0;top:0;bottom:0;background:var(--terracota);}
+  .rank-item.dim .rk-bar i{background:var(--faint);}
+  .rank-item .rk-val{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--aco);width:3rem;text-align:right;flex:none;}
+
+  /* ---------- Tradução Kairos blockquote ---------- */
+  blockquote.kairos{
+    max-width:var(--measure);margin:2.6rem auto;
+    background:var(--aco);
+    color:#F2ECE0;
+    padding:2rem 2.1rem 1.9rem;
+    position:relative;
+    border-radius:2px;
+  }
+  blockquote.kairos .k-label{
+    font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;
+    color:#E6B9A6;display:block;margin-bottom:1rem;
+  }
+  blockquote.kairos p{
+    font-family:var(--serif);font-style:italic;font-weight:340;
+    font-size:1.28rem;line-height:1.42;color:#F5EFE4;margin:0;max-width:none;
+  }
+  blockquote.kairos p strong{color:#fff;font-weight:600;font-style:normal;}
+  blockquote.kairos .k-mark{
+    position:absolute;top:1rem;right:1.4rem;
+    font-family:var(--serif);font-size:3.6rem;line-height:1;color:rgba(230,185,166,.35);
+  }
+
+  /* pull quote (non-kairos, big statement) */
+  .pull{
+    max-width:52rem;margin:3rem auto;text-align:center;padding:0 1rem;
+  }
+  .pull p{
+    font-family:var(--serif);font-weight:340;font-style:italic;
+    font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.28;color:var(--ink);max-width:none;
+  }
+  .pull p em{color:var(--terracota);font-style:italic;}
+
+  /* section divider */
+  .divider{
+    max-width:74rem;margin:3.2rem auto;padding:0 clamp(1.1rem,4vw,3rem);
+    display:flex;align-items:center;gap:1rem;
+  }
+  .divider .d-line{flex:1;height:1px;background:var(--line-strong);}
+  .divider .d-mark{font-family:var(--mono);font-size:.62rem;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);}
+  .divider .d-dot{width:6px;height:6px;background:var(--terracota);transform:rotate(45deg);}
+
+  /* ---------- manifesto ---------- */
+  .manifesto{
+    background:var(--ink);color:#E8E1D4;
+    margin-top:4rem;padding:clamp(3.4rem,9vw,6.5rem) 0;
+    position:relative;overflow:hidden;
+  }
+  .manifesto .m-grid{
+    position:absolute;inset:0;
+    background-image:linear-gradient(90deg,rgba(237,231,219,.05) 1px,transparent 1px);
+    background-size:clamp(48px,7vw,88px) 100%;pointer-events:none;
+  }
+  .manifesto .wrap{position:relative;z-index:2;}
+  .manifesto .eyebrow{color:#E6B9A6;}
+  .manifesto h2{color:#F4EEE2;}
+  .manifesto h2 em{color:#D98B6B;}
+  .manifesto p{color:rgba(232,225,212,.85);max-width:var(--measure);}
+  .manifesto strong{color:#fff;}
+  .manifesto .m-final{
+    font-family:var(--serif);font-style:italic;font-weight:340;
+    font-size:clamp(1.5rem,3.6vw,2.2rem);line-height:1.32;color:#F4EEE2;
+    max-width:38rem;margin:2.4rem auto;text-align:center;
+  }
+  .manifesto .m-final em{color:#D98B6B;}
+  .manifesto h3{color:#F4EEE2;font-family:var(--serif);}
+  .colophon{
+    max-width:var(--measure);margin:3rem auto 0;padding-top:2rem;
+    border-top:1px solid rgba(237,231,219,.2);
+    display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;
+    font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(232,225,212,.6);
+  }
+  .colophon b{color:#E6B9A6;font-weight:600;}
+
+  /* ---------- sources ---------- */
+  .sources{
+    max-width:74rem;margin:0 auto;padding:clamp(2.6rem,6vw,4rem) clamp(1.1rem,4vw,3rem);
+  }
+  .sources .eyebrow{display:block;margin-bottom:1.4rem;}
+  .sources ol{
+    list-style:none;margin:0;padding:0;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:0;
+    border-top:1px solid var(--line);
+  }
+  .sources li{
+    font-family:var(--mono);font-size:.74rem;line-height:1.5;color:var(--body);
+    padding:.85rem 1rem .85rem 0;border-bottom:1px solid var(--line);
+    display:flex;gap:.7rem;
+  }
+  .sources li .s-i{color:var(--terracota);flex:none;}
+
+  /* table of contents (mini) */
+  .toc{max-width:var(--measure);margin:2.6rem auto 0;}
+  .toc-item{
+    display:flex;align-items:baseline;gap:1rem;
+    padding:.7rem 0;border-bottom:1px solid var(--line);
+    text-decoration:none;color:var(--ink);border-top:none;
+  }
+  .toc-item:hover .toc-title{color:var(--terracota);}
+  .toc-item .toc-n{font-family:var(--mono);font-size:.78rem;color:var(--terracota);width:2.4rem;flex:none;}
+  .toc-item .toc-title{font-family:var(--serif);font-size:1.12rem;flex:1;transition:color .15s;}
+  .toc-item .toc-p{font-family:var(--mono);font-size:.66rem;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+  .toc-dots{flex:1;border-bottom:1px dotted var(--line-strong);transform:translateY(-.25rem);}
+
+  /* footnote-ish small print */
+  .caveat{
+    max-width:var(--measure);margin:1.6rem auto;
+    font-size:.86rem;color:var(--faint);font-style:italic;
+    padding-left:1rem;border-left:2px solid var(--line-strong);
+  }
+
+  /* ======================================================
+     RESPONSIVE
+  ====================================================== */
+  @media (max-width:640px){
+    body{font-size:17px;}
+    .beat{flex-direction:column;gap:.5rem;}
+    .beat .tag{width:auto;border-top:none;border-left:2px solid var(--aco);padding:0 0 0 .6rem;}
+    .beat.state .tag{border-color:var(--faint);}
+    .beat.rupture .tag{border-color:var(--terracota);}
+    .rank-item .rk-name{width:8rem;font-size:.7rem;}
+    .cover-serie{text-align:left;}
+    .cover-spec{text-align:left;}
+  }
+
+  /* ======================================================
+     DARK MODE
+  ====================================================== */
+  @media (prefers-color-scheme:dark){
+    :root{
+      --paper:#1A1917;--card:#232019;--ink:#F0EADD;--body:#C9C2B2;
+      --faint:#8F8775;--terracota:#D07A54;--aco:#7BA29B;
+      --line:rgba(240,234,221,.12);--line-strong:rgba(240,234,221,.24);
+    }
+    .cover{background:linear-gradient(180deg,#1A1917,#232019);}
+    .ficha.accent{background:#2C3E3A;}
+    blockquote.kairos{background:#243430;}
+    .manifesto{background:#0E0D0C;}
+    .manifesto p{color:rgba(232,225,212,.8);}
+    .spec-inline .big,.ficha .ficha-num{color:var(--ink);}
+    .rank-item .rk-bar{background:rgba(240,234,221,.1);}
+  }
+  :root[data-theme="dark"]{
+    --paper:#1A1917;--card:#232019;--ink:#F0EADD;--body:#C9C2B2;
+    --faint:#8F8775;--terracota:#D07A54;--aco:#7BA29B;
+    --line:rgba(240,234,221,.12);--line-strong:rgba(240,234,221,.24);
+  }
+  :root[data-theme="dark"] .cover{background:linear-gradient(180deg,#1A1917,#232019);}
+  :root[data-theme="dark"] .ficha.accent{background:#2C3E3A;}
+  :root[data-theme="dark"] blockquote.kairos{background:#243430;}
+  :root[data-theme="dark"] .manifesto{background:#0E0D0C;}
+  :root[data-theme="light"]{
+    --paper:#EDE7DB;--card:#E3DBCC;--ink:#161514;--body:#4A463C;
+    --faint:#8A8272;--terracota:#A8482A;--aco:#3C5551;
+    --line:rgba(22,21,20,.14);--line-strong:rgba(22,21,20,.28);
+  }
+
+  /* ======================================================
+     PRINT
+  ====================================================== */
+  @media print{
+    @page{margin:18mm 16mm;}
+    :root{--paper:#fff;--card:#F4F0E8;--ink:#111;--body:#333;--faint:#777;}
+    body{font-size:11pt;line-height:1.5;background:#fff;color:#222;}
+    #progress{display:none;}
+    .cover{min-height:auto;page-break-after:always;border:none;}
+    .cover-grid,.manifesto .m-grid,.cover-mid{padding:0;}
+    .cover-mid{padding:2rem 0;}
+    .chapter{page-break-inside:auto;}
+    h2,h3{page-break-after:avoid;}
+    blockquote.kairos,.ficha-row,.spec-inline,.rank,.pull{page-break-inside:avoid;}
+    blockquote.kairos{background:#F4F0E8 !important;color:#111 !important;border:1px solid #ccc;}
+    blockquote.kairos p{color:#222 !important;}
+    blockquote.kairos .k-label{color:#A8482A !important;}
+    blockquote.kairos .k-mark{color:#ccc !important;}
+    .ficha.accent{background:#F4F0E8 !important;}
+    .ficha.accent .ficha-num,.ficha.accent .ficha-desc,.ficha.accent .ficha-label{color:#222 !important;}
+    .manifesto{background:#fff !important;color:#222 !important;}
+    .manifesto h2,.manifesto p,.manifesto .m-final,.manifesto h3{color:#222 !important;}
+    .manifesto strong{color:#000 !important;}
+    a{color:#222;border:none;}
+    .divider{page-break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<div id="progress"></div>
+
+<!-- ============================= COVER ============================= -->
+<header class="cover">
+  <div class="cover-grid"></div>
+
+  <div class="cover-top">
+    <div class="brandmark">
+      <svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true">
+        <circle cx="17" cy="17" r="16" fill="none" stroke="#A8482A" stroke-width="1.4"/>
+        <path d="M11 8 L11 26 M11 17 L23 8 M11 17 L23 26" fill="none" stroke="#3C5551" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      <div class="bm-text">Kairos<span>Movimento</span></div>
+    </div>
+    <div class="cover-serie">Série &nbsp;·&nbsp; <b>A Arte do Treinamento</b><br>Manual de Ofício &nbsp;Nº 01</div>
+  </div>
+
+  <div class="cover-mid">
+    <div class="cover-kicker eyebrow">O ofício de treinar como arte</div>
+    <h1>A Arte do<br><em>Treinamento</em></h1>
+    <p class="cover-sub">Treinar é traduzir,<br>não repetir.</p>
+    <div class="cover-rule"></div>
+    <p class="cover-lede">Um manual de ofício sobre a arte de adaptar o treino à pessoa — e ao momento. Da ciência do treino à decisão viva da sessão.</p>
+  </div>
+
+  <div class="cover-bottom">
+    <div class="cover-author">
+      <b>Jeffrey Arcanjo Reis</b>
+      <span>Kairos Movimento · Lisboa · 2026</span>
+    </div>
+    <div class="cover-spec">
+      Chronos <b>×</b> Kairos<br>
+      5 princípios · 5 corpos de evidência<br>
+      Estrutura fixa <b>·</b> execução viva
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- ============================= INTRO ============================= -->
+  <section class="lead-in">
+    <span class="eyebrow">Introdução</span>
+    <h2>Duas maneiras de<br>contar o <em>tempo</em></h2>
+  </section>
+
+  <p class="measure dropcap">Os gregos tinham duas palavras para aquilo que nós chamamos de "tempo". Uma era <strong>Chronos</strong>: o tempo do relógio, o tempo que passa igual para todos, medido em séries, cargas, semanas e planilhas. Chronos é a coluna do Excel — a prescrição que você fecha no domingo à noite e entrega na segunda, idêntica, para dez corpos diferentes.</p>
+
+  <p class="measure">A outra era <strong>Kairos</strong>: o momento oportuno. O instante em que a coisa certa acontece porque as condições estão maduras para ela. Kairos não se agenda — reconhece-se. É a diferença entre o dia em que a pessoa está pronta para subir a carga e o dia em que subir a carga só vai machucá-la.</p>
+
+  <p class="measure">Este manual é sobre a distância entre esses dois tempos. E sobre por que o ofício de treinar vive, quase inteiro, dentro dessa distância.</p>
+
+  <p class="measure">Você provavelmente já sentiu isto, colega: dois alunos, o mesmo agachamento, a mesma progressão bem-desenhada. Um sai mais forte. O outro sai com dor no joelho. O exercício era o mesmo. O que mudou foi tudo aquilo que a planilha não vê — a história de cada corpo, o dia que cada um teve, o ponto de onde cada um partiu.</p>
+
+  <div class="pull">
+    <p>Treinar não é repetir um protocolo. É <em>traduzir</em> um princípio para o corpo que está na sua frente, no momento em que ele chega.</p>
+  </div>
+
+  <p class="measure">Um tradutor honesto não decora uma frase pronta — ele entende o sentido e o reconstrói noutra língua, com as palavras que aquele leitor entende. É exatamente esse o gesto do bom treinador. O método Kairos se organiza em cinco princípios inabaláveis — Individualidade, Impermanência, Imprevisibilidade, Kairos e Sensibilidade — mas há uma frase que os costura: <strong>estrutura fixa, execução viva</strong>. Os princípios da fisiologia não mudam; são o esqueleto. A maneira como você os aplica muda a cada pessoa e a cada dia.</p>
+
+  <p class="measure">E há um propósito por baixo de tudo, que convém dizer antes da ciência: aqui não se treina por um corpo melhor, mas por uma pessoa melhor. O corpo é a porta de entrada — física, mental, espiritual e social. É por onde se começa, não onde se chega. Nada aqui é invenção; cada número tem fonte, e onde a evidência é incerta, eu digo que é incerta. Um ofício sério se constrói assim.</p>
+
+  <!-- TOC -->
+  <div class="toc">
+    <span class="eyebrow faint" style="display:block;margin-bottom:.8rem;">Os cinco eixos + a prática</span>
+    <a class="toc-item" href="#c1"><span class="toc-n">01</span><span class="toc-title">A Individualidade</span><span class="toc-dots"></span><span class="toc-p">Individualidade</span></a>
+    <a class="toc-item" href="#c2"><span class="toc-n">02</span><span class="toc-title">Os Princípios do Treino</span><span class="toc-dots"></span><span class="toc-p">Impermanência</span></a>
+    <a class="toc-item" href="#c3"><span class="toc-n">03</span><span class="toc-title">A Aprendizagem Motora</span><span class="toc-dots"></span><span class="toc-p">Imprevisibilidade</span></a>
+    <a class="toc-item" href="#c4"><span class="toc-n">04</span><span class="toc-title">Periodização & Autorregulação</span><span class="toc-dots"></span><span class="toc-p">Kairos</span></a>
+    <a class="toc-item" href="#c5"><span class="toc-n">05</span><span class="toc-title">A Sensibilidade</span><span class="toc-dots"></span><span class="toc-p">Sensibilidade</span></a>
+    <a class="toc-item" href="#c6"><span class="toc-n">06</span><span class="toc-title">Da ciência à sessão</span><span class="toc-dots"></span><span class="toc-p">Prática</span></a>
+  </div>
+
+  <div class="divider"><span class="d-line"></span><span class="d-dot"></span><span class="d-mark">Capítulo Um</span><span class="d-dot"></span><span class="d-line"></span></div>
+
+  <!-- ============================= CH 1 ============================= -->
+  <section class="chapter" id="c1">
+    <div class="chapter-head">
+      <span class="num">01<small>Individualidade</small></span>
+      <h2>Por que a mesma dose<br>não gera a <em>mesma resposta</em></h2>
+    </div>
+
+    <div class="beat state"><span class="tag">Estado</span><div class="body"><p>Você monta um bom programa: progressão coerente, volume adequado, tudo apoiado na melhor evidência que conhece. E, ainda assim, um aluno voa enquanto o outro parece emperrado há semanas. A tentação é procurar o culpado — falta de foco, sono ruim, "não pega pesado". No fundo, é achar que existe um treino certo e que a pessoa é que está errada.</p></div></div>
+
+    <div class="beat rupture"><span class="tag">Ruptura</span><div class="body"><p>A fisiologia inverte a frase. Quando um grupo segue exatamente o mesmo programa, os resultados <strong>não</strong> são os mesmos — e isto está entre os achados mais bem documentados da área.</p></div></div>
+
+    <p class="measure">A ciência descreve três padrões sob o mesmo estímulo: <strong>respondedores</strong> (melhoram), <strong>não-respondedores</strong> (não mudam no desfecho medido) e <strong>respondedores adversos</strong> (chegam a piorar naquele desfecho específico) — <em>Journal of Applied Physiology</em>, 2015; <em>Frontiers in Physiology</em> (revisão sistemática), 2021.</p>
+
+    <div class="ficha-row">
+      <div class="ficha">
+        <span class="ficha-label">Padrões sob mesmo estímulo</span>
+        <span class="ficha-num">3</span>
+        <span class="ficha-desc">Respondedores · não-respondedores · respondedores adversos.</span>
+      </div>
+      <div class="ficha accent">
+        <span class="ficha-label">Não-resposta cardiorrespiratória</span>
+        <span class="ficha-num">HIIT <span class="u">&lt;</span></span>
+        <span class="ficha-desc">Taxa de não-resposta tende a ser menor no HIIT do que no contínuo moderado.</span>
+      </div>
+      <div class="ficha">
+        <span class="ficha-label">Desfechos-chave</span>
+        <span class="ficha-num">VO₂ <span class="u">+ força</span></span>
+        <span class="ficha-desc">Variabilidade grande entre indivíduos: ganhos de nulos a muito altos.</span>
+      </div>
+    </div>
+
+    <p class="caveat">Ressalva que fortalece: o próprio campo alerta que rotular alguém de "não-respondedor" é <strong style="color:inherit">impreciso</strong>. Responder depende do desfecho medido e do erro de medida — a mesma pessoa pode não responder em VO₂máx e responder em força, e a resposta muda com a dose. "Não-respondedor" não é um tipo de gente: é a foto de um desfecho, num momento, sob uma dose.</p>
+
+    <p class="measure">E o achado de maior valor prático é este: <strong>a não-resposta muitas vezes se resolve mudando o estímulo</strong>. A incidência cai quando se altera tipo, volume ou intensidade — não é um destino fixo da pessoa. De onde vem a variabilidade? De vários lugares ao mesmo tempo: genética e epigenética, o estado de partida (quem sai do sedentarismo tende a responder mais — dose-resposta não-linear), o contexto de vida (sono, nutrição, estresse) e a adesão real. O melhor treino continua sendo aquele que a pessoa consegue sustentar.</p>
+
+    <blockquote class="kairos">
+      <span class="k-mark">”</span>
+      <span class="k-label">Tradução Kairos · Individualidade</span>
+      <p>Não existe treino universal porque não existe corpo padrão — e a fisiologia confirma. Individualizar não é capricho estético: é <strong>obrigação técnica</strong>. Se o corpo não respondeu, a resposta não é insistir. É ajustar.</p>
+    </blockquote>
+  </section>
+
+  <div class="divider"><span class="d-line"></span><span class="d-dot"></span><span class="d-mark">Capítulo Dois</span><span class="d-dot"></span><span class="d-line"></span></div>
+
+  <!-- ============================= CH 2 ============================= -->
+  <section class="chapter" id="c2">
+    <div class="chapter-head">
+      <span class="num">02<small>Impermanência</small></span>
+      <h2>A estrutura fixa que dá<br>chão à <em>execução viva</em></h2>
+    </div>
+
+    <div class="beat state"><span class="tag">Estado</span><div class="body"><p>Talvez você progrida quase sempre da mesma maneira: mais peso na barra. É concreto, mensurável, é o que o aluno entende como "evoluir". E funciona — até parar de funcionar, e você ficar sem saber qual botão apertar quando o peso já não pode subir toda semana.</p></div></div>
+
+    <div class="beat rupture"><span class="tag">Ruptura</span><div class="body"><p>Sobrecarga progressiva não é sinônimo de "mais peso". É manter um estímulo que <strong>cresce à medida que a capacidade cresce</strong> — e há mais de uma alavanca para isso.</p></div></div>
+
+    <p class="measure">Progredir <strong>carga OU repetições</strong> produz <strong>adaptações musculares semelhantes</strong> ao longo de um ciclo de 8 semanas (<em>Plotkin et al., 2022</em>). Peso é uma alavanca; repetições, densidade e amplitude são outras. Escolher a certa para esta pessoa — a que o corpo dela comporta agora — é a parte artesanal do ofício.</p>
+
+    <div class="ficha-row">
+      <div class="ficha">
+        <span class="ficha-label">Dose mínima eficaz · hipertrofia</span>
+        <span class="ficha-num">~4 <span class="u">séries/sem</span></span>
+        <span class="ficha-desc">Meta-regressão 2025 · 67 estudos · 2.058 participantes.</span>
+      </div>
+      <div class="ficha accent">
+        <span class="ficha-label">Custo do último incremento de força</span>
+        <span class="ficha-num">3<span class="u">× o primeiro</span></span>
+        <span class="ficha-desc">Os primeiros ganhos são baratos; os últimos, caros.</span>
+      </div>
+      <div class="ficha">
+        <span class="ficha-label">Deload · prática de força</span>
+        <span class="ficha-num">~6 <span class="u">dias</span></span>
+        <span class="ficha-desc">Em média a cada ~5–6 semanas (Bell et al., 2024).</span>
+      </div>
+    </div>
+
+    <p class="measure">Dois princípios completam o esqueleto. A <strong>especificidade</strong>: a adaptação é específica ao estímulo — mudar o exercício redistribui o estresse para padrões ainda não adaptados (o que também é sobrecarga). E a <strong>reversibilidade</strong>: o que não se usa, se perde — por isso <strong>consistência supera picos isolados</strong>. E o princípio que mais gente esqueceu: <strong>a adaptação acontece na recuperação, não no esforço</strong>. Excesso sem recuperação não acelera nada — leva a fadiga acumulada, queda de desempenho e <em>overreaching</em> não-funcional, com mais dor e mais risco de lesão.</p>
+
+    <p class="caveat">Honestidade radical: a evidência do deload sobre hipertrofia é <strong style="color:inherit">mista</strong> — em alguns estudos, o treino contínuo mantém mais força (<em>PeerJ, 2024</em>). O deload é sobretudo ferramenta de gestão de fadiga e prevenção, não acelerador mágico. Saber isso te ajuda a usá-lo pelo motivo certo.</p>
+
+    <blockquote class="kairos">
+      <span class="k-mark">”</span>
+      <span class="k-label">Tradução Kairos · Impermanência</span>
+      <p>Treina-se pensando na mudança e no descanso. Recuperar é <strong>parte do treino</strong>, não pausa dele. A estrutura é fixa — sobrecarga, especificidade, recuperação. A execução é viva: qual alavanca, quanto volume, quando descarregar.</p>
+    </blockquote>
+  </section>
+
+  <div class="divider"><span class="d-line"></span><span class="d-dot"></span><span class="d-mark">Capítulo Três</span><span class="d-dot"></span><span class="d-line"></span></div>
+
+  <!-- ============================= CH 3 ============================= -->
+  <section class="chapter" id="c3">
+    <div class="chapter-head">
+      <span class="num">03<small>Imprevisibilidade</small></span>
+      <h2>Do simples ao complexo —<br>e por que essa <em>ordem</em> importa</h2>
+    </div>
+
+    <div class="beat state"><span class="tag">Estado</span><div class="body"><p>Chega alguém empolgado, querendo o exercício avançado que viu num vídeo. É tentador entregar — a energia é boa, o aluno quer, você quer que ele fique. Então você adianta a carga, adianta a complexidade, e o gesto sai desengonçado, arriscado, longe do que deveria ser.</p></div></div>
+
+    <div class="beat rupture"><span class="tag">Ruptura</span><div class="body"><p>Aprender um movimento passa por fases, e elas não se pulam. O modelo clássico de <strong>Fitts &amp; Posner (1967)</strong> descreve três estágios num contínuo.</p></div></div>
+
+    <div class="ficha-row">
+      <div class="ficha">
+        <span class="ficha-label">Fase 1</span>
+        <span class="ficha-num" style="font-size:1.5rem">Cognitiva</span>
+        <span class="ficha-desc">Movimentos lentos, inconsistentes, cheios de erro. Atenção consciente total. "Entender o gesto".</span>
+      </div>
+      <div class="ficha">
+        <span class="ficha-label">Fase 2</span>
+        <span class="ficha-num" style="font-size:1.5rem">Associativa</span>
+        <span class="ficha-desc">Mais fluido e confiável; erros diminuem conforme os programas motores se formam.</span>
+      </div>
+      <div class="ficha accent">
+        <span class="ficha-label">Fase 3</span>
+        <span class="ficha-num" style="font-size:1.5rem">Autônoma</span>
+        <span class="ficha-desc">Preciso, consistente, quase automático. "Parece sem esforço".</span>
+      </div>
+    </div>
+
+    <p class="measure">A chave do ofício: avançar carga ou complexidade antes da hora é pedir a um corpo na fase cognitiva aquilo que só a fase autônoma entrega. Não é ambição — é atropelamento. E há uma nuance que separa o treinador experiente do afobado. O <strong>efeito da interferência contextual</strong> (<em>Magill &amp; Hall, 1990</em>; estudos recentes, 2024) mostra que praticar variações misturadas <strong>piora o desempenho no momento, mas melhora a retenção e a transferência a longo prazo</strong>. O que parece "pior no treino de hoje" costuma ser justamente o que fica.</p>
+
+    <div class="spec-inline">
+      <span class="big">▸ dose</span>
+      <span class="txt"><strong style="color:var(--ink)">Mais variabilidade não é sempre melhor.</strong> O aumento <em>gradual</em> da complexidade supera despejar variação máxima de uma vez ("more is not better", 2024). O ponto ótimo para o iniciante é variação moderada — nem 100% blocada, nem 100% aleatória.</span>
+    </div>
+
+    <blockquote class="kairos">
+      <span class="k-mark">”</span>
+      <span class="k-label">Tradução Kairos · Imprevisibilidade</span>
+      <p>A prática variada prepara o corpo para o que a vida não agenda. Mas ela se constrói respeitando a fase do aprendiz. "Do fácil ao difícil, sempre nessa ordem" não é conservadorismo: <strong>o difícil só é certo quando o fácil já foi dominado</strong>.</p>
+    </blockquote>
+  </section>
+
+  <div class="divider"><span class="d-line"></span><span class="d-dot"></span><span class="d-mark">Capítulo Quatro</span><span class="d-dot"></span><span class="d-line"></span></div>
+
+  <!-- ============================= CH 4 ============================= -->
+  <section class="chapter" id="c4">
+    <div class="chapter-head">
+      <span class="num">04<small>Kairos · o momento</small></span>
+      <h2>Periodização, autorregulação<br>e a pergunta: <em>quem chegou hoje?</em></h2>
+    </div>
+
+    <div class="beat state"><span class="tag">Estado</span><div class="body"><p>A planilha diz 80% hoje. Mas o aluno chegou depois de uma noite mal dormida, uma semana pesada, o corpo pedindo trégua. E aí você fica dividido entre a autoridade da planilha — que você fez com cuidado — e o que os seus olhos estão vendo à sua frente.</p></div></div>
+
+    <div class="beat rupture"><span class="tag">Ruptura</span><div class="body"><p>A ciência recente resolve esse impasse a favor dos seus olhos. <strong>Periodização linear e ondulatória produzem ganhos de força semelhantes</strong> na maioria dos estudos — não existe uma estrutura única superior para todos, o que abre justamente o espaço para adaptar ao indivíduo.</p></div></div>
+
+    <div class="rank">
+      <div class="rank-cap">Ranking de métodos de progressão de carga · network meta-análise, 2025</div>
+      <div class="rank-item"><span class="rk-name">APRE (autorregulado)</span><span class="rk-bar"><i style="width:93%"></i></span><span class="rk-val">93%</span></div>
+      <div class="rank-item"><span class="rk-name">RPE / RIR</span><span class="rk-bar"><i style="width:67%"></i></span><span class="rk-val">67%</span></div>
+      <div class="rank-item dim"><span class="rk-name">Velocidade (VBT)</span><span class="rk-bar"><i style="width:27%"></i></span><span class="rk-val">27%</span></div>
+      <div class="rank-item dim"><span class="rk-name">Percentual fixo</span><span class="rk-bar"><i style="width:13%"></i></span><span class="rk-val">13%</span></div>
+    </div>
+
+    <p class="measure">A carga que se ajusta ao estado real — sono, energia, prontidão — supera com folga a carga imposta por uma tabela. E há uma boa notícia para quem não tem tecnologia de ponta: métodos <strong>subjetivos (RPE/RIR)</strong> e <strong>objetivos (velocidade)</strong> produzem <strong>ganhos de força semelhantes</strong> (<em>revisão sistemática, 2021, PMC7810043</em>). O essencial não é a ferramenta cara — é ajustar ao dia. RPE e RIR não exigem sensor nenhum. Exigem escuta.</p>
+
+    <p class="caveat">Sobre o deload, a mesma honestidade: é gestão de fadiga, com evidência mista sobre desempenho, aplicado em média a cada ~5–6 semanas. O <em>quando</em> aplicá-lo não sai de uma fórmula — sai do julgamento. E o julgamento é parte da arte.</p>
+
+    <blockquote class="kairos">
+      <span class="k-mark">”</span>
+      <span class="k-label">Tradução Kairos · o momento certo</span>
+      <p>"Quem chegou hoje?" — a pergunta que abre toda sessão Kairos — tem respaldo científico direto. Planeje, mas não engesse: a periodização dá o mapa, <strong>o dia dá o terreno</strong>. É o treino que se adapta à pessoa — nunca a pessoa que se força ao treino.</p>
+    </blockquote>
+  </section>
+
+  <div class="divider"><span class="d-line"></span><span class="d-dot"></span><span class="d-mark">Capítulo Cinco</span><span class="d-dot"></span><span class="d-line"></span></div>
+
+  <!-- ============================= CH 5 ============================= -->
+  <section class="chapter" id="c5">
+    <div class="chapter-head">
+      <span class="num">05<small>Sensibilidade</small></span>
+      <h2>Sentir por dentro,<br><em>agir</em> a partir disso</h2>
+    </div>
+
+    <div class="beat state"><span class="tag">Estado</span><div class="body"><p>"Sentir o corpo" soa vago — quase esotérico — para quem foi formado na linguagem das cargas e das repetições. Fácil relegar isso ao território do bem-estar e voltar ao que se mede. Mas você já viu: o aluno que não distingue esforço produtivo de dor de alerta é o aluno que se machuca, ou que trava com medo.</p></div></div>
+
+    <div class="beat rupture"><span class="tag">Ruptura</span><div class="body"><p>Sentir o corpo é <strong>treinável</strong> — e há neurociência por baixo. A <strong>propriocepção</strong> (percepção da posição e do movimento do corpo, via sensores em músculos, tendões e articulações) é essencial para movimento preciso, prevenção de lesão e desempenho.</p></div></div>
+
+    <p class="measure">O mais importante para o ofício: <strong>o treino proprioceptivo melhora o desempenho motor e reduz a disfunção motora</strong> em populações atléticas, ortopédicas e neurológicas (<em>Frontiers in Rehabilitation Sciences, revisão sistemática, 2022</em>). Dá para treinar a sensibilidade como se treina a força.</p>
+
+    <div class="ficha-row">
+      <div class="ficha">
+        <span class="ficha-label">Propriocepção</span>
+        <span class="ficha-num" style="font-size:1.35rem">− lesão · + gesto</span>
+        <span class="ficha-desc">Treino proprioceptivo reduz disfunção motora e refina o movimento.</span>
+      </div>
+      <div class="ficha accent">
+        <span class="ficha-label">Interocepção</span>
+        <span class="ficha-num" style="font-size:1.35rem">esforço × dor</span>
+        <span class="ficha-desc">Ler estados internos habilita a distinguir esforço produtivo de dor de alerta.</span>
+      </div>
+      <div class="ficha">
+        <span class="ficha-label">Movimento consciente</span>
+        <span class="ficha-num" style="font-size:1.35rem">a ponte</span>
+        <span class="ficha-desc">Yoga, tai chi, qigong, Pilates: ganho motor, cognitivo e emocional.</span>
+      </div>
+    </div>
+
+    <p class="measure">Repare como isso fecha o circuito com o capítulo anterior: o aluno que se lê por dentro é o aluno que consegue autorregular. A interocepção é o que torna o "quem chegou hoje?" uma pergunta que o próprio aluno aprende a responder.</p>
+
+    <blockquote class="kairos">
+      <span class="k-mark">”</span>
+      <span class="k-label">Tradução Kairos · Sensibilidade</span>
+      <p>"Sentir sem agir não muda nada; agir sem sentir só machuca." Deixa de ser lema e vira método: a sensibilidade é uma capacidade treinável que protege e refina. É o que transforma <strong>exercício</strong> — gesto executado — em <strong>treino</strong> — gesto sentido, lido e ajustado.</p>
+    </blockquote>
+  </section>
+
+  <div class="divider"><span class="d-line"></span><span class="d-dot"></span><span class="d-mark">Capítulo Seis · A Prática</span><span class="d-dot"></span><span class="d-line"></span></div>
+
+  <!-- ============================= CH 6 ============================= -->
+  <section class="chapter practice" id="c6">
+    <div class="chapter-head">
+      <span class="num">06<small>Da ciência à sessão</small></span>
+      <h2>O ofício <em>em ato</em></h2>
+    </div>
+
+    <p class="measure">Toda a evidência acima só vale se descer para o chão da sessão. Este é o capítulo mais concreto do manual — onde a estrutura fixa vira execução viva. Cinco movimentos, na ordem em que costumam acontecer.</p>
+
+    <h3><span class="step">01</span> Abra lendo o estado, não a planilha</h3>
+    <p class="measure">Comece toda sessão pela pergunta: <strong>quem chegou hoje?</strong> Sono, energia, humor, dor, o peso da semana. Não é conversa de aquecimento — é diagnóstico. Use uma escala simples e barata, <strong>RPE/RIR</strong>: um "de 0 a 10, quanto de bateria você tem hoje?" já reordena a sessão. A planilha é a sua hipótese; o estado do dia é o dado. Quando divergem, o dado vence — porque a autorregulação supera o percentual fixo (~93% vs. ~13%).</p>
+
+    <h3><span class="step">02</span> Diagnostique a fase antes de escolher a carga</h3>
+    <p class="measure">Antes de decidir peso ou complexidade, pergunte-se em que <strong>fase de Fitts &amp; Posner</strong> aquele padrão está para aquela pessoa. Movimento ainda cognitivo não recebe carga alta nem variação caótica — recebe repetição de qualidade para consolidar. Movimento autônomo comporta desafio e variação. <strong>Domínio antes de progressão.</strong> E calibre a sua leitura: um dia de execução pior pode ser interferência contextual trabalhando a favor da retenção.</p>
+
+    <h3><span class="step">03</span> Progrida pela alavanca certa, não pela óbvia</h3>
+    <p class="measure">Quando for hora de subir o estímulo, não vá no automático do "mais peso". Você tem um leque: <strong>carga, repetições, densidade, amplitude, complexidade</strong>. Carga ou repetições dão adaptação semelhante (<em>Plotkin, 2022</em>) — escolha a que o corpo comporta hoje. Com iniciantes, lembre que os primeiros ganhos são baratos (~4 séries/sem já geram hipertrofia). Guarde o volume alto para quando os ganhos ficarem caros — e eles ficarão.</p>
+
+    <h3><span class="step">04</span> Dose a variação — nem monotonia, nem caos</h3>
+    <p class="measure">A variação constrói transferência e prepara para o imprevisível, mas em <strong>dose gradual</strong>. Para quem começa um padrão, prática moderadamente variada supera tanto a repetição blocada quanto a aleatoriedade total. Consolide o básico, e então introduza variações — de ângulo, de tempo, de contexto — uma camada de cada vez. Você constrói repertório, não testa a paciência do sistema nervoso do aluno.</p>
+
+    <h3><span class="step">05</span> Ensine a sentir — e trate recuperação como treino</h3>
+    <p class="measure">Reserve tempo, de verdade, para a <strong>sensibilidade</strong>: equilíbrio e controle (propriocepção), atenção à respiração e à tensão (interocepção). Ensine explicitamente a diferença entre <strong>esforço produtivo e dor de alerta</strong> — a habilidade que mais previne lesão e mais habilita o aluno a autorregular sozinho. E feche o ciclo: periodize carga e descarga, use o deload como gestão de fadiga (~5–6 semanas, efeito misto sobre desempenho), e trate o descanso como parte do plano — porque a adaptação mora nele.</p>
+
+    <div class="pull">
+      <p>Os cinco movimentos têm o mesmo eixo: <em>ler antes de agir, e adaptar em vez de impor.</em></p>
+    </div>
+
+    <p class="measure">E há uma camada que nenhuma planilha alcança — a pessoa inteira. O corpo é a porta de entrada, mas na mesma sessão você toca o mental (a atenção que o gesto exige), o espiritual (o sentido de se cuidar) e o social (o vínculo de quem é visto de verdade). Não se treina por um corpo melhor. Treina-se por uma pessoa melhor — e o corpo é por onde ela entra.</p>
+  </section>
+
+</main>
+
+<!-- ============================= MANIFESTO ============================= -->
+<section class="manifesto">
+  <div class="m-grid"></div>
+  <div class="wrap">
+    <span class="eyebrow" style="display:block;text-align:center;margin-bottom:1.4rem;">Manifesto de fechamento</span>
+    <h2 style="text-align:center;max-width:24rem;margin:0 auto 2.4rem;">O método se dobra<br>à <em>pessoa</em></h2>
+
+    <p>Chegamos ao fim, e é hora de dizer o que tudo isto quis dizer. A ciência do treino não desmente a intuição do bom treinador — ela a confirma, e lhe dá chão. A variabilidade de resposta é real. A progressão tem várias alavancas. A recuperação é onde a adaptação acontece. Ajustar ao dia vence seguir a planilha. Sentir o corpo protege e refina. Cada uma dessas frases tem fonte, e cada uma aponta para o mesmo lugar.</p>
+
+    <p>A maioria dos métodos molda a pessoa ao método. O caminho que este manual defende faz o contrário: <strong>o método se dobra à pessoa</strong>. Estrutura fixa — os princípios da fisiologia, que não se negociam. Execução viva — a tradução desses princípios para este corpo, neste dia. É essa a arte. É essa a diferença entre Chronos, que só passa, e Kairos, que se reconhece e se aproveita.</p>
+
+    <p class="m-final">Não existe o treino certo.<br>Existe o treino certo para <em>esta pessoa, agora.</em></p>
+
+    <p>E é por isso que, no fundo, o ofício de treinar nunca foi sobre um corpo melhor. Foi sempre sobre uma pessoa melhor, entrando pela única porta que temos: o próprio corpo, sentido de dentro, movido com sentido.</p>
+
+    <h3 style="text-align:center;margin-top:3rem;">Um convite</h3>
+    <p>Se algo aqui ressoou com o modo como você já suspeitava que se deveria treinar, você não está sozinho — e não precisa de urgência nenhuma para dar o próximo passo. O movimento Kairos é isto: gente que trata o treino como ofício e como arte, que respeita a ciência sem virar refém da planilha, que olha para a pessoa antes de olhar para o número. Não é um método para vender a você. É uma maneira de ver que você é convidado a habitar — no seu tempo, com os seus alunos, do seu jeito.</p>
+
+    <p style="text-align:center;font-family:var(--serif);font-style:italic;font-size:1.2rem;color:#F4EEE2;max-width:30rem;margin:2.4rem auto 0;">Quando você entrar na próxima sessão, faça só uma pergunta antes de qualquer outra coisa: <strong style="font-style:normal">quem chegou hoje?</strong><br>O resto é tradução.</p>
+
+    <div class="colophon">
+      <span><b>Jeffrey Arcanjo Reis</b> · Kairos Movimento</span>
+      <span>Lisboa · 2026</span>
+      <span><b>"Não por um corpo melhor, mas por uma pessoa melhor."</b></span>
+    </div>
+  </div>
+</section>
+
+<!-- ============================= SOURCES ============================= -->
+<section class="sources">
+  <span class="eyebrow aco">Fontes da evidência citada</span>
+  <ol>
+    <li><span class="s-i">▸</span> Journal of Applied Physiology (2015) — resposta individual ao treino, perspectiva estatística</li>
+    <li><span class="s-i">▸</span> Frontiers in Physiology (2021) — revisão sistemática sobre variabilidade de treinabilidade e classificação de resposta</li>
+    <li><span class="s-i">▸</span> Plotkin et al. (2022, PMC9528903) — progressão de carga vs. repetições e adaptações musculares</li>
+    <li><span class="s-i">▸</span> The Resistance Training Dose Response — meta-regressão (Sports Medicine, 2025; 67 estudos, 2.058 participantes)</li>
+    <li><span class="s-i">▸</span> Bell et al. — práticas de deload em esportes de força (Sports Medicine – Open, 2024)</li>
+    <li><span class="s-i">▸</span> PeerJ (2024) — efeitos de uma semana de deload sobre adaptações musculares</li>
+    <li><span class="s-i">▸</span> Fitts &amp; Posner (1967) — modelo das três fases da aprendizagem motora</li>
+    <li><span class="s-i">▸</span> Magill &amp; Hall (1990) — efeito de interferência contextual na aquisição de habilidade</li>
+    <li><span class="s-i">▸</span> "Applying different levels of practice variability: More is not better" (2024, PMC11212619)</li>
+    <li><span class="s-i">▸</span> Autoregulated Resistance Training — Systematic Review and Network Meta-Analysis (ScienceDirect, 2025)</li>
+    <li><span class="s-i">▸</span> Autorregulação subjetiva (RPE/RIR) vs. objetiva (velocidade) — revisão sistemática, PMC7810043 (2021)</li>
+    <li><span class="s-i">▸</span> Meta-análise de periodização linear vs. ondulatória — força muscular</li>
+    <li><span class="s-i">▸</span> Frontiers in Rehabilitation Sciences (2022) — treino proprioceptivo, desempenho e disfunção motora</li>
+    <li><span class="s-i">▸</span> Literatura sobre interocepção e exercício mente-corpo (yoga, tai chi, qigong, Pilates)</li>
+  </ol>
+</section>
+
+<script>
+  (function(){
+    var bar=document.getElementById('progress');
+    function upd(){
+      var h=document.documentElement;
+      var st=h.scrollTop||document.body.scrollTop;
+      var sh=(h.scrollHeight-h.clientHeight)||1;
+      bar.style.width=(st/sh*100)+'%';
+    }
+    document.addEventListener('scroll',upd,{passive:true});
+    window.addEventListener('resize',upd);
+    upd();
+  })();
+</script>
+</body>
+</html>
