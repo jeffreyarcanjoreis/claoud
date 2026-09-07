@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Agenda</p>
+<h1>Google Calendar</h1>
+
+{% include "painel/_agenda_subnav.html" %}
+
+{% if state == "nao_configurado" %}
+<div class="coming-soon">
+    <h2>Conecte o seu Google Calendar</h2>
+    <p>
+        O Kairos pode <strong>mostrar</strong> aqui os treinos que você já tem no seu
+        Google Calendar (somente leitura — nunca escreve nada no seu calendário).
+        Para isso, precisa do endereço secreto do calendário:
+    </p>
+    <ol class="sketch">
+        <li>
+            <span class="name">1. Abra o Google Calendar no computador</span>
+            <span class="desc">Passe o mouse sobre o calendário dos treinos, clique em ⋮ e escolha «Configurações e compartilhamento».</span>
+        </li>
+        <li>
+            <span class="name">2. Vá em «Integrar calendário»</span>
+            <span class="desc">Role a página até essa seção.</span>
+        </li>
+        <li>
+            <span class="name">3. Copie o «Endereço secreto no formato iCal»</span>
+            <span class="desc">É um link que termina em <code>.ics</code>. É secreto — quem tiver o link vê a sua agenda, então não compartilhe.</span>
+        </li>
+        <li>
+            <span class="name">4. Informe ao Kairos qual é o link</span>
+            <span class="desc">Defina a variável de ambiente <code>KAIROS_GCAL_ICS_URL</code> com esse endereço e reinicie o Kairos.</span>
+        </li>
+    </ol>
+</div>
+
+{% elif state == "erro" %}
+<div class="coming-soon">
+    <h2>Não foi possível ler o calendário agora</h2>
+    <p>
+        O Kairos tentou ler o seu Google Calendar mas não conseguiu. Pode ser a
+        conexão com a internet, ou o endereço secreto (<code>KAIROS_GCAL_ICS_URL</code>)
+        pode ter mudado. Tente novamente daqui a pouco; se persistir, confira o link.
+    </p>
+</div>
+
+{% elif dias %}
+<p class="agenda-janela">Próximos {{ janela_dias }} dias · {{ total }} evento{{ "s" if total != 1 else "" }}</p>
+{% for dia in dias %}
+<section class="agenda-dia">
+    <h2 class="agenda-dia-titulo">{{ dia.data_label }}</h2>
+    <ul class="card-list">
+        {% for ev in dia.eventos %}
+        <li class="card">
+            <p class="card-line"><strong>{{ ev.hora }}</strong> · {{ ev.summary }}</p>
+            {% if ev.location %}
+            <p class="card-line card-line-dim">{{ ev.location }}</p>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+</section>
+{% endfor %}
+
+{% else %}
+<div class="coming-soon">
+    <p>Nenhum treino no Google Calendar para os próximos {{ janela_dias }} dias.</p>
+</div>
+{% endif %}
+{% endblock %}

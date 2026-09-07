@@ -1,0 +1,25 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Treinos</h2>
+
+<p><a class="button-link" href="/alunos/{{ aluno.id }}/treino/novo">Novo treino</a></p>
+
+{% if treinos %}
+<ul class="card-list">
+    {% for t in treinos %}
+    <li class="card">
+        <a class="card-title" href="/alunos/{{ aluno.id }}/treino/{{ t.id }}">{{ t.nome }}</a>
+        <p class="card-line"><strong>Exercícios</strong>{{ t.item_label }}</p>
+        {% if t.observacao %}
+        <p class="card-line card-line-dim">{{ t.observacao }}</p>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="coming-soon">
+    <p>Este aluno ainda não tem treinos. Crie o primeiro para montar a planilha.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Novo treino</h2>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/treino">
+    <div class="field">
+        <label for="nome">Nome *</label>
+        <input type="text" id="nome" name="nome" placeholder="ex.: Treino A — Peito, Tríceps, Quadríceps" value="{{ (values.nome if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="observacao">Observação</label>
+        <textarea id="observacao" name="observacao" rows="3">{{ (values.observacao if values else '') or '' }}</textarea>
+    </div>
+
+    <button type="submit">Criar treino</button>
+</form>
+
+<p><a href="/alunos/{{ aluno.id }}/treino">&larr; Voltar aos treinos</a></p>
+{% endblock %}

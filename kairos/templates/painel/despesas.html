@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Do negócio</p>
+<h1>Despesas</h1>
+<p>{{ mes_label }}</p>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<div class="stats">
+    <div class="stat">
+        <div class="n">{{ total }}</div>
+        <div class="l">Total do mês</div>
+    </div>
+</div>
+
+<form class="field-row" method="post" action="/financeiro/despesas">
+    <div class="field">
+        <label for="data">Data *</label>
+        <input type="date" id="data" name="data" value="{{ (values.data if values else '') or hoje }}">
+    </div>
+
+    <div class="field">
+        <label for="descricao">Descrição *</label>
+        <input type="text" id="descricao" name="descricao" placeholder="ex.: Aluguel do studio" value="{{ (values.descricao if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="categoria">Categoria</label>
+        <select id="categoria" name="categoria">
+            <option value=""{% if not values or not values.categoria %} selected{% endif %}>— sem categoria —</option>
+            <option value="aluguel"{% if values and values.categoria == 'aluguel' %} selected{% endif %}>Aluguel</option>
+            <option value="equipamento"{% if values and values.categoria == 'equipamento' %} selected{% endif %}>Equipamento</option>
+            <option value="software"{% if values and values.categoria == 'software' %} selected{% endif %}>Software</option>
+            <option value="divulgacao"{% if values and values.categoria == 'divulgacao' %} selected{% endif %}>Divulgação</option>
+            <option value="formacao"{% if values and values.categoria == 'formacao' %} selected{% endif %}>Formação</option>
+            <option value="outros"{% if values and values.categoria == 'outros' %} selected{% endif %}>Outros</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="valor">Valor (R$) *</label>
+        <input type="number" step="0.01" inputmode="decimal" id="valor" name="valor" value="{{ (values.valor if values else '') or '' }}">
+    </div>
+
+    <button type="submit">Registrar despesa</button>
+</form>
+
+{% if despesas %}
+<ul class="card-list">
+    {% for d in despesas %}
+    <li class="card">
+        <div class="card-header">
+            <span class="card-title">{{ d.descricao }}</span>
+            <span>{{ d.valor }}</span>
+        </div>
+        <p class="card-line">
+            {{ d.data }}
+            {% if d.categoria_label %}
+            <span class="tarefa-cat">{{ d.categoria_label }}</span>
+            {% endif %}
+        </p>
+        <form method="post" action="/financeiro/despesas/{{ d.id }}/remover">
+            <button type="submit" class="button-danger-sm">Remover</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="none">Nenhuma despesa neste mês.</p>
+{% endif %}
+
+<p><a href="/financeiro">&larr; Voltar ao Financeiro</a></p>
+{% endblock %}

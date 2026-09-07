@@ -1,0 +1,50 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — {{ treino.nome }}{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/css/components.css?v={{ asset_ver }}">
+{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>{{ treino.nome }}</h1>
+  {% if treino.observacao %}
+  <p class="cad-sub">{{ treino.observacao }}</p>
+  {% endif %}
+
+  {% if treino.itens %}
+  <div class="table-wrap">
+    <table class="planilha">
+      <thead>
+        <tr>
+          <th>Exercício</th>
+          <th>Grupo</th>
+          <th>Séries</th>
+          <th>Reps</th>
+          <th>Carga</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in treino.itens %}
+        <tr>
+          <td>
+            {{ i.exercicio_nome }}
+            {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
+          </td>
+          <td>{{ i.grupo_muscular or '—' }}</td>
+          <td>{{ i.series or '—' }}</td>
+          <td>{{ i.reps or '—' }}</td>
+          <td>{{ i.carga or '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p class="aluno-vazio">Este treino ainda não tem exercícios.</p>
+  {% endif %}
+
+  <p><a href="/aluno">&larr; Voltar</a></p>
+</section>
+{% endblock %}

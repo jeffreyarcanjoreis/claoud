@@ -5,12 +5,24 @@ values are resolved at call time. Tests can change environment variables after
 this module has been imported and still get the updated values.
 """
 
+import logging
 import os
 from pathlib import Path
 from typing import Optional
 
+logger = logging.getLogger(__name__)
+
 # Project root: the directory that contains the `kairos` package.
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
+
+# Development-only fallback secret used by `secret_key()` when
+# KAIROS_SECRET_KEY is unset. Fixed (not random) so sessions survive process
+# restarts in dev; never use this in production.
+_DEV_INSECURE_SECRET_KEY = "kairos-dev-insecure-secret-change-me"
+
+# Set to True after the missing-secret warning has been logged once, so we
+# don't spam the log on every `secret_key()` call.
+_secret_warned = False
 
 
 def _load_dotenv() -> None:
@@ -104,3 +116,50 @@ def gcal_ics_url() -> Optional[str]:
     if raw and raw.strip():
         return raw.strip()
     return None
+
+
+def supabase_url() -> Optional[str]:
+    """Base URL of the Supabase project (env: KAIROS_SUPABASE_URL).
+
+    Example: ``https://<ref>.supabase.co``. A trailing slash, if present, is
+    stripped. Returns ``None`` when unset, so the auth layer can show a
+    "não configurado" state instead of breaking (rule 6).
+    """
+    raw = os.environ.get("KAIROS_SUPABASE_URL")
+    if raw and raw.strip():
+        return raw.strip().rstrip("/")
+    return None
+
+
+def supabase_anon_key() -> Optional[str]:
+    """Public ``anon`` key of the Supabase project (env: KAIROS_SUPABASE_ANON_KEY).
+
+    Public by nature (safe to expose to a browser client), but it still lives
+    in the environment because it is specific to this project's Supabase
+    instance. Returns ``None`` when unset.
+    """
+    raw = os.environ.get("KAIROS_SUPABASE_ANON_KEY")
+    if raw and raw.strip():
+        return raw.strip()
+    return None
+
+
+def secret_key() -> str:
+    """Secret used to sign the session cookie (env: KAIROS_SECRET_KEY).
+
+    Always returns a usable string. When the env var is unset or empty, falls
+    back to a fixed, insecure dev-only secret and logs a warning once (not on
+    every call), so sessions still work — but only signed with a real
+    secret — in development. Set ``KAIROS_SECRET_KEY`` in production.
+    """
+    global _secret_warned
+    raw = os.environ.get("KAIROS_SECRET_KEY")
+    if raw and raw.strip():
+        return raw.strip()
+    if not _secret_warned:
+        logger.warning(
+            "KAIROS_SECRET_KEY não definida — usando um segredo de "
+            "desenvolvimento inseguro. Defina KAIROS_SECRET_KEY em produção."
+        )
+        _secret_warned = True
+    return _DEV_INSECURE_SECRET_KEY

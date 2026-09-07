@@ -1,0 +1,43 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Avaliação — {{ av.data }}</h2>
+
+<div class="profile">
+    {% for m in av.metricas %}
+    <div class="row">
+        <span class="k">{{ m.label }}</span>
+        <span class="v">
+            {% if m.valor == "sem registro" %}<span class="none">{{ m.valor }}</span>{% else %}{{ m.valor }}{% endif %}
+            {% if m.delta is not none %}<span class="delta delta-{{ m.direcao }}">{{ m.delta }}</span>{% endif %}
+        </span>
+    </div>
+    {% endfor %}
+    <div class="row">
+        <span class="k">IMC</span>
+        <span class="v">
+            {% if av.imc == "sem registro" %}<span class="none">{{ av.imc }}</span>{% else %}{{ av.imc }}{% endif %}
+        </span>
+    </div>
+</div>
+
+{% if not av.has_previous %}
+<p class="none">Primeira avaliação — sem comparação anterior.</p>
+{% endif %}
+
+<h3>Perimetria (cm)</h3>
+{% if av.perimetria %}
+<dl class="profile">
+    {% for p in av.perimetria %}
+    <div class="row">
+        <dt class="k">{{ p.label }}</dt>
+        <dd class="v">{{ p.valor }}{% if p.delta %} <span class="delta delta-{{ p.direcao }}">{{ p.delta }}</span>{% endif %}</dd>
+    </div>
+    {% endfor %}
+</dl>
+{% else %}
+<p><span class="none">sem registro</span></p>
+{% endif %}
+
+<p><a href="/alunos/{{ aluno.id }}/avaliacoes">&larr; Voltar às avaliações</a></p>
+{% endblock %}

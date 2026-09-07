@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kairos — Entrar</title>
+  <link rel="stylesheet" href="/static/css/tokens.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/base.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/cadastro.css?v={{ asset_ver }}">
+</head>
+<body>
+  <canvas id="fundo3d" aria-hidden="true"></canvas>
+  <div id="fundo3d-scrim" aria-hidden="true"></div>
+
+  <header class="cad-top">
+    <a class="word" href="/vitrine">Kair<span class="o">o</span>s</a>
+  </header>
+
+  <main class="cad-main">
+    <section class="cad-card login-card">
+      <h1>Entrar</h1>
+      <p class="cad-sub">Acesse a sua conta.</p>
+
+      {% if error %}
+      <div class="message-error">{{ error }}</div>
+      {% endif %}
+
+      {% if not configurado %}
+      <p class="form-nota">O login ainda não está configurado.</p>
+      {% endif %}
+
+      <form method="post" action="/login" class="cad-form login-form">
+        <input type="hidden" name="next" value="{{ next }}">
+
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" required
+              autocomplete="email"
+              value="{{ (values.email if values else '') or '' }}">
+        </div>
+        <div class="field">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" name="senha" required
+              autocomplete="current-password">
+        </div>
+
+        <div class="login-actions">
+          <button type="submit" name="modo" value="coach" class="button-primary">Entrar como coach</button>
+          <button type="submit" name="modo" value="aluno" class="button-secondary">Entrar como aluno</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="/static/js/painel-fundo.js?v={{ asset_ver }}"></script>
+</body>
+</html>

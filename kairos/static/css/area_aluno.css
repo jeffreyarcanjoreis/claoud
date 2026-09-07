@@ -1,0 +1,93 @@
+/* Kairos — área do aluno (landing /aluno e subpáginas read-only)
+   Depende de tokens.css + base.css + cadastro.css (carregados antes deste arquivo).
+   Paginas do aluno reaproveitam o esqueleto de cadastro.css (fundo 3D, .cad-top,
+   .cad-main, .cad-card); aqui so o que e proprio da area do aluno: o header com
+   wordmark + Sair, e as listas das 4 secoes do inicio. */
+
+/* ===== header (wordmark + sair) =====
+   So se aplica quando a classe extra esta presente (paginas do aluno); o
+   .cad-top puro de /comecar continua so com a wordmark. */
+.cad-top-aluno {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+/* Sair discreto no header — espelha .logout-form/.logout-btn do painel do
+   coach (components.css), que a area do aluno nao carrega por padrao. */
+.logout-form {
+  display: inline-flex;
+}
+
+.logout-btn {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.logout-btn:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: none;
+  transform: none;
+}
+
+/* ===== secoes do inicio (agendamentos, treinos, avaliacoes, sessoes) ===== */
+.aluno-secao {
+  margin-top: var(--sp-6);
+}
+
+.aluno-secao:first-of-type {
+  margin-top: var(--sp-5);
+}
+
+.aluno-secao h2 {
+  margin-bottom: var(--sp-3);
+}
+
+.aluno-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.aluno-lista-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.aluno-lista-item:last-child {
+  border-bottom: none;
+}
+
+.aluno-item-principal {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  color: var(--bone);
+}
+
+.aluno-item-meta {
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+}
+
+.aluno-vazio {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--sage);
+}

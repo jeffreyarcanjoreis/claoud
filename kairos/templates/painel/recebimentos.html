@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Do negócio</p>
+<h1>Recebimentos</h1>
+<p>{{ mes_label }}</p>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<div class="stats">
+    <div class="stat">
+        <div class="n">{{ resumo.recebido }}</div>
+        <div class="l">Recebido</div>
+    </div>
+    <div class="stat">
+        <div class="n">{{ resumo.pendente }}</div>
+        <div class="l">Pendente</div>
+    </div>
+</div>
+
+{% if linhas %}
+<ul class="card-list">
+    {% for l in linhas %}
+    <li class="card">
+        <div class="card-header">
+            <span class="card-title">{{ l.aluno_nome }}</span>
+            <span>{{ l.valor_plano }}</span>
+        </div>
+        {% if l.pago %}
+        <p class="card-line">Pago {{ l.valor_pago }} em {{ l.data_pagamento }}</p>
+        <form method="post" action="/financeiro/recebimentos/{{ l.pagamento_id }}/remover">
+            <button type="submit" class="button-danger-sm">Desfazer</button>
+        </form>
+        {% else %}
+        <form class="field-row" method="post" action="/financeiro/recebimentos">
+            <input type="hidden" name="aluno_id" value="{{ l.aluno_id }}">
+            <div class="field">
+                <label for="valor-{{ l.aluno_id }}">Valor (R$)</label>
+                <input type="number" step="0.01" inputmode="decimal" id="valor-{{ l.aluno_id }}" name="valor" value="{{ l.valor_plano_input }}">
+            </div>
+            <div class="field">
+                <label for="data-{{ l.aluno_id }}">Data</label>
+                <input type="date" id="data-{{ l.aluno_id }}" name="data_pagamento" value="{{ hoje }}">
+            </div>
+            <button type="submit">Registrar pago</button>
+        </form>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="none">Nenhum aluno ativo com plano.</p>
+{% endif %}
+
+<p><a href="/financeiro">&larr; Voltar ao Financeiro</a></p>
+{% endblock %}

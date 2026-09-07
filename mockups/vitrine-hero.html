@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairos · Vitrine — hero com logo 3D</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;1,9..144,300;1,9..144,400&family=Archivo:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{--void:#14130f;--bone:#f0ebe0;--bone-dim:#d4cdbd;--clay:#c2613f;--sage:#6b7355;--gold:#c89b4a;--line:rgba(240,235,224,0.14);}
+  html,body{height:100%;}
+  body{background:var(--void);color:var(--bone);font-family:'Archivo',system-ui,sans-serif;font-weight:300;overflow:hidden;}
+
+  /* glow quente atrás do logo */
+  .glow{position:fixed;inset:0;z-index:0;background:radial-gradient(circle at 50% 46%,rgba(194,97,63,0.22),transparent 52%),radial-gradient(circle at 50% 46%,rgba(200,155,74,0.12),transparent 40%),var(--void);}
+  #scene{position:fixed;inset:0;z-index:1;display:block;}
+
+  .overlay{position:fixed;inset:0;z-index:2;pointer-events:none;display:flex;flex-direction:column;}
+
+  .top{display:flex;align-items:center;justify-content:space-between;padding:30px 6vw;}
+  .word{font-family:'Fraunces',Georgia,serif;font-size:22px;letter-spacing:-0.02em;pointer-events:auto;}
+  .word .o{font-style:italic;color:var(--gold);}
+  .nav{display:flex;gap:34px;font-size:12px;letter-spacing:0.18em;text-transform:uppercase;color:var(--bone-dim);pointer-events:auto;}
+  .nav span{cursor:pointer;transition:color .25s ease;}
+  .nav span:hover{color:var(--gold);}
+
+  .center{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding-bottom:11vh;}
+  .center .slogan{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(30px,6.4vw,74px);line-height:1.02;letter-spacing:-0.03em;max-width:16ch;text-shadow:0 2px 40px rgba(20,19,15,0.8);}
+  .center .slogan em{font-style:italic;color:var(--gold);}
+  .center .sub{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:clamp(15px,2.2vw,22px);color:var(--bone-dim);margin-top:22px;}
+
+  .hint{position:fixed;bottom:30px;left:50%;transform:translateX(-50%);z-index:2;font-size:11px;letter-spacing:0.32em;text-transform:uppercase;color:var(--bone-dim);display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .hint::after{content:'';width:1px;height:38px;background:linear-gradient(var(--bone-dim),transparent);animation:pulse 2s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:.25;}50%{opacity:1;}}
+
+  .tagcap{position:fixed;top:0;left:0;z-index:3;font-size:11px;letter-spacing:0.04em;color:var(--bone-dim);background:rgba(20,19,15,0.7);padding:6px 12px;border-bottom-right-radius:8px;pointer-events:none;}
+</style>
+</head>
+<body>
+  <div class="tagcap">mockup · vitrine — logo 3D reativo ao mouse (arraste o cursor)</div>
+  <div class="glow"></div>
+  <canvas id="scene"></canvas>
+
+  <div class="overlay">
+    <div class="top">
+      <span class="word">Kair<span class="o">o</span>s</span>
+      <nav class="nav"><span>Método</span><span>A sessão</span><span>Começar</span></nav>
+    </div>
+    <div class="center">
+      <div class="slogan">Mover-se no<br><em>momento certo</em>.</div>
+      <div class="sub">No corpo, na mente, no espírito e na comunidade.</div>
+    </div>
+  </div>
+  <div class="hint">Role</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 13);
+
+  // luzes quentes para o ouro brilhar
+  scene.add(new THREE.AmbientLight(0xf0ebe0, 0.55));
+  const key = new THREE.PointLight(0xc89b4a, 90, 100); key.position.set(6, 7, 9); scene.add(key);
+  const fill = new THREE.PointLight(0xc2613f, 45, 100); fill.position.set(-7, -4, 5); scene.add(fill);
+  const rim = new THREE.DirectionalLight(0xf0ebe0, 0.6); rim.position.set(0, 2, -6); scene.add(rim);
+
+  const gold = new THREE.MeshStandardMaterial({ color:0xc89b4a, metalness:0.9, roughness:0.32 });
+  const clay = new THREE.MeshStandardMaterial({ color:0xc2613f, metalness:0.35, roughness:0.55 });
+  const bone = new THREE.MeshStandardMaterial({ color:0xf0ebe0, metalness:0.1, roughness:0.85, transparent:true, opacity:0.55 });
+
+  const outer = new THREE.Group();   // recebe o tilt do mouse
+  const spin  = new THREE.Group();   // gira sozinho — chronos
+  outer.add(spin); scene.add(outer);
+
+  // anel externo (chronos) — toro fino dourado
+  spin.add(new THREE.Mesh(new THREE.TorusGeometry(4.6, 0.05, 16, 160), gold));
+  // o momento — toro argila mais grosso
+  spin.add(new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.16, 20, 160), clay));
+  // linha de equilíbrio — barra osso vertical
+  spin.add(new THREE.Mesh(new THREE.BoxGeometry(0.08, 6.8, 0.08), bone));
+  // o instante agarrado — topete de Kairos (curva dourada como tubo 3D)
+  const curve = new THREE.QuadraticBezierCurve3(
+    new THREE.Vector3(0, 0, 0), new THREE.Vector3(2.0, 1.2, 0.35), new THREE.Vector3(1.4, 2.8, 0)
+  );
+  spin.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 64, 0.13, 14, false), gold));
+  // centro — esfera argila
+  spin.add(new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), clay));
+
+  outer.rotation.x = -0.28; // inclinação inicial para já ler como 3D
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let tx = 0, ty = 0;
+  window.addEventListener('pointermove', (e) => {
+    tx = (e.clientX / window.innerWidth  - 0.5);
+    ty = (e.clientY / window.innerHeight - 0.5);
+  });
+
+  function resize(){
+    camera.aspect = window.innerWidth/window.innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener('resize', resize);
+
+  function tick(){
+    if(!reduce){
+      spin.rotation.y += 0.004;
+      outer.rotation.y += (tx * 0.9 - outer.rotation.y) * 0.05;
+      outer.rotation.x += ((-0.28 + ty * 0.7) - outer.rotation.x) * 0.05;
+    }
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+  window.__kairosReady = true;
+</script>
+</body>
+</html>

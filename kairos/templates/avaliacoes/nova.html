@@ -1,0 +1,56 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Nova avaliação</h2>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/avaliacoes">
+    <div class="field">
+        <label for="data">Data *</label>
+        <input type="date" id="data" name="data" value="{{ (values.data if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="peso">Peso (kg)</label>
+        <input type="number" step="0.01" inputmode="decimal" id="peso" name="peso" value="{{ (values.peso if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="altura">Altura (cm)</label>
+        <input type="number" step="0.01" inputmode="decimal" id="altura" name="altura" value="{{ (values.altura if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="gordura_pct">% de gordura</label>
+        <input type="number" step="0.1" inputmode="decimal" id="gordura_pct" name="gordura_pct" value="{{ (values.gordura_pct if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="massa_magra">Massa magra (kg)</label>
+        <input type="number" step="0.01" inputmode="decimal" id="massa_magra" name="massa_magra" value="{{ (values.massa_magra if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="massa_gorda">Massa gorda (kg)</label>
+        <input type="number" step="0.01" inputmode="decimal" id="massa_gorda" name="massa_gorda" value="{{ (values.massa_gorda if values else '') or '' }}">
+    </div>
+
+    <h3>Perimetria (cm)</h3>
+
+    <div class="perimetria-grid">
+        {% for key, label in segmentos %}
+        <div class="field">
+            <label for="perim_{{ key }}">{{ label }}</label>
+            <input type="number" step="0.1" inputmode="decimal" id="perim_{{ key }}" name="perim_{{ key }}" value="{{ (values.perimetria[key] if values and values.perimetria else '') or '' }}">
+        </div>
+        {% endfor %}
+    </div>
+
+    <button type="submit">Salvar avaliação</button>
+</form>
+
+<p><a href="/alunos/{{ aluno.id }}/avaliacoes">&larr; Voltar às avaliações</a></p>
+{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Alunos</h1>
+
+{% if success %}
+<div class="message-success">{{ success }}</div>
+{% endif %}
+
+<p><a class="button-link" href="/alunos/novo">Novo aluno</a></p>
+
+<p class="filter-bar">
+    {% if current_filter %}<a href="/alunos">Todos</a>{% else %}<strong>Todos</strong>{% endif %}
+    |
+    {% if current_filter == "active" %}<strong>Ativos</strong>{% else %}<a href="/alunos?status=active">Ativos</a>{% endif %}
+    |
+    {% if current_filter == "inactive" %}<strong>Inativos</strong>{% else %}<a href="/alunos?status=inactive">Inativos</a>{% endif %}
+</p>
+
+{% if alunos %}
+<ul class="card-list">
+    {% for aluno in alunos %}
+    <li class="card">
+        <div class="card-header">
+            <a class="card-title" href="/alunos/{{ aluno.id }}">{{ aluno.name }}</a>
+            <span class="badge {{ aluno.status_class }}">{{ aluno.status_label }}</span>
+        </div>
+        <p class="card-line"><strong>Objetivo:</strong> {{ aluno.objective_display }}</p>
+        <p class="card-line"><strong>Plano:</strong> {{ aluno.period_display }}</p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>Nenhum aluno cadastrado.</p>
+{% endif %}
+{% endblock %}

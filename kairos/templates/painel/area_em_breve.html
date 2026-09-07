@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">{{ eyebrow }}</p>
+<h1>{{ title }}</h1>
+
+<div class="coming-soon">
+    <p>Esta área ainda está por construir.</p>
+    <ul class="sketch">
+        {% for item in items %}
+        <li>
+            <span class="name">{{ item.name }}</span>
+            <span class="desc">{{ item.desc }}</span>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
