@@ -15,6 +15,8 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import RedirectResponse
 
+from kairos import config
+
 # Paths that never require a logged-in coach. Defined at module level so
 # ``AuthGateMiddleware`` and tests share a single source of truth.
 _PUBLIC_EXACT_PATHS = {"/login", "/logout", "/vitrine", "/comecar"}
@@ -25,8 +27,32 @@ def current_user(request: Request) -> Optional[Dict[str, Any]]:
 
     A thin wrapper around ``request.session`` so callers (and tests, via
     monkeypatch) have a single place to read "who is logged in".
+
+    Development-only bypass: when :func:`kairos.config.dev_no_auth` is on and
+    there is no real session, return a synthetic user matching the area being
+    visited — student for the ``/aluno`` area (with ``KAIROS_DEV_ALUNO_ID`` as
+    its ``aluno_id``), coach everywhere else — so both areas can be reviewed
+    without logging in. Off by default; never use in production.
     """
-    return request.session.get("user")
+    user = request.session.get("user")
+    if user is not None:
+        return user
+
+    if config.dev_no_auth():
+        if _is_area_aluno(request.url.path):
+            return {
+                "user_id": "dev-aluno",
+                "email": "dev-aluno@local",
+                "papel": "aluno",
+                "aluno_id": config.dev_aluno_id(),
+            }
+        return {
+            "user_id": "dev-coach",
+            "email": "dev-coach@local",
+            "papel": "coach",
+        }
+
+    return None
 
 
 def _is_public(path: str) -> bool:
@@ -38,6 +64,10 @@ def _is_public(path: str) -> bool:
     if path == "/favicon.ico":
         return True
     if path.startswith("/ativar"):
+        return True
+    if path.startswith("/esqueci-senha"):
+        return True
+    if path.startswith("/redefinir-senha"):
         return True
     return path in _PUBLIC_EXACT_PATHS
 

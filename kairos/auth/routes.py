@@ -86,6 +86,7 @@ async def login_form(request: Request):
             "error": None,
             "next": _safe_next(request.query_params.get("next")),
             "configurado": _configurado(),
+            "redefinida": request.query_params.get("redefinida") == "1",
         },
     )
 
@@ -326,4 +327,120 @@ async def ativar_submit(
         request,
         "auth/ativar.html",
         {"estado": "confirme_email"},
+    )
+
+
+@router.get("/esqueci-senha")
+async def esqueci_senha_form(request: Request):
+    """Show the "forgot my password" request form."""
+    return templates.TemplateResponse(
+        request,
+        "auth/esqueci_senha.html",
+        {"enviado": False, "erro": None},
+    )
+
+
+@router.post("/esqueci-senha")
+async def esqueci_senha_submit(request: Request, email: str = Form(...)):
+    """Ask Supabase to send a password-reset e-mail.
+
+    Anti-enumeration: whether or not the e-mail exists, we render the same
+    generic "enviado" message, never revealing which case happened.
+    """
+    redirect_to = str(request.base_url).rstrip("/") + "/redefinir-senha"
+
+    try:
+        supabase.recover(email, redirect_to)
+    except (supabase.AuthNaoConfigurado, supabase.AuthError):
+        return templates.TemplateResponse(
+            request,
+            "auth/esqueci_senha.html",
+            {
+                "enviado": False,
+                "erro": "Não foi possível enviar agora. Tente novamente.",
+            },
+        )
+
+    return templates.TemplateResponse(
+        request,
+        "auth/esqueci_senha.html",
+        {
+            "enviado": True,
+            "erro": None,
+        },
+    )
+
+
+@router.get("/redefinir-senha")
+async def redefinir_senha_form(request: Request):
+    """Show the "set a new password" form.
+
+    Public route: the recovery access token itself (read from the URL
+    fragment by client-side JS, since fragments never reach the server)
+    proves the request came from the e-mailed link.
+    """
+    return templates.TemplateResponse(
+        request,
+        "auth/redefinir_senha.html",
+        {"erro": None},
+    )
+
+
+@router.post("/redefinir-senha")
+async def redefinir_senha_submit(
+    request: Request,
+    access_token: str = Form(""),
+    senha: str = Form(...),
+    confirmar: str = Form(...),
+):
+    """Set a new password using the Supabase recovery access token.
+
+    Never puts the password in the template context or in a log; the
+    access token may be echoed back into the hidden form field on a
+    validation error so the user does not need to re-open the e-mail link
+    (it is the user's own single-use recovery token, sent over HTTPS).
+    """
+    if not access_token:
+        return templates.TemplateResponse(
+            request,
+            "auth/redefinir_senha.html",
+            {"erro": "Link inválido ou expirado. Peça um novo."},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    if len(senha) < _SENHA_MIN or senha != confirmar:
+        return templates.TemplateResponse(
+            request,
+            "auth/redefinir_senha.html",
+            {
+                "erro": (
+                    "A senha precisa ter pelo menos "
+                    f"{_SENHA_MIN} caracteres e as duas senhas "
+                    "precisam ser iguais."
+                ),
+                "access_token": access_token,
+            },
+        )
+
+    try:
+        supabase.atualizar_senha(access_token, senha)
+    except supabase.AuthTokenInvalido:
+        return templates.TemplateResponse(
+            request,
+            "auth/redefinir_senha.html",
+            {"erro": "Link inválido ou expirado. Peça um novo."},
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+    except (supabase.AuthNaoConfigurado, supabase.AuthError):
+        return templates.TemplateResponse(
+            request,
+            "auth/redefinir_senha.html",
+            {
+                "erro": "Não foi possível redefinir a senha agora.",
+                "access_token": access_token,
+            },
+        )
+
+    return RedirectResponse(
+        url="/login?redefinida=1", status_code=status.HTTP_303_SEE_OTHER
     )

@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import logging
 import urllib.error
+import urllib.parse
 import urllib.request
 from typing import Dict
 
@@ -32,6 +33,7 @@ _REQUEST_TIMEOUT_S = 15
 _GENERIC_INVALID_MESSAGE = "E-mail ou senha inválidos."
 _GENERIC_FAILURE_MESSAGE = "Não foi possível verificar o acesso agora."
 _GENERIC_SIGNUP_FAILURE_MESSAGE = "Não foi possível criar o acesso agora."
+_GENERIC_RESET_FAILURE_MESSAGE = "Não foi possível concluir agora."
 
 # Substrings Supabase Auth is known to use (in ``error_code``, ``msg`` or
 # ``error_description``) to signal that the e-mail is already registered.
@@ -59,6 +61,10 @@ class AuthNaoConfigurado(Exception):
 
 class AuthEmailJaRegistrado(Exception):
     """Sign-up was rejected because the e-mail already has an account."""
+
+
+class AuthTokenInvalido(Exception):
+    """The password-recovery access token is missing, expired or invalid."""
 
 
 def login(email: str, senha: str) -> Dict[str, str]:
@@ -220,8 +226,13 @@ def signup(email: str, senha: str) -> Dict[str, str]:
         )
         raise AuthError(_GENERIC_SIGNUP_FAILURE_MESSAGE) from exc
 
-    user = data.get("user") if isinstance(data, dict) else None
     access_token = data.get("access_token") if isinstance(data, dict) else None
+    # /auth/v1/signup returns the created user nested under "user" when a
+    # session is opened (autoconfirm on), but at the TOP LEVEL of the
+    # response when "Confirm email" is on (no session). Accept both shapes.
+    user = data.get("user") if isinstance(data, dict) else None
+    if not isinstance(user, dict) and isinstance(data, dict) and data.get("id"):
+        user = data
     user_id = user.get("id") if isinstance(user, dict) else None
     if not user_id:
         logger.warning(
@@ -229,9 +240,119 @@ def signup(email: str, senha: str) -> Dict[str, str]:
         )
         raise AuthError(_GENERIC_FAILURE_MESSAGE)
 
+    # E-mail-enumeration protection: for an already-registered e-mail with
+    # "Confirm email" on, GoTrue returns an obfuscated user carrying an empty
+    # ``identities`` list. Treat that as "already registered".
+    identities = user.get("identities")
+    if isinstance(identities, list) and len(identities) == 0:
+        raise AuthEmailJaRegistrado("Já existe uma conta com esse e-mail.")
+
     user_email = user.get("email") if isinstance(user, dict) else None
     return {
         "user_id": str(user_id),
         "email": user_email or email,
         "access_token": access_token or "",
     }
+
+
+def recover(email: str, redirect_to: str) -> None:
+    """Ask Supabase Auth to e-mail ``email`` a password-recovery link.
+
+    Raises :class:`AuthNaoConfigurado` when the Supabase URL or anon key are
+    not set, and :class:`AuthError` when the request could not be completed
+    (network/timeout/unexpected HTTP status). Supabase answers with HTTP 200
+    both for a registered and for an unregistered e-mail (anti-enumeration
+    protection): this function never tries to tell the two apart and simply
+    returns ``None`` on success. Neither the e-mail nor the request body is
+    ever logged.
+    """
+    url = config.supabase_url()
+    anon_key = config.supabase_anon_key()
+    if not url or not anon_key:
+        raise AuthNaoConfigurado("Recuperação de senha com Supabase não configurada.")
+
+    query = urllib.parse.urlencode({"redirect_to": redirect_to})
+    endpoint = f"{url}/auth/v1/recover?{query}"
+    payload = json.dumps({"email": email}).encode("utf-8")
+    request = urllib.request.Request(
+        endpoint,
+        data=payload,
+        method="POST",
+        headers={
+            "apikey": anon_key,
+            "Content-Type": "application/json",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=_REQUEST_TIMEOUT_S):
+            pass
+    except urllib.error.HTTPError as exc:
+        logger.warning(
+            "Falha inesperada ao solicitar recuperação de senha no Supabase "
+            "Auth (status HTTP %s).",
+            exc.code,
+        )
+        raise AuthError(_GENERIC_RESET_FAILURE_MESSAGE) from exc
+    except (urllib.error.URLError, OSError, ValueError) as exc:
+        # Network/timeout/malformed-URL failures. Never log the exception
+        # payload itself: it may echo back parts of the request.
+        logger.warning(
+            "Falha de rede ao solicitar recuperação de senha no Supabase "
+            "Auth: %s",
+            type(exc).__name__,
+        )
+        raise AuthError(_GENERIC_RESET_FAILURE_MESSAGE) from exc
+
+
+def atualizar_senha(access_token: str, senha: str) -> None:
+    """Set a new ``senha`` for the user owning the recovery ``access_token``.
+
+    Raises :class:`AuthNaoConfigurado` when the Supabase URL or anon key are
+    not set, :class:`AuthTokenInvalido` when the recovery token is missing,
+    expired or otherwise rejected (HTTP 401/403), and :class:`AuthError` for
+    any other failure (network/timeout/unexpected HTTP status). The
+    ``access_token`` only ever travels in the ``Authorization`` header and
+    the new password only in the HTTPS request body; neither is logged or
+    included in an exception message.
+    """
+    url = config.supabase_url()
+    anon_key = config.supabase_anon_key()
+    if not url or not anon_key:
+        raise AuthNaoConfigurado("Redefinição de senha com Supabase não configurada.")
+
+    endpoint = f"{url}/auth/v1/user"
+    payload = json.dumps({"password": senha}).encode("utf-8")
+    request = urllib.request.Request(
+        endpoint,
+        data=payload,
+        method="PUT",
+        headers={
+            "apikey": anon_key,
+            "Authorization": f"Bearer {access_token}",
+            "Content-Type": "application/json",
+        },
+    )
+
+    try:
+        with urllib.request.urlopen(request, timeout=_REQUEST_TIMEOUT_S):
+            pass
+    except urllib.error.HTTPError as exc:
+        if exc.code in (401, 403):
+            raise AuthTokenInvalido(
+                "Link inválido ou expirado. Peça um novo."
+            ) from exc
+        logger.warning(
+            "Falha inesperada ao redefinir senha no Supabase Auth "
+            "(status HTTP %s).",
+            exc.code,
+        )
+        raise AuthError(_GENERIC_RESET_FAILURE_MESSAGE) from exc
+    except (urllib.error.URLError, OSError, ValueError) as exc:
+        # Network/timeout/malformed-URL failures. Never log the exception
+        # payload itself: it may echo back parts of the request.
+        logger.warning(
+            "Falha de rede ao redefinir senha no Supabase Auth: %s",
+            type(exc).__name__,
+        )
+        raise AuthError(_GENERIC_RESET_FAILURE_MESSAGE) from exc

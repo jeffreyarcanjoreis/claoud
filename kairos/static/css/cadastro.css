@@ -333,6 +333,22 @@ body {
   padding: var(--sp-3) var(--sp-5);
 }
 
+/* ===== link discreto (voltar / recuperar senha) ===== */
+.link-voltar {
+  display: inline-block;
+  margin-top: var(--sp-4);
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  color: var(--sage);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.22s var(--ease);
+}
+
+.link-voltar:hover {
+  color: var(--gold);
+}
+
 @media (max-width: 640px) {
   .cad-top {
     padding: var(--sp-4) 5vw var(--sp-2);

@@ -163,3 +163,38 @@ def secret_key() -> str:
         )
         _secret_warned = True
     return _DEV_INSECURE_SECRET_KEY
+
+
+def dev_no_auth() -> bool:
+    """Development-only auth bypass (env: KAIROS_DEV_NO_AUTH).
+
+    When truthy ("1"/"true"/"yes"/"on"), the auth gate lets every request
+    through and :func:`kairos.auth.middleware.current_user` returns a
+    synthetic user matching the area being visited (coach for the panel,
+    student for ``/aluno``), so both areas can be reviewed without logging in.
+    Defaults to False (off) so it never leaks into production by accident;
+    turn it on only in a local ``.env``. Never use in production.
+    """
+    return os.environ.get("KAIROS_DEV_NO_AUTH", "").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
+
+
+def dev_aluno_id() -> Optional[int]:
+    """Aluno id the dev auth bypass uses for the ``/aluno`` area
+    (env: KAIROS_DEV_ALUNO_ID).
+
+    Lets the student area render a real student's own content while
+    :func:`dev_no_auth` is on. Returns None when unset or not an integer (the
+    student landing then greets generically, with empty sections).
+    """
+    raw = os.environ.get("KAIROS_DEV_ALUNO_ID", "").strip()
+    if not raw:
+        return None
+    try:
+        return int(raw)
+    except ValueError:
+        return None

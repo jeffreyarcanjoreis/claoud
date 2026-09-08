@@ -40,6 +40,11 @@ async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     """
     setup_logging()
     run_migrations()
+    if config.dev_no_auth():
+        logger.warning(
+            "KAIROS_DEV_NO_AUTH ATIVO: autenticacao DESLIGADA (modo dev) — "
+            "todas as areas abrem sem login. NAO use em producao."
+        )
     logger.info("Kairos application started.")
     yield
 

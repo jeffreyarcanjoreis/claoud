@@ -21,6 +21,10 @@
       <h1>Entrar</h1>
       <p class="cad-sub">Acesse a sua conta.</p>
 
+      {% if redefinida %}
+      <div class="message-success">Senha redefinida! Entre com a nova senha.</div>
+      {% endif %}
+
       {% if error %}
       <div class="message-error">{{ error }}</div>
       {% endif %}
@@ -49,6 +53,8 @@
           <button type="submit" name="modo" value="aluno" class="button-secondary">Entrar como aluno</button>
         </div>
       </form>
+
+      <a class="link-voltar" href="/esqueci-senha">Esqueci minha senha</a>
     </section>
   </main>
 

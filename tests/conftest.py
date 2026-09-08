@@ -28,8 +28,14 @@ def pytest_configure(config: pytest.Config) -> None:
 
 @pytest.fixture(autouse=True)
 def _no_remote_database_url(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Force every test onto SQLite, regardless of KAIROS_DATABASE_URL."""
+    """Isolate every test from the local ``.env``: force SQLite and turn the
+    dev auth-bypass OFF, regardless of what ``.env`` set. Otherwise a local
+    ``KAIROS_DEV_NO_AUTH=1`` (or ``KAIROS_DATABASE_URL``) would leak in and
+    change the gate/DB under the tests. Tests that want the bypass on set it
+    themselves with ``monkeypatch.setenv``."""
     monkeypatch.delenv("KAIROS_DATABASE_URL", raising=False)
+    monkeypatch.delenv("KAIROS_DEV_NO_AUTH", raising=False)
+    monkeypatch.delenv("KAIROS_DEV_ALUNO_ID", raising=False)
 
 
 @pytest.fixture(autouse=True)
