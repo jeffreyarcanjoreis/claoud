@@ -11,6 +11,7 @@
   {% block head_extra %}{% endblock %}
 </head>
 <body>
+  {% set p = request.url.path %}
   <canvas id="fundo3d" aria-hidden="true"></canvas>
   <div id="fundo3d-scrim" aria-hidden="true"></div>
 
@@ -20,6 +21,16 @@
       <button type="submit" class="logout-btn">Sair</button>
     </form>
   </header>
+
+  <nav class="aluno-nav" aria-label="Navegação da sua área">
+    <a class="aluno-nav-link{% if p == '/aluno' %} is-active{% endif %}" href="/aluno">Início</a>
+    <a class="aluno-nav-link{% if p.startswith('/aluno/perfil') %} is-active{% endif %}" href="/aluno/perfil">Perfil</a>
+    <a class="aluno-nav-link{% if p.startswith('/aluno/treinos') %} is-active{% endif %}" href="/aluno/treinos">Treinos</a>
+    <a class="aluno-nav-link{% if p.startswith('/aluno/avaliacoes') %} is-active{% endif %}" href="/aluno/avaliacoes">Avaliações</a>
+    <a class="aluno-nav-link{% if p.startswith('/aluno/agenda') %} is-active{% endif %}" href="/aluno/agenda">Agenda</a>
+    <a class="aluno-nav-link{% if p.startswith('/aluno/financeiro') %} is-active{% endif %}" href="/aluno/financeiro">Financeiro</a>
+    <a class="aluno-nav-link{% if p.startswith('/aluno/acompanhamento') %} is-active{% endif %}" href="/aluno/acompanhamento">Acompanhamento</a>
+  </nav>
 
   <main class="cad-main">
     {% block content %}{% endblock %}

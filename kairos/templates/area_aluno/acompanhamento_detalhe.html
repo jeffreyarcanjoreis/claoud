@@ -1,0 +1,30 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Sessão de acompanhamento{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/css/components.css?v={{ asset_ver }}">
+{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Sessão — {{ registro.data }}</h1>
+
+  <dl class="profile">
+    <div class="row">
+      <dt class="k">Presença</dt>
+      <dd class="v">{% if registro.presenca_label %}{{ registro.presenca_label }}{% else %}<span class="none">sem registro</span>{% endif %}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Disposição</dt>
+      <dd class="v">{% if registro.disposicao %}{{ registro.disposicao }}{% else %}<span class="none">sem registro</span>{% endif %}</dd>
+    </div>
+    <div class="row row-full">
+      <dt class="k">Feedback</dt>
+      <dd class="v">{% if registro.feedback %}{{ registro.feedback }}{% else %}<span class="none">sem registro</span>{% endif %}</dd>
+    </div>
+  </dl>
+
+  <p><a href="/aluno/acompanhamento">&larr; Voltar</a></p>
+</section>
+{% endblock %}

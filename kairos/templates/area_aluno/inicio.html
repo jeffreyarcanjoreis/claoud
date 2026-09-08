@@ -9,79 +9,33 @@
   {% else %}
   <h1>Olá!</h1>
   {% endif %}
-  <p class="cad-sub">Esta é a sua área no Kairos: seus agendamentos, treinos, avaliações e sessões.</p>
+  <p class="cad-sub">Esta é a sua área no Kairos.</p>
 
   <section class="aluno-secao">
-    <h2>Próximos agendamentos</h2>
-    {% if agendamentos %}
-    <ul class="aluno-lista">
-      {% for item in agendamentos %}
-      <li class="aluno-lista-item">
-        <span class="aluno-item-principal">{{ item.data }} às {{ item.hora }}</span>
-        <span class="aluno-item-meta">{{ item.tipo_label }}</span>
-        {% if item.treino_id and item.treino_nome %}
-        <a href="/aluno/treinos/{{ item.treino_id }}">ver treino: {{ item.treino_nome }}</a>
-        {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
+    <h2>Próxima sessão</h2>
+    {% if proxima_sessao %}
+    <div class="aluno-lista-item">
+      <span class="aluno-item-principal">{{ proxima_sessao.data }} às {{ proxima_sessao.hora }}</span>
+      <span class="aluno-item-meta">{{ proxima_sessao.tipo_label }}</span>
+      {% if proxima_sessao.treino_id %}
+      <a href="/aluno/treinos/{{ proxima_sessao.treino_id }}">ver treino{% if proxima_sessao.treino_nome %}: {{ proxima_sessao.treino_nome }}{% endif %}</a>
+      {% endif %}
+    </div>
     {% else %}
-    <p class="aluno-vazio">Nenhum agendamento próximo.</p>
+    <p class="aluno-vazio">Nenhuma sessão agendada.</p>
     {% endif %}
   </section>
 
   <section class="aluno-secao">
-    <h2>Meus treinos</h2>
-    {% if treinos %}
-    <ul class="aluno-lista">
-      {% for t in treinos %}
-      <li class="aluno-lista-item">
-        <span class="aluno-item-principal">{{ t.nome }}</span>
-        {% if t.item_count is defined %}
-        <span class="aluno-item-meta">{{ t.item_count }} exercício{{ 's' if t.item_count != 1 else '' }}</span>
-        {% endif %}
-        <a href="/aluno/treinos/{{ t.id }}">ver treino</a>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="aluno-vazio">Nenhum treino atribuído ainda.</p>
-    {% endif %}
-  </section>
-
-  <section class="aluno-secao">
-    <h2>Minhas avaliações</h2>
-    {% if avaliacoes %}
-    <ul class="aluno-lista">
-      {% for a in avaliacoes %}
-      <li class="aluno-lista-item">
-        <span class="aluno-item-principal">{{ a.data }}</span>
-        <a href="/aluno/avaliacoes/{{ a.id }}">ver</a>
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="aluno-vazio">Nenhuma avaliação registrada ainda.</p>
-    {% endif %}
-  </section>
-
-  <section class="aluno-secao">
-    <h2>Histórico de sessões</h2>
-    {% if sessoes_realizadas %}
-    <ul class="aluno-lista">
-      {% for s in sessoes_realizadas %}
-      <li class="aluno-lista-item">
-        <span class="aluno-item-principal">{{ s.data }}</span>
-        <span class="aluno-item-meta">{{ s.presenca_label }}</span>
-        {% if s.disposicao %}
-        <span class="aluno-item-meta">Disposição: {{ s.disposicao }}</span>
-        {% endif %}
-      </li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p class="aluno-vazio">Sem sessões registradas ainda.</p>
-    {% endif %}
+    <h2>Atalhos</h2>
+    <div class="aluno-atalhos">
+      <a class="aluno-atalho" href="/aluno/perfil">Perfil</a>
+      <a class="aluno-atalho" href="/aluno/treinos">Treinos</a>
+      <a class="aluno-atalho" href="/aluno/avaliacoes">Avaliações</a>
+      <a class="aluno-atalho" href="/aluno/agenda">Agenda</a>
+      <a class="aluno-atalho" href="/aluno/financeiro">Financeiro</a>
+      <a class="aluno-atalho" href="/aluno/acompanhamento">Acompanhamento</a>
+    </div>
   </section>
 </section>
 {% endblock %}

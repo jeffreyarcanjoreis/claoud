@@ -42,6 +42,91 @@
   transform: none;
 }
 
+/* ===== navegacao da area do aluno (abas) =====
+   Mesma ideia de .tabs/.tab/.on do painel do coach (shell.css), com nomes
+   proprios da area do aluno; rola na horizontal em telas estreitas em vez
+   de quebrar linha. */
+.aluno-nav {
+  display: flex;
+  gap: var(--sp-1);
+  padding: 0 6vw;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.aluno-nav-link {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  letter-spacing: 0.03em;
+  color: var(--bone-dim);
+  padding: var(--sp-3);
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.2s var(--ease);
+}
+
+.aluno-nav-link:hover {
+  color: var(--bone);
+}
+
+.aluno-nav-link.is-active {
+  color: var(--bone);
+}
+
+.aluno-nav-link.is-active::after {
+  content: '';
+  position: absolute;
+  left: var(--sp-3);
+  right: var(--sp-3);
+  bottom: -1px;
+  height: 2px;
+  background: var(--gold);
+}
+
+/* ===== atalhos do inicio ===== */
+.aluno-atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--sp-3);
+}
+
+.aluno-atalho {
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: var(--fs-lead);
+  color: var(--bone);
+  text-align: center;
+  padding: var(--sp-4) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.aluno-atalho:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aluno-atalho:hover {
+    transform: none;
+  }
+}
+
+/* ===== foto do perfil ===== */
+.aluno-foto {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  margin-bottom: var(--sp-3);
+}
+
 /* ===== secoes do inicio (agendamentos, treinos, avaliacoes, sessoes) ===== */
 .aluno-secao {
   margin-top: var(--sp-6);

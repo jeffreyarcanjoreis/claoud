@@ -1,0 +1,23 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Meus treinos{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Meus treinos</h1>
+
+  {% if treinos %}
+  <ul class="aluno-lista">
+    {% for t in treinos %}
+    <li class="aluno-lista-item">
+      <span class="aluno-item-principal">{{ t.nome }}</span>
+      <span class="aluno-item-meta">{{ t.item_count }} exercício{{ 's' if t.item_count != 1 else '' }}</span>
+      <a href="/aluno/treinos/{{ t.id }}">ver treino</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="aluno-vazio">Nenhum treino atribuído ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}
