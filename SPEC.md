@@ -1,45 +1,66 @@
-# SPEC — Sistema Kairos (plataforma do coach)
+# SPEC — Sistema Kairos (plataforma do coach + área do aluno)
 
-> Fatia atual: **Treino** (fatia 9) — **completa** (9.1 biblioteca, 9.2 montar treinos, 9.3 ligar à agenda).
-> Fatias 1-8 concluídas; 324 testes verdes.
-> Workflow: `App Kairos Movimento/10 - Workflow da Área do Coach.md`. Domínio: `09 - Modelo de Domínio.md`.
+> Fatia atual: **Autoavaliação** (Fase 4 do roadmap da área do aluno) — a 4ª válvula.
+> Fatias anteriores concluídas até a Fase 3 (registro pós-treino); **786 testes** (785 + 1 skip), head de migração **0022**.
+> Roadmap: `docs/roadmap-area-aluno.md`. Workflow: `App Kairos Movimento/10 - Workflow da Área do Coach.md`. Domínio: `09 - Modelo de Domínio.md`.
 
 ## Overview
 
-A capacidade **Treino** liga três coisas: uma **biblioteca de exercícios** (o acervo partilhado), os **treinos / planilhas** de cada aluno (um treino nomeado composto de exercícios com séries/reps/carga), e a **ligação à agenda** — ao ver uma marcação, um botão abre o treino atribuído àquele dia. Ancorada nos dados reais do Marcos (planilha = divisão semanal dia → foco muscular + cardio).
+A **Autoavaliação** é a 4ª válvula do método (o aluno mede o que o mercado não mede) e o primeiro passo da Fase 4. O coach **envia** ao aluno uma autoavaliação — um questionário **fixo do método Kairos** (não é montado à mão nesta fatia) — e o aluno **responde** dando uma nota 0–10 a cada pergunta mais uma observação livre. O coach **lê** as respostas na ficha do aluno; os dois lados veem o histórico. É uma feature de dois lados, coach-primeiro: o coach precisa enviar antes de o aluno ter o que responder.
 
-Decisões (com o PO): (a) o botão abre **o treino atribuído** à marcação, não um log de execução (esse fica como evolução futura); (b) a ligação treino↔dia é **manual por marcação**; (c) o vínculo vive nas **sessões Kairos** (os eventos do Google Calendar são só-leitura).
+Decisões (com o PO): (a) o questionário é um **modelo fixo Kairos** — o coach só dispara, não escreve perguntas; editar o modelo fica fora desta fatia; (b) cada pergunta é uma **escala 0–10** (notas obrigatórias) mais **uma observação em texto livre** (opcional); (c) o coach envia **por aluno, sob demanda** (sem agendamento/recorrência); o aluno responde **uma vez** e a resposta passa a ser só-leitura; (d) o histórico (enviadas/respondidas) é visível para o aluno e para o coach.
+
+## Modelo fixo Kairos (v1)
+
+Cinco perguntas de escala **0–10** (o aluno se avalia no período), mais uma observação livre. Textos refináveis depois (fora desta fatia):
+
+1. **Autorregulação** — "Consegui ajustar o esforço ao que meu corpo pedia."
+2. **Autonomia** — "Me senti capaz de conduzir meus treinos sem depender de instrução o tempo todo."
+3. **Consistência** — "Mantive a regularidade que combinei comigo."
+4. **Conexão** — "Me senti presente e conectado durante o movimento."
+5. **Evolução percebida** — "Senti evolução no meu corpo / condicionamento no período."
+6. **Observação** (texto livre, opcional) — "O que mais você quer me contar sobre esse período?"
 
 ## Áreas
 
-- **Treinos** (`/treinos`) — biblioteca de exercícios (lista + `/treinos/novo`).
-- **Treino do aluno** (`/alunos/{id}/treino`) — sub-aba da ficha: os treinos do aluno; `/novo`; `/{treino_id}` mostra a planilha e permite adicionar/remover exercícios e apagar o treino.
-- **Agenda** (`/alunos/{id}/agenda/nova`, `/alunos/{id}/agenda`, `/agenda`) — a marcação pode apontar para um treino; a agenda do aluno e a global de hoje mostram-no com link "ver treino".
+- **Autoavaliações do aluno (coach)** (`/alunos/{id}/autoavaliacoes`) — sub-aba da ficha: lista as autoavaliações enviadas àquele aluno (data, estado pendente/respondida) e o botão "Enviar autoavaliação"; abrir uma respondida mostra as notas + observação (só-leitura).
+- **Autoavaliação (aluno)** (`/aluno/autoavaliacoes`) — nova aba na área do aluno: a(s) pendente(s) para responder + o histórico das respondidas; abrir uma pendente mostra o formulário; abrir uma respondida mostra as respostas (só-leitura).
+- **Início do aluno** (`/aluno`) — ganha um CTA leve quando há autoavaliação pendente (eco da regra de ouro).
+
+## Componentes
+
+- **Cartão de autoavaliação** — item de lista com data e estado (pendente / respondida), reutilizado nas duas listas (coach e aluno).
+- **Formulário do modelo Kairos** — as 5 escalas 0–10 + observação, renderizado no lado do aluno (resposta) e reusado como leitura no lado do coach.
 
 ## Comportamentos
 
-**9.1 Biblioteca**
-1. Separador "Treinos" → `/treinos`, biblioteca ordenada por nome (case-insensitive), botão "Adicionar exercício"; estado vazio.
-2. Criar exercício com nome válido grava e lista; sem nome → recusa, valores preservados. Grupo/observação vazios → NULL / "sem registro".
+**Envio (coach-primeiro)**
+1. A sub-aba "Autoavaliações" na ficha do aluno lista as autoavaliações daquele aluno (data de envio, estado), mais recente primeiro; estado vazio quando não há nenhuma.
+2. O botão "Enviar autoavaliação" cria uma nova autoavaliação para o aluno no estado **pendente** (com a data de envio) a partir do modelo fixo, e volta à lista mostrando-a.
+3. Enviar quando o aluno já tem uma autoavaliação **pendente** é recusado com aviso (não empilha pendentes).
 
-**9.2 Montar treinos (planilha)**
-3. Sub-aba "Treino" na ficha lista os treinos do aluno (com nº de exercícios) e tem "Novo treino"; estado vazio.
-4. Criar treino com nome válido grava e redireciona à sua planilha; sem nome → recusa.
-5. Na planilha, adicionar um exercício da biblioteca (com séries/reps/carga opcionais) junta-o em ordem; séries deve ser positivo se dado; escolher nenhum exercício → recusa.
-6. Remover um exercício e apagar o treino inteiro (com verificação de dono: 404 ao aceder à planilha/item de outro aluno ou de outro treino).
+**Resposta (aluno)**
+4. A aba "Autoavaliação" na área do aluno mostra a(s) pendente(s) para responder e o histórico das respondidas; estado vazio quando não há nenhuma.
+5. Abrir uma autoavaliação pendente mostra o formulário do modelo Kairos: as 5 perguntas em escala 0–10 e o campo de observação.
+6. Responder com as 5 notas válidas (0–10) grava as respostas, marca a autoavaliação como **respondida** (com a data de resposta) e redireciona à lista.
+7. Uma nota fora de 0–10, ou uma nota faltando, é recusada sem perder o que já foi digitado (a observação é opcional).
+8. Uma autoavaliação já **respondida** é só-leitura: mostra as respostas gravadas e não pode ser respondida de novo (novo envio de resposta é recusado).
+9. Isolamento: o aluno só vê e só responde autoavaliações do próprio (aluno_id da sessão); abrir/responder a de outro aluno devolve "não encontrado" (404, nunca 403).
 
-**9.3 Ligar à agenda (o botão)**
-7. O formulário de agendar oferece um select "Treino" com os treinos do aluno (opcional).
-8. Agendar com um treino associa-o à sessão; um treino de outro aluno, ou um id inválido, é recusado.
-9. A agenda do aluno e a agenda global de hoje (`/agenda`) mostram o nome do treino da sessão com um link "ver treino" para a planilha.
-10. Uma sessão sem treino grava treino_id NULL (rule 6); nada muda para as sessões antigas.
+**Leitura (coach)**
+10. O coach abre uma autoavaliação **respondida** e vê as notas por pergunta e a observação (só-leitura); uma **pendente** aparece como "aguardando resposta".
+
+**Início (regra de ouro)**
+11. Quando o aluno tem autoavaliação pendente, o início mostra um CTA leve "Você tem uma autoavaliação para responder → responder"; sem pendente, o CTA não aparece.
 
 **Geral**
-11. Os 298 testes anteriores continuam verdes; nenhum comportamento anterior muda.
+12. Toda escrita gera log; textos exibidos em português (regra 10); campo sem dado é NULL / "sem registro" (regra 6). Os 786 testes anteriores continuam verdes; nenhum comportamento anterior muda.
 
-## Fora desta fatia
+## Fora desta fatia (Fase 4 seguinte / futuro)
 
-- Log de execução (o que foi realmente feito nesse dia: cargas/reps reais) — evolução futura sobre o vínculo.
-- Divisão semanal automática (dia da semana → treino) que preencha a agenda sozinha.
-- Editar um exercício da biblioteca ou um item do treino (por agora: remover + adicionar de novo).
-- Vocabulário controlado de grupos musculares / filtro; vídeo/imagem do exercício.
+- **Marcadores Kairos** (presença / autorregulação / autonomia por período, avaliados pelo coach) — fatia seguinte da Fase 4.
+- **Passagem de nível** — o conceito de **frente + nível I–IV** e o reconhecimento de subida de nível pelo coach — fatia seguinte da Fase 4.
+- **Coach escrever/editar o questionário** (perguntas próprias, editar o modelo fixo).
+- **Envio recorrente/agendado** e **notificações** de nova autoavaliação.
+- Outros tipos de resposta (múltipla escolha); gráfico de evolução das notas ao longo do tempo.
+- **Log de execução do treino** (cargas/reps reais por série — Fase 3b), independente desta fatia.
