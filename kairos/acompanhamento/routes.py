@@ -19,6 +19,7 @@ from kairos.acompanhamento.service import (
     remover_sessao_realizada,
 )
 from kairos.alunos.service import get_aluno
+from kairos.registro_treino.service import list_registros as list_registros_treino
 from kairos.web import ficha_header, templates
 
 router = APIRouter()
@@ -41,6 +42,18 @@ def _to_list_display(r: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+def _to_registro_treino_display(r: Dict[str, Any]) -> Dict[str, Any]:
+    """Map a registro_treino service-layer dict to ready-to-print fields."""
+    return {
+        "data": r["data"].strftime("%d/%m/%Y"),
+        "treino_nome": r["treino_nome"],
+        "rpe": r["rpe"],
+        "sensacao_label": r["sensacao_label"],
+        "o_que_mudou": r["o_que_mudou"],
+        "dor_nova": r["dor_nova"],
+    }
+
+
 @router.get("/alunos/{aluno_id}/acompanhamento", response_class=HTMLResponse)
 async def aluno_acompanhamento(request: Request, aluno_id: int) -> HTMLResponse:
     """Render the student's "Acompanhamento" sub-tab, or a 404 page."""
@@ -58,6 +71,9 @@ async def aluno_acompanhamento(request: Request, aluno_id: int) -> HTMLResponse:
         "aluno": ficha_header(aluno),
         "subtab": "acompanhamento",
         "registros": [_to_list_display(r) for r in registros],
+        "registros_treino": [
+            _to_registro_treino_display(r) for r in list_registros_treino(aluno_id)
+        ],
     }
     return templates.TemplateResponse(request, "acompanhamento/lista.html", context)
 

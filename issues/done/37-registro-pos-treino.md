@@ -6,7 +6,10 @@ que mudou, dor nova). Fecha o ciclo do dia e alimenta a leitura da próxima sess
 pelo coach.
 
 ## Status
-planejada
+concluída
+
+> Escopo **enxuto** escolhido pelo PO: só o registro pós-sessão (RPE, sensação,
+> o que mudou, dor nova). O log de carga/reps por série fica para a Fase 3b.
 
 ## Decisão de escopo (quero seu ok)
 A spec (tela 02) lista duas coisas nesta frente:

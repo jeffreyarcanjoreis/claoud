@@ -24,6 +24,7 @@ from kairos.log import setup_logging
 from kairos.mensagens.routes import router as mensagens_router
 from kairos.migrations_runner import run_migrations
 from kairos.painel.routes import router as painel_router
+from kairos.registro_treino.routes import router as registro_treino_router
 from kairos.tarefas.routes import router as tarefas_router
 from kairos.treinos.routes import router as treinos_router
 from kairos.vitrine.routes import router as vitrine_router
@@ -76,6 +77,7 @@ app.include_router(financeiro_router)
 app.include_router(mensagens_router)
 app.include_router(acompanhamento_router)
 app.include_router(agenda_router)
+app.include_router(registro_treino_router)
 app.include_router(tarefas_router)
 app.include_router(treinos_router)
 app.include_router(vitrine_router)

@@ -1,0 +1,88 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Registro pós-treino{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Como foi o treino?</h1>
+  <p class="cad-sub">Registre como foi — é isso que ajusta a próxima sessão.</p>
+
+  {% if erro %}
+  <div class="message-error">{{ erro }}</div>
+  {% endif %}
+
+  <form method="post" action="/aluno/registro" class="checkin-form">
+    <div class="field-row">
+      <div class="field">
+        <label for="treino_id">Treino (opcional)</label>
+        <select id="treino_id" name="treino_id">
+          <option value="">—</option>
+          {% for id, nome in treino_opcoes %}
+          <option value="{{ id }}" {% if valores and valores.treino_id == id|string %}selected{% endif %}>{{ nome }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="rpe">RPE (0–10)</label>
+        <input
+          type="number"
+          id="rpe"
+          name="rpe"
+          min="0"
+          max="10"
+          value="{% if valores and valores.rpe %}{{ valores.rpe }}{% endif %}"
+        >
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="sensacao">Sensação</label>
+      <select id="sensacao" name="sensacao">
+        <option value="">—</option>
+        {% for valor, label in sensacao_opcoes %}
+        <option value="{{ valor }}" {% if valores and valores.sensacao == valor %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field">
+      <label for="o_que_mudou">O que mudou? (opcional)</label>
+      <textarea id="o_que_mudou" name="o_que_mudou">{% if valores and valores.o_que_mudou %}{{ valores.o_que_mudou }}{% endif %}</textarea>
+    </div>
+
+    <div class="field">
+      <label for="dor_nova">Dor nova? (opcional)</label>
+      <textarea id="dor_nova" name="dor_nova">{% if valores and valores.dor_nova %}{{ valores.dor_nova }}{% endif %}</textarea>
+    </div>
+
+    <button type="submit" class="button-primary">Salvar registro</button>
+  </form>
+
+  <section class="aluno-secao">
+    <h2>Seus registros</h2>
+    {% if registros %}
+    <ul class="card-list">
+      {% for r in registros %}
+      <li class="card">
+        <p class="card-title">{{ r.data }}{% if r.treino_nome %} &middot; {{ r.treino_nome }}{% endif %}</p>
+        {% if r.rpe is not none %}
+        <p class="card-line"><strong>RPE:</strong> {{ r.rpe }}/10</p>
+        {% endif %}
+        {% if r.sensacao_label %}
+        <p class="card-line"><strong>Sensação:</strong> {{ r.sensacao_label }}</p>
+        {% endif %}
+        {% if r.o_que_mudou %}
+        <p class="card-line"><strong>O que mudou:</strong> {{ r.o_que_mudou }}</p>
+        {% endif %}
+        {% if r.dor_nova %}
+        <p class="card-line"><strong>Dor nova:</strong> {{ r.dor_nova }}</p>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="aluno-vazio">Você ainda não registrou nenhum treino.</p>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}

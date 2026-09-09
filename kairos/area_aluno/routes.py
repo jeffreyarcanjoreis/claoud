@@ -25,6 +25,7 @@ from kairos.avaliacoes.service import get_avaliacao, get_avaliacao_detail, list_
 from kairos.checkin.service import checkin_de_hoje
 from kairos.financeiro.service import get_plano, pagamentos_do_aluno
 from kairos.mensagens.service import contar_nao_lidas, ultima_do_coach
+from kairos.registro_treino.service import list_registros
 from kairos.treinos.service import get_treino, get_treino_detail, list_treinos
 from kairos.web import formatar_reais, templates
 
@@ -215,6 +216,7 @@ async def inicio(request: Request):
 
     checkin_hoje: Optional[Dict[str, Any]] = None
     treino_hoje: Optional[Dict[str, Any]] = None
+    pode_registrar_hoje = False
     if aluno_id:
         checkin_hoje = checkin_de_hoje(aluno_id)
 
@@ -224,6 +226,11 @@ async def inicio(request: Request):
         )
         if sessao_hoje is not None:
             treino_hoje = _to_agendamento_display(sessao_hoje)
+
+        registros_hoje = [
+            r for r in list_registros(aluno_id) if r["data"] == hoje
+        ]
+        pode_registrar_hoje = bool(treino_hoje) and not registros_hoje
 
     return templates.TemplateResponse(
         request,
@@ -235,6 +242,7 @@ async def inicio(request: Request):
             "recado_novo": recado_novo,
             "checkin_hoje": checkin_hoje,
             "treino_hoje": treino_hoje,
+            "pode_registrar_hoje": pode_registrar_hoje,
         },
     )
 

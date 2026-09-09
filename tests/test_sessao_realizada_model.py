@@ -29,7 +29,7 @@ from kairos.alunos.service import create_aluno
 from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0021"  # bumped by migration 0021_create_checkins
+HEAD_REVISION = "0022"  # bumped by migration 0022_create_registros_treino
 
 
 @pytest.fixture
