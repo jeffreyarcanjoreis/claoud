@@ -1,0 +1,29 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "kairos-remotion-studio",
+      "runtimeExecutable": "C:\\Users\\jeffr\\OneDrive\\Ambiente de Trabalho\\repositorio\\kairos-apresentacao\\start-studio.cmd",
+      "runtimeArgs": [],
+      "port": 3000
+    },
+    {
+      "name": "kairos-mockups",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "http.server", "4322", "--directory", "mockups"],
+      "port": 4322
+    },
+    {
+      "name": "kairos-app",
+      "runtimeExecutable": "python",
+      "runtimeArgs": ["-m", "uvicorn", "kairos.main:app", "--port", "8000"],
+      "port": 8000
+    },
+    {
+      "name": "kairos-static-html",
+      "runtimeExecutable": "C:\\Users\\jeffr\\OneDrive\\Ambiente de Trabalho\\repositorio\\claoud\\start-kairos-static.cmd",
+      "runtimeArgs": [],
+      "port": 4321
+    }
+  ]
+}

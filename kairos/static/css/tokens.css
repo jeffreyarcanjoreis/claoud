@@ -1,0 +1,44 @@
+/* Kairos — design tokens
+   Fonte de verdade visual: mockups/app-kairos-marca.html + mockups/painel-coach.html
+   Kit de marca: KAIROS MOVIMENTO / 08_Identidade_Marca
+   Nomes de token em ingles; sao consumidos pelo restante do CSS. */
+
+:root {
+  /* ===== cores ===== */
+  --void: #14130f;                       /* fundo base (quase-preto) */
+  --void-2: #1c1a14;                     /* fundo elevado / hover */
+  --bone: #f0ebe0;                       /* texto principal (osso) */
+  --bone-dim: #d4cdbd;                   /* texto secundario (osso-dim) */
+  --clay: #c2613f;                       /* argila — destaque quente */
+  --sage: #6b7355;                       /* salvia — estados apagados */
+  --gold: #c89b4a;                       /* ouro — enfase / links hover */
+  --line: rgba(240, 235, 224, 0.14);     /* traco de separacao */
+
+  /* ===== familias tipograficas ===== */
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'Archivo', system-ui, sans-serif;
+
+  /* ===== escala tipografica ===== */
+  --fs-h1: clamp(38px, 6vw, 60px);
+  --fs-h2: clamp(26px, 3.4vw, 34px);
+  --fs-h3: 20px;
+  --fs-lead: 17px;
+  --fs-body: 15px;
+  --fs-small: 13px;
+  --fs-eyebrow: 11px;
+
+  /* ===== espacamento ===== */
+  --sp-1: 6px;
+  --sp-2: 12px;
+  --sp-3: 18px;
+  --sp-4: 26px;
+  --sp-5: 40px;
+  --sp-6: 64px;
+
+  /* ===== raios ===== */
+  --radius: 12px;
+  --radius-lg: 100px;                     /* pilulas / badges */
+
+  /* ===== movimento ===== */
+  --ease: cubic-bezier(.2, .8, .2, 1);
+}

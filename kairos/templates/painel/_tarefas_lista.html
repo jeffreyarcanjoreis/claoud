@@ -1,0 +1,35 @@
+{# Partial: only the open tasks list. Shared between the Início page
+   (full render) and the "GET /tarefas/fragmento" AJAX endpoint (modal
+   refresh without a full page reload). Context: ``tarefas``. #}
+{% if tarefas %}
+<ul class="card-list">
+    {% for t in tarefas %}
+    <li class="card tarefa-card">
+        <div class="card-header">
+            <span class="card-title tarefa-titulo">{{ t.titulo }}</span>
+            {% if t.categoria_label %}
+            <span class="tarefa-cat">{{ t.categoria_label }}</span>
+            {% endif %}
+        </div>
+        {% if t.prazo %}
+        <p class="card-line">
+            Prazo: {{ t.prazo }}
+            {% if t.atrasada %}
+            <span class="tarefa-atrasada">atrasada</span>
+            {% endif %}
+        </p>
+        {% endif %}
+        <div class="tarefa-acoes">
+            <form method="post" action="/tarefas/{{ t.id }}/concluir">
+                <button type="submit">Concluir</button>
+            </form>
+            <form method="post" action="/tarefas/{{ t.id }}/remover">
+                <button type="submit" class="button-danger-sm">remover</button>
+            </form>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="tarefas-vazio none">Nenhuma tarefa em aberto.</p>
+{% endif %}

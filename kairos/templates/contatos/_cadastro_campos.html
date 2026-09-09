@@ -1,0 +1,99 @@
+{# Kairos — campos da Avaliação Inicial (partial compartilhado).
+   Usado pela página pública /comecar (cadastro.html) e pelo modal da vitrine
+   (vitrine/hero.html). NÃO inclui a tag <form> nem o botão de enviar — cada
+   página que inclui este partial cuida disso, pois diferem entre si.
+   Contexto esperado: values (pode ser None), sexo_opcoes, niveis, frequencias. #}
+<fieldset class="form-bloco">
+  <legend class="form-bloco-titulo">Dados gerais</legend>
+
+  <div class="field">
+    <label for="nome">Nome *</label>
+    <input type="text" id="nome" name="nome" required
+        value="{{ (values.nome if values else '') or '' }}">
+  </div>
+  <div class="field">
+    <label for="contato">Contato *</label>
+    <input type="text" id="contato" name="contato" required
+        placeholder="telefone / WhatsApp / e-mail"
+        value="{{ (values.contato if values else '') or '' }}">
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label for="idade">Idade</label>
+      <input type="number" id="idade" name="idade" min="1" max="120"
+          value="{{ (values.idade if values else '') or '' }}">
+    </div>
+    <div class="field">
+      <label for="sexo">Sexo</label>
+      <select id="sexo" name="sexo">
+        <option value="">— selecione —</option>
+        {% for v, l in sexo_opcoes %}
+        <option value="{{ v }}" {% if values and values.sexo == v %}selected{% endif %}>{{ l }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</fieldset>
+
+<fieldset class="form-bloco">
+  <legend class="form-bloco-titulo">Seus objetivos</legend>
+
+  <div class="field">
+    <label for="objetivo">Objetivo principal</label>
+    <textarea id="objetivo" name="objetivo">{{ (values.objetivo if values else '') or '' }}</textarea>
+  </div>
+  <div class="field">
+    <label for="objetivos_secundarios">Objetivos secundários</label>
+    <textarea id="objetivos_secundarios" name="objetivos_secundarios">{{ (values.objetivos_secundarios if values else '') or '' }}</textarea>
+  </div>
+  <div class="field-row">
+    <div class="field">
+      <label for="prazo_desejado">Prazo desejado</label>
+      <input type="text" id="prazo_desejado" name="prazo_desejado"
+          value="{{ (values.prazo_desejado if values else '') or '' }}">
+    </div>
+    <div class="field">
+      <label for="frequencia_desejada">Frequência semanal desejada</label>
+      <select id="frequencia_desejada" name="frequencia_desejada">
+        <option value="">— selecione —</option>
+        {% for v, l in frequencias %}
+        <option value="{{ v }}" {% if values and values.frequencia_desejada == v %}selected{% endif %}>{{ l }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+</fieldset>
+
+<fieldset class="form-bloco">
+  <legend class="form-bloco-titulo">Histórico de saúde</legend>
+  <p class="form-bloco-intro">Essas informações ajudam a treinar com segurança.</p>
+
+  <div class="field">
+    <label for="condicoes">Condições / patologias</label>
+    <textarea id="condicoes" name="condicoes">{{ (values.condicoes if values else '') or '' }}</textarea>
+  </div>
+  <div class="field">
+    <label for="lesoes">Lesões ou restrições</label>
+    <textarea id="lesoes" name="lesoes">{{ (values.lesoes if values else '') or '' }}</textarea>
+  </div>
+  <div class="field">
+    <label for="medicamentos">Medicamentos em uso</label>
+    <textarea id="medicamentos" name="medicamentos">{{ (values.medicamentos if values else '') or '' }}</textarea>
+  </div>
+  <div class="field">
+    <label for="nivel_condicionamento">Nível de condicionamento</label>
+    <select id="nivel_condicionamento" name="nivel_condicionamento">
+      <option value="">— selecione —</option>
+      {% for v, l in niveis %}
+      <option value="{{ v }}" {% if values and values.nivel_condicionamento == v %}selected{% endif %}>{{ l }}</option>
+      {% endfor %}
+    </select>
+  </div>
+</fieldset>
+
+<label class="consent">
+  <input type="checkbox" name="consentimento" required
+      {% if values and values.consentimento %}checked{% endif %}>
+  <span>Autorizo o uso dos meus dados, inclusive os de saúde, para o desenho do meu treino.</span>
+</label>
+<p class="form-nota">Seus dados ficam com o Método Kairos e são usados só para o seu acompanhamento.</p>

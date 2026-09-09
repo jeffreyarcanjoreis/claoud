@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Treinos</p>
+<h1>Biblioteca de exercícios</h1>
+
+<p><a class="button-link" href="/treinos/novo">Adicionar exercício</a></p>
+
+{% if exercicios %}
+<ul class="card-list">
+    {% for e in exercicios %}
+    <li class="card">
+        <span class="card-title">{{ e.nome }}</span>
+        <p class="card-line"><strong>Grupo</strong>{{ e.grupo_muscular }}</p>
+        {% if e.observacao %}
+        <p class="card-line card-line-dim">{{ e.observacao }}</p>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="coming-soon">
+    <p>Ainda não há exercícios na biblioteca. Comece adicionando o primeiro.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairos Movimento · Entrar</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Archivo:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{--void:#14130f;--void-2:#1c1a14;--bone:#f0ebe0;--bone-dim:#d4cdbd;--clay:#c2613f;--sage:#6b7355;--gold:#c89b4a;--line:rgba(240,235,224,0.14);}
+  html,body{height:100%;}
+  body{background:var(--void);color:var(--bone);font-family:'Archivo',system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;overflow:hidden;}
+
+  /* logo 3D girando atrás da janela — mais presente */
+  #scene{position:fixed;inset:0;z-index:0;display:block;filter:blur(2px);opacity:0.92;}
+  .scrim{position:fixed;inset:0;z-index:1;pointer-events:none;background:radial-gradient(circle at 50% 44%,rgba(194,97,63,0.12),transparent 50%),linear-gradient(180deg,rgba(20,19,15,0.62),rgba(20,19,15,0.78));}
+
+  .tagcap{position:fixed;top:0;left:0;z-index:5;font-size:11px;letter-spacing:0.04em;color:var(--bone-dim);background:rgba(20,19,15,0.7);padding:6px 12px;border-bottom-right-radius:8px;}
+
+  .wrap{position:relative;z-index:2;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
+
+  /* nome da marca por cima da janela */
+  .brandname{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(34px,6.4vw,58px);line-height:1;letter-spacing:-0.03em;text-align:center;text-shadow:0 2px 30px rgba(20,19,15,0.85);}
+  .brandname .o{font-style:italic;color:var(--gold);}
+  .brandname .mov{color:var(--bone);}
+  .brand-tag{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:clamp(14px,2vw,18px);color:var(--bone-dim);text-align:center;margin-top:14px;margin-bottom:34px;}
+
+  /* janela de login — cores da marca */
+  .card{width:100%;max-width:404px;border-radius:16px;padding:40px 40px 36px;text-align:center;
+    background:radial-gradient(circle at 50% 0%,rgba(200,155,74,0.12),transparent 62%),linear-gradient(180deg,rgba(34,30,22,0.82),rgba(24,22,17,0.82));
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(200,155,74,0.32);
+    box-shadow:0 26px 70px rgba(0,0,0,0.55), inset 0 1px 0 rgba(240,235,224,0.06);}
+  .card .accent{width:44px;height:2px;background:linear-gradient(90deg,var(--clay),var(--gold));border-radius:2px;margin:0 auto 22px;}
+
+  .eyebrow{font-size:10.5px;font-weight:500;letter-spacing:0.3em;text-transform:uppercase;color:var(--clay);margin-bottom:8px;}
+  .card .sub{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:19px;color:var(--bone);margin-bottom:28px;}
+
+  form{text-align:left;}
+  .field{margin-bottom:18px;}
+  .field label{display:block;font-size:10.5px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:var(--bone-dim);margin-bottom:8px;}
+  .field input{width:100%;background:rgba(20,19,15,0.6);border:1px solid var(--line);border-radius:9px;padding:13px 15px;color:var(--bone);font-family:'Archivo',sans-serif;font-size:15px;font-weight:300;transition:border-color .2s ease,background .2s ease;}
+  .field input::placeholder{color:rgba(212,205,189,0.4);}
+  .field input:focus{outline:none;border-color:var(--gold);background:rgba(20,19,15,0.85);}
+
+  .btn{width:100%;margin-top:8px;padding:14px;background:var(--gold);color:var(--void);border:none;border-radius:100px;font-family:'Archivo',sans-serif;font-weight:500;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;cursor:pointer;transition:transform .22s ease,background .22s ease;}
+  .btn:hover{background:var(--clay);color:var(--bone);transform:translateY(-2px);}
+
+  .forgot{display:block;text-align:center;margin-top:16px;font-size:12.5px;color:var(--bone-dim);text-decoration:none;transition:color .2s;}
+  .forgot:hover{color:var(--gold);}
+
+  .divider{display:flex;align-items:center;gap:14px;margin:26px 0 20px;color:var(--bone-dim);font-size:11px;letter-spacing:0.08em;}
+  .divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--line);}
+
+  .lead{font-size:13px;color:var(--bone-dim);line-height:1.6;}
+  .lead a{color:var(--gold);text-decoration:none;font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:15px;}
+  .lead a:hover{text-decoration:underline;}
+
+  .back{position:relative;z-index:2;margin-top:26px;font-size:12.5px;color:var(--bone-dim);text-decoration:none;letter-spacing:0.04em;transition:color .2s;}
+  .back:hover{color:var(--gold);}
+</style>
+</head>
+<body>
+  <div class="tagcap">mockup · tela de login (visual) — a autenticação real é fatia de backend, com senha protegida</div>
+  <canvas id="scene"></canvas>
+  <div class="scrim"></div>
+
+  <div class="wrap">
+    <h1 class="brandname">Kair<span class="o">o</span>s <span class="mov">Movimento</span></h1>
+    <p class="brand-tag">Mover-se no momento certo.</p>
+
+    <div class="card">
+      <div class="accent"></div>
+      <p class="eyebrow">Painel do coach</p>
+      <p class="sub">Bem-vindo de volta.</p>
+
+      <form onsubmit="event.preventDefault(); window.location='painel-coach.html';">
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" placeholder="voce@exemplo.com" autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="senha">Senha</label>
+          <input type="password" id="senha" placeholder="••••••••" autocomplete="current-password">
+        </div>
+        <button type="submit" class="btn">Entrar</button>
+        <a href="#" class="forgot">Esqueceu a senha?</a>
+      </form>
+
+      <div class="divider">ou</div>
+      <p class="lead">Ainda não treina com o Método Kairos?<br><a href="vitrine-hero.html">Fazer a Avaliação Inicial</a></p>
+    </div>
+    <a href="vitrine-hero.html" class="back">← Voltar à vitrine</a>
+  </div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  const canvas = document.getElementById('scene');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 0.1, 100);
+  camera.position.set(0, 0, 13);
+  scene.add(new THREE.AmbientLight(0xf0ebe0, 0.5));
+  const key = new THREE.PointLight(0xc89b4a, 85, 100); key.position.set(6, 7, 9); scene.add(key);
+  const fill = new THREE.PointLight(0xc2613f, 42, 100); fill.position.set(-7, -4, 5); scene.add(fill);
+  const gold = new THREE.MeshStandardMaterial({ color:0xc89b4a, metalness:0.9, roughness:0.34, transparent:true, opacity:0.78 });
+  const clay = new THREE.MeshStandardMaterial({ color:0xc2613f, metalness:0.35, roughness:0.55, transparent:true, opacity:0.7 });
+  const bone = new THREE.MeshStandardMaterial({ color:0xf0ebe0, metalness:0.1, roughness:0.85, transparent:true, opacity:0.42 });
+  const outer = new THREE.Group(); const spin = new THREE.Group(); outer.add(spin); scene.add(outer);
+  spin.add(new THREE.Mesh(new THREE.TorusGeometry(4.6, 0.05, 16, 160), gold));
+  spin.add(new THREE.Mesh(new THREE.TorusGeometry(3.4, 0.16, 20, 160), clay));
+  spin.add(new THREE.Mesh(new THREE.BoxGeometry(0.08, 6.8, 0.08), bone));
+  const curve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(0,0,0), new THREE.Vector3(2.0,1.2,0.35), new THREE.Vector3(1.4,2.8,0));
+  spin.add(new THREE.Mesh(new THREE.TubeGeometry(curve, 64, 0.13, 14, false), gold));
+  spin.add(new THREE.Mesh(new THREE.SphereGeometry(0.35, 32, 32), clay));
+  outer.scale.setScalar(1.45); outer.rotation.x = -0.26;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let tx=0, ty=0;
+  window.addEventListener('pointermove', e => { tx=e.clientX/window.innerWidth-0.5; ty=e.clientY/window.innerHeight-0.5; });
+  window.addEventListener('resize', () => { camera.aspect=window.innerWidth/window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+  function tick(){
+    if(!reduce){ spin.rotation.y += 0.0032; outer.rotation.y += (tx*0.5 - outer.rotation.y)*0.05; outer.rotation.x += ((-0.26+ty*0.4) - outer.rotation.x)*0.05; }
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  tick();
+  window.__kairosReady = true;
+</script>
+</body>
+</html>

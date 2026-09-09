@@ -1,0 +1,46 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Registrar sessão</h2>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/acompanhamento">
+    <div class="field">
+        <label for="data">Data *</label>
+        <input type="date" id="data" name="data" value="{{ (values.data if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="presenca">Presença *</label>
+        <select id="presenca" name="presenca">
+            <option value="compareceu"{% if values and values.presenca == 'compareceu' %} selected{% endif %}>Compareceu</option>
+            <option value="faltou"{% if values and values.presenca == 'faltou' %} selected{% endif %}>Faltou</option>
+            <option value="remarcada"{% if values and values.presenca == 'remarcada' %} selected{% endif %}>Remarcada</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="disposicao">Disposição</label>
+        <select id="disposicao" name="disposicao">
+            <option value="">— sem registro —</option>
+            <option value="ótima"{% if values and values.disposicao == 'ótima' %} selected{% endif %}>Ótima</option>
+            <option value="boa"{% if values and values.disposicao == 'boa' %} selected{% endif %}>Boa</option>
+            <option value="neutra"{% if values and values.disposicao == 'neutra' %} selected{% endif %}>Neutra</option>
+            <option value="baixa"{% if values and values.disposicao == 'baixa' %} selected{% endif %}>Baixa</option>
+            <option value="muito baixa"{% if values and values.disposicao == 'muito baixa' %} selected{% endif %}>Muito baixa</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="feedback">Feedback</label>
+        <textarea id="feedback" name="feedback">{{ (values.feedback if values else '') or '' }}</textarea>
+    </div>
+
+    <button type="submit">Salvar</button>
+</form>
+
+<p><a href="/alunos/{{ aluno.id }}/acompanhamento">&larr; Voltar ao acompanhamento</a></p>
+{% endblock %}

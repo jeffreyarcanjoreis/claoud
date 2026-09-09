@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairos · App do coach na marca — mockup</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Archivo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{
+    --void:#14130f; --void-2:#1c1a14; --bone:#f0ebe0; --bone-dim:#d4cdbd;
+    --clay:#c2613f; --sage:#6b7355; --gold:#c89b4a; --line:rgba(240,235,224,0.14);
+  }
+  body{background:var(--void);color:var(--bone);font-family:'Archivo',system-ui,sans-serif;font-weight:300;line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+  .caption{max-width:1080px;margin:0 auto;padding:22px 6vw 0;font-size:12px;letter-spacing:0.04em;color:var(--bone-dim);}
+  .caption b{color:var(--gold);font-weight:500;}
+
+  /* ===== barra do topo ===== */
+  .topbar{max-width:1080px;margin:0 auto;padding:26px 6vw;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);}
+  .brand{display:flex;align-items:center;gap:13px;}
+  .brand svg{width:34px;height:34px;overflow:visible;}
+  .ring{transform-origin:center;animation:spin 40s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .brand .word{font-family:'Fraunces',Georgia,serif;font-size:22px;letter-spacing:-0.02em;}
+  .brand .word .o{font-style:italic;color:var(--gold);}
+  .brand .sub{font-size:12px;color:var(--bone-dim);letter-spacing:0.06em;border-left:1px solid var(--line);padding-left:13px;margin-left:2px;}
+  .btn-gold{font-family:'Archivo',sans-serif;font-weight:500;font-size:13px;letter-spacing:0.06em;text-transform:uppercase;background:var(--gold);color:var(--void);border:none;border-radius:100px;padding:12px 26px;cursor:pointer;transition:transform .22s ease,background .22s ease;text-decoration:none;display:inline-block;}
+  .btn-gold:hover{background:var(--clay);color:var(--bone);transform:translateY(-2px);}
+
+  .screen{max-width:1080px;margin:0 auto;padding:52px 6vw 70px;}
+  .eyebrow{font-size:11px;font-weight:500;letter-spacing:0.32em;text-transform:uppercase;color:var(--clay);margin-bottom:16px;}
+  .screen-label{font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--sage);margin-bottom:34px;padding-bottom:14px;border-bottom:1px dashed var(--line);}
+
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(38px,6vw,60px);line-height:0.95;letter-spacing:-0.03em;}
+  h1 em{font-style:italic;color:var(--gold);}
+  .count{font-size:14px;color:var(--bone-dim);margin-top:10px;}
+
+  /* ===== filtros ===== */
+  .filters{display:flex;gap:26px;margin:34px 0 22px;font-size:13px;letter-spacing:0.04em;}
+  .filters a{color:var(--bone-dim);text-decoration:none;padding-bottom:6px;transition:color .2s ease;}
+  .filters a.on{color:var(--bone);border-bottom:1.5px solid var(--gold);}
+  .filters a:hover{color:var(--bone);}
+
+  /* ===== cartão de aluno ===== */
+  .card{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px 28px;border:1px solid var(--line);border-radius:12px;background:var(--void);margin-bottom:14px;transition:border-color .25s ease,transform .25s ease,background .25s ease;cursor:pointer;}
+  .card:hover{border-color:var(--clay);transform:translateY(-3px);background:var(--void-2);}
+  .card .who{display:flex;flex-direction:column;gap:7px;}
+  .card .name{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:25px;letter-spacing:-0.01em;transition:color .25s ease;}
+  .card:hover .name{color:var(--gold);}
+  .card .obj{font-size:14.5px;color:var(--bone-dim);}
+  .card .meta{font-size:12.5px;color:var(--bone-dim);opacity:0.8;letter-spacing:0.02em;}
+  .card .meta .none{font-style:italic;color:var(--sage);}
+  .card .right{display:flex;align-items:center;gap:22px;flex:none;}
+  .badge{font-size:11px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;padding:6px 14px;border-radius:100px;border:1px solid var(--line);}
+  .badge.ativo{color:var(--gold);border-color:rgba(200,155,74,0.4);}
+  .badge.inativo{color:var(--bone-dim);opacity:0.6;}
+  .chev{color:var(--bone-dim);opacity:0.5;transition:transform .25s ease,opacity .25s ease;}
+  .card:hover .chev{transform:translateX(4px);opacity:1;color:var(--gold);}
+  .ilus{font-size:11px;color:var(--sage);font-style:italic;margin-top:12px;letter-spacing:0.02em;}
+
+  /* ===== perfil ===== */
+  .divider{max-width:1080px;margin:0 auto;border:none;border-top:1px solid var(--line);}
+  .back{font-size:13px;color:var(--bone-dim);text-decoration:none;letter-spacing:0.04em;transition:color .2s ease;}
+  .back:hover{color:var(--gold);}
+  .profile-head{display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin:26px 0 8px;}
+  .profile-head .badge{margin-top:16px;}
+  .dl{display:grid;grid-template-columns:1fr 1fr;gap:0 64px;margin-top:40px;border-top:1px solid var(--line);}
+  .row{display:flex;flex-direction:column;gap:5px;padding:20px 0;border-bottom:1px solid var(--line);}
+  .row .k{font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:var(--clay);}
+  .row .v{font-size:17px;color:var(--bone);font-weight:300;}
+  .row .v.none{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:16px;color:var(--sage);}
+  .row .v.soul{font-family:'Fraunces',Georgia,serif;font-size:19px;}
+  @media(max-width:720px){.dl{grid-template-columns:1fr;gap:0;}}
+</style>
+</head>
+<body>
+
+<div class="caption">Mockup de <b>direção visual</b> — não é o app final, é a marca Kairos aplicada às telas reais. Fontes e paleta verdadeiras; o Marcos é dado real, os outros dois alunos são ilustrativos.</div>
+
+<!-- ================= TELA 1 · LISTA ================= -->
+<header class="topbar">
+  <div class="brand">
+    <svg viewBox="0 0 100 100" aria-label="Kairos">
+      <g class="ring"><circle cx="50" cy="50" r="46" fill="none" stroke="#c89b4a" stroke-width="0.6" stroke-dasharray="2 6" opacity="0.55"/></g>
+      <circle cx="50" cy="50" r="34" fill="none" stroke="#c2613f" stroke-width="1.6"/>
+      <line x1="50" y1="16" x2="50" y2="84" stroke="#f0ebe0" stroke-width="1" opacity="0.4"/>
+      <path d="M 50 50 Q 70 38 64 22" fill="none" stroke="#c89b4a" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="50" cy="50" r="3.6" fill="#c2613f"/>
+    </svg>
+    <span class="word">Kair<span class="o">o</span>s</span>
+    <span class="sub">painel do coach</span>
+  </div>
+  <a href="#" class="btn-gold">+ Novo aluno</a>
+</header>
+
+<main class="screen">
+  <p class="screen-label">Tela 1 — lista de alunos</p>
+  <p class="eyebrow">Quem você acompanha</p>
+  <h1>Alunos</h1>
+  <p class="count">3 alunos · 2 ativos</p>
+
+  <nav class="filters">
+    <a href="#" class="on">Todos</a>
+    <a href="#">Ativos</a>
+    <a href="#">Inativos</a>
+  </nav>
+
+  <div class="card">
+    <div class="who">
+      <span class="name">Marcos Anastasio</span>
+      <span class="obj">Definição e hipertrofia</span>
+      <span class="meta">Plano: 02/01/2024 → 15/02/2024 · Fase: Hipertrofia — Fase 2</span>
+    </div>
+    <div class="right">
+      <span class="badge ativo">Ativo</span>
+      <span class="chev">→</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="who">
+      <span class="name">Ana Lima</span>
+      <span class="obj">Mobilidade e volta ao treino</span>
+      <span class="meta">Plano: 10/06/2026 → <span class="none">sem registro</span></span>
+    </div>
+    <div class="right">
+      <span class="badge ativo">Ativo</span>
+      <span class="chev">→</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="who">
+      <span class="name">Bruno Costa</span>
+      <span class="obj">Perda de gordura</span>
+      <span class="meta">Plano: <span class="none">sem registro</span></span>
+    </div>
+    <div class="right">
+      <span class="badge inativo">Inativo</span>
+      <span class="chev">→</span>
+    </div>
+  </div>
+  <p class="ilus">Ana e Bruno são ilustrativos, só para mostrar densidade e o estado "Inativo".</p>
+</main>
+
+<hr class="divider">
+
+<!-- ================= TELA 2 · PERFIL ================= -->
+<main class="screen">
+  <p class="screen-label">Tela 2 — perfil do aluno</p>
+  <a href="#" class="back">← Alunos</a>
+
+  <div class="profile-head">
+    <div>
+      <p class="eyebrow" style="margin-top:22px;">Perfil do aluno</p>
+      <h1>Marcos Anastasio</h1>
+    </div>
+    <a href="#" class="btn-gold">Editar</a>
+  </div>
+  <span class="badge ativo">Ativo</span>
+
+  <div class="dl">
+    <div class="row"><span class="k">Objetivo</span><span class="v soul">Definição e hipertrofia</span></div>
+    <div class="row"><span class="k">Fase atual</span><span class="v soul">Hipertrofia — Fase 2</span></div>
+    <div class="row"><span class="k">Início do plano</span><span class="v">02/01/2024</span></div>
+    <div class="row"><span class="k">Término do plano</span><span class="v">15/02/2024</span></div>
+    <div class="row"><span class="k">Data de nascimento</span><span class="v none">sem registro</span></div>
+    <div class="row"><span class="k">Idade</span><span class="v none">sem registro</span></div>
+    <div class="row"><span class="k">Restrições físicas</span><span class="v none">sem registro</span></div>
+    <div class="row"><span class="k">Alerta</span><span class="v none">sem registro</span></div>
+    <div class="row"><span class="k">Observações</span><span class="v none">sem registro</span></div>
+    <div class="row"><span class="k">Cadastrado em</span><span class="v">20/07/2026 21:46</span></div>
+  </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,40 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<p><a class="button-link" href="/alunos/{{ aluno.id }}/agenda/nova">Agendar sessão</a></p>
+
+{% if sessoes %}
+<ul class="card-list">
+    {% for s in sessoes %}
+    <li class="card">
+        <p class="card-title">{{ s.data }} &middot; {{ s.hora }} &middot; {{ s.tipo_label }}</p>
+        <p class="card-line">
+            <strong>Duração:</strong>
+            {% if s.duracao == 'sem registro' %}
+            <span class="none">{{ s.duracao }}</span>
+            {% else %}
+            {{ s.duracao }}
+            {% endif %}
+        </p>
+        {% if s.observacao %}
+        <p class="card-line">{{ s.observacao }}</p>
+        {% endif %}
+        {% if s.treino_nome %}
+        <p class="card-line">
+            <strong>Treino:</strong>
+            <a href="/alunos/{{ aluno.id }}/treino/{{ s.treino_id }}">{{ s.treino_nome }}</a>
+        </p>
+        {% endif %}
+        <form method="post" action="/alunos/{{ aluno.id }}/agenda/{{ s.id }}/cancelar" class="cancelar-form">
+            <button type="submit" class="btn-cancelar">Cancelar</button>
+        </form>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="coming-soon">
+    <h2>Agenda</h2>
+    <p>Ainda não há sessões agendadas.</p>
+</div>
+{% endif %}
+{% endblock %}

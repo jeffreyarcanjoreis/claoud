@@ -1,0 +1,377 @@
+/* Kairos — área do aluno (landing /aluno e subpáginas read-only)
+   Depende de tokens.css + base.css + cadastro.css (carregados antes deste arquivo).
+   Paginas do aluno reaproveitam o esqueleto de cadastro.css (fundo 3D, .cad-top,
+   .cad-main, .cad-card); aqui so o que e proprio da area do aluno: o header com
+   wordmark + Sair, e as listas das 4 secoes do inicio. */
+
+/* ===== header (wordmark + sair) =====
+   So se aplica quando a classe extra esta presente (paginas do aluno); o
+   .cad-top puro de /comecar continua so com a wordmark. */
+.cad-top-aluno {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+}
+
+/* Sair discreto no header — espelha .logout-form/.logout-btn do painel do
+   coach (components.css), que a area do aluno nao carrega por padrao. */
+.logout-form {
+  display: inline-flex;
+}
+
+.logout-btn {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  background: none;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.logout-btn:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: none;
+  transform: none;
+}
+
+/* ===== navegacao da area do aluno (abas) =====
+   Mesma ideia de .tabs/.tab/.on do painel do coach (shell.css), com nomes
+   proprios da area do aluno; rola na horizontal em telas estreitas em vez
+   de quebrar linha. */
+.aluno-nav {
+  display: flex;
+  gap: var(--sp-1);
+  padding: 0 6vw;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+  position: relative;
+  z-index: 1;
+}
+
+.aluno-nav-link {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  letter-spacing: 0.03em;
+  color: var(--bone-dim);
+  padding: var(--sp-3);
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.2s var(--ease);
+}
+
+.aluno-nav-link:hover {
+  color: var(--bone);
+}
+
+.aluno-nav-link.is-active {
+  color: var(--bone);
+}
+
+.aluno-nav-link.is-active::after {
+  content: '';
+  position: absolute;
+  left: var(--sp-3);
+  right: var(--sp-3);
+  bottom: -1px;
+  height: 2px;
+  background: var(--gold);
+}
+
+/* ===== atalhos do inicio ===== */
+.aluno-atalhos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  gap: var(--sp-3);
+}
+
+.aluno-atalho {
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: var(--fs-lead);
+  color: var(--bone);
+  text-align: center;
+  padding: var(--sp-4) var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.aluno-atalho:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aluno-atalho:hover {
+    transform: none;
+  }
+}
+
+/* ===== foto do perfil ===== */
+.aluno-foto {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  margin-bottom: var(--sp-3);
+}
+
+/* ===== recado do coach (Inicio) ===== */
+.recado-card {
+  display: block;
+  margin-top: var(--sp-4);
+  padding: var(--sp-4);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--void-2);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.recado-card:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recado-card:hover {
+    transform: none;
+  }
+}
+
+.recado-topo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.recado-titulo {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-lead);
+  color: var(--bone);
+}
+
+.badge-recado-novo {
+  color: var(--void);
+  background: var(--gold);
+  border-color: var(--gold);
+  padding: 3px 10px;
+  font-size: 9px;
+}
+
+.recado-texto {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-body);
+  color: var(--bone-dim);
+}
+
+.recado-data {
+  display: block;
+  margin-top: var(--sp-1);
+  font-size: var(--fs-eyebrow);
+  color: var(--sage);
+}
+
+/* ===== secoes do inicio (agendamentos, treinos, avaliacoes, sessoes) ===== */
+.aluno-secao {
+  margin-top: var(--sp-6);
+}
+
+.aluno-secao:first-of-type {
+  margin-top: var(--sp-5);
+}
+
+.aluno-secao h2 {
+  margin-bottom: var(--sp-3);
+}
+
+.aluno-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.aluno-lista-item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.aluno-lista-item:last-child {
+  border-bottom: none;
+}
+
+.aluno-item-principal {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  color: var(--bone);
+}
+
+.aluno-item-meta {
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+}
+
+.aluno-vazio {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--sage);
+}
+
+/* ===== check-in de hoje (Inicio) =====
+   CTA quando ainda não foi feito hoje (mesma linguagem do .recado-card:
+   borda em ouro, card clicável) e resumo curto quando já foi preenchido. */
+.checkin-cta {
+  display: block;
+  padding: var(--sp-4);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--void-2);
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: var(--fs-lead);
+  color: var(--bone);
+  text-align: center;
+  transition: color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.checkin-cta:hover {
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkin-cta:hover {
+    transform: none;
+  }
+}
+
+.checkin-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--void-2);
+}
+
+.checkin-resumo {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--bone-dim);
+}
+
+/* ===== formulario do check-in diario ===== */
+.checkin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.checkin-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: 0;
+}
+
+.checkin-form .field label {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.checkin-form .field input,
+.checkin-form .field select,
+.checkin-form .field textarea {
+  width: 100%;
+}
+
+.checkin-form .field textarea {
+  min-height: 5.5rem;
+}
+
+/* ===== CTA discreto de registro pos-treino (Inicio) =====
+   Mais discreto que .checkin-cta: fica dentro do card "Treino de hoje",
+   nao compete visualmente com o check-in do dia. */
+.registro-cta {
+  display: inline-block;
+  margin-top: var(--sp-3);
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+  border-bottom: 1px solid var(--line);
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.registro-cta:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ===== lista "Meus registros" (pagina de registro pos-treino) =====
+   Cada item e mais denso que .aluno-lista-item (tem 4 linhas de texto),
+   por isso um bloco proprio em coluna em vez do flex-wrap baseline. */
+.aluno-registros {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+}
+
+.registro-item {
+  padding: var(--sp-3) 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.registro-item:last-child {
+  border-bottom: none;
+}
+
+.registro-cabecalho {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-1);
+}
+
+.registro-linha {
+  margin-top: var(--sp-1);
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+}
+
+.registro-linha strong {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-right: var(--sp-1);
+}
+
+.sem-registro {
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: var(--sage);
+}

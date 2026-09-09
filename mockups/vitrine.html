@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kairos Movimento · Mover-se no momento certo</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Archivo:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{--void:#14130f;--void-2:#1c1a14;--bone:#f0ebe0;--bone-dim:#d4cdbd;--clay:#c2613f;--sage:#6b7355;--gold:#c89b4a;--line:rgba(240,235,224,0.14);}
+  html{scroll-behavior:smooth;}
+  body{background:var(--void);color:var(--bone);font-family:'Archivo',system-ui,sans-serif;font-weight:300;line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased;}
+  ::selection{background:var(--clay);color:var(--bone);}
+  a{color:inherit;}
+
+  /* ===== nav ===== */
+  nav{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:18px 6vw;transition:background .35s ease,border-color .35s ease,padding .35s ease;border-bottom:1px solid transparent;}
+  nav.solid{background:rgba(20,19,15,0.82);backdrop-filter:blur(10px);border-bottom-color:var(--line);padding:12px 6vw;}
+  .nav-word{font-family:'Fraunces',Georgia,serif;font-size:20px;letter-spacing:-0.02em;}
+  .nav-word .o{font-style:italic;color:var(--gold);}
+  .nav-links{display:flex;align-items:center;gap:28px;font-size:13px;letter-spacing:0.03em;}
+  .nav-links a{text-decoration:none;color:var(--bone-dim);transition:color .2s;}
+  .nav-links a:hover{color:var(--bone);}
+  .nav-cta{background:var(--gold);color:var(--void)!important;padding:9px 20px;border-radius:100px;font-weight:500;font-size:12.5px;letter-spacing:0.05em;text-transform:uppercase;transition:transform .22s,background .22s;}
+  .nav-cta:hover{background:var(--clay);color:var(--bone)!important;transform:translateY(-2px);}
+  @media(max-width:720px){.nav-links a.hide-m{display:none;}}
+
+  /* ===== hero ===== */
+  .hero{position:relative;height:100vh;min-height:600px;}
+  #scene{position:absolute;inset:0;z-index:0;display:block;}
+  .hero .glow{position:absolute;inset:0;z-index:0;background:radial-gradient(circle at 50% 44%,rgba(194,97,63,0.2),transparent 52%),radial-gradient(circle at 50% 44%,rgba(200,155,74,0.1),transparent 40%);}
+  .hero .inner{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;text-align:center;padding-bottom:12vh;pointer-events:none;}
+  .hero .slogan{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(32px,6.6vw,78px);line-height:1.0;letter-spacing:-0.03em;text-shadow:0 2px 40px rgba(20,19,15,0.85);}
+  .hero .slogan em{font-style:italic;color:var(--gold);}
+  .hero .sub{font-family:'Fraunces',Georgia,serif;font-style:italic;font-size:clamp(15px,2.2vw,22px);color:var(--bone-dim);margin-top:20px;}
+  .hero .cta{pointer-events:auto;display:inline-block;margin-top:34px;background:var(--gold);color:var(--void);padding:15px 38px;border-radius:100px;font-weight:500;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:transform .22s,background .22s;}
+  .hero .cta:hover{background:var(--clay);color:var(--bone);transform:translateY(-2px);}
+  .scroll-hint{position:absolute;bottom:26px;left:50%;transform:translateX(-50%);z-index:2;font-size:11px;letter-spacing:0.3em;text-transform:uppercase;color:var(--bone-dim);}
+
+  /* ===== secções ===== */
+  section.block{padding:96px 6vw;max-width:1120px;margin:0 auto;border-bottom:1px solid var(--line);}
+  .eyebrow{font-size:11px;font-weight:500;letter-spacing:0.32em;text-transform:uppercase;color:var(--clay);margin-bottom:22px;}
+  h2{font-family:'Fraunces',Georgia,serif;font-weight:300;font-size:clamp(30px,5vw,58px);line-height:1.04;letter-spacing:-0.02em;max-width:18ch;}
+  h2 em{font-style:italic;color:var(--gold);}
+  .body-text{font-size:clamp(15px,1.9vw,18px);max-width:58ch;color:var(--bone-dim);margin-top:24px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;}
+  @media(max-width:820px){.two-col{grid-template-columns:1fr;gap:36px;}}
+
+  .reveal{opacity:0;transform:translateY(30px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1);}
+  .reveal.in{opacity:1;transform:none;}
+  .reveal.d1{transition-delay:.1s;}.reveal.d2{transition-delay:.25s;}.reveal.d3{transition-delay:.4s;}.reveal.d4{transition-delay:.55s;}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none;}}
+
+  .compare{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--line);margin-top:36px;}
+  .compare>div{padding:34px;}
+  .compare>div:first-child{border-right:1px solid var(--line);}
+  .compare h3{font-family:'Fraunces',Georgia,serif;font-style:italic;font-weight:400;font-size:26px;margin-bottom:14px;}
+  .compare .c-chronos h3{color:var(--bone-dim);}
+  .compare .c-kairos h3{color:var(--gold);}
+  .compare p{font-size:14.5px;color:var(--bone-dim);}
+  @media(max-width:600px){.compare{grid-template-columns:1fr;}.compare>div:first-child{border-right:none;border-bottom:1px solid var(--line);}}
+
+  .grid4{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-top:36px;}
+  .cell{background:var(--void);padding:34px 30px;transition:background .35s;}
+  .cell:hover{background:var(--void-2);}
+  .cell h3{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:23px;margin-bottom:10px;}
+  .cell p{font-size:14px;color:var(--bone-dim);}
+  .cell .root{font-size:12px;color:var(--sage);font-style:italic;margin-top:14px;}
+  @media(max-width:700px){.grid4{grid-template-columns:1fr;}}
+
+  /* ===== séries ===== */
+  .series{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px;}
+  .serie{background:var(--void-2);border:1px solid var(--line);border-radius:14px;padding:30px 28px;display:flex;flex-direction:column;transition:border-color .25s,transform .25s;}
+  .serie:hover{border-color:var(--clay);transform:translateY(-4px);}
+  .serie .n{font-family:'Fraunces',Georgia,serif;font-style:italic;color:var(--gold);font-size:15px;margin-bottom:14px;}
+  .serie h3{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:24px;line-height:1.1;margin-bottom:12px;}
+  .serie p{font-size:14px;color:var(--bone-dim);flex:1;}
+  .serie .meta{margin-top:20px;font-size:12px;letter-spacing:0.04em;color:var(--bone-dim);display:flex;align-items:center;justify-content:space-between;gap:10px;}
+  .serie .tag{font-size:10px;letter-spacing:0.14em;text-transform:uppercase;padding:5px 11px;border-radius:100px;border:1px solid var(--line);}
+  .serie .tag.on{color:var(--gold);border-color:rgba(200,155,74,0.4);}
+  .serie .tag.soon{color:var(--sage);}
+  .serie .go{margin-top:18px;font-size:13px;color:var(--gold);text-decoration:none;font-family:'Fraunces',Georgia,serif;font-style:italic;}
+  .serie .go:hover{text-decoration:underline;}
+  @media(max-width:820px){.series{grid-template-columns:1fr;}}
+
+  /* ===== CTA final ===== */
+  .cta-block{text-align:center;background:radial-gradient(circle at 50% 50%,rgba(200,155,74,0.1),transparent 60%),var(--void);}
+  .cta-block h2{margin:0 auto;max-width:20ch;}
+  .cta-block .body-text{margin:24px auto 0;}
+  .cta-block .cta{display:inline-block;margin-top:36px;background:var(--gold);color:var(--void);padding:16px 42px;border-radius:100px;font-weight:500;font-size:14px;letter-spacing:0.06em;text-transform:uppercase;text-decoration:none;transition:transform .22s,background .22s;}
+  .cta-block .cta:hover{background:var(--clay);color:var(--bone);transform:translateY(-2px);}
+  .cta-block .note{font-size:12px;color:var(--sage);margin-top:16px;font-style:italic;}
+
+  footer{padding:60px 6vw;max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between;color:var(--bone-dim);font-size:13px;}
+  footer .sign{font-family:'Fraunces',Georgia,serif;font-style:italic;}
+  footer a{color:var(--bone-dim);text-decoration:none;}
+  footer a:hover{color:var(--gold);}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <span class="nav-word">Kair<span class="o">o</span>s Movimento</span>
+  <div class="nav-links">
+    <a href="#metodo" class="hide-m">O Método</a>
+    <a href="#series" class="hide-m">Séries</a>
+    <a href="login.html">Entrar</a>
+    <a href="#avaliacao" class="nav-cta">Avaliação Inicial</a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<header class="hero">
+  <div class="glow"></div>
+  <canvas id="scene"></canvas>
+  <div class="inner">
+    <div class="slogan">Mover-se no<br><em>momento certo</em>.</div>
+    <div class="sub">No corpo, na mente, no espírito e na comunidade.</div>
+    <a href="#avaliacao" class="cta">Fazer a Avaliação Inicial</a>
+  </div>
+  <div class="scroll-hint">Role</div>
+</header>
+
+<!-- ===== O MÉTODO ===== -->
+<section class="block" id="metodo">
+  <div class="two-col">
+    <div>
+      <p class="eyebrow reveal">A premissa</p>
+      <h2 class="reveal d1">O corpo moderno esqueceu o seu <em>próprio tempo</em>.</h2>
+    </div>
+    <p class="body-text reveal d2">Treinamos para parecer, não para ser. Seguimos fórmulas feitas para todos e, por isso, feitas para ninguém. O Método Kairos parte do oposto: cada corpo é único, cada momento é irrepetível, e a transformação só acontece quando o estímulo encontra a pessoa certa na hora certa.</p>
+  </div>
+</section>
+
+<!-- ===== CHRONOS x KAIROS ===== -->
+<section class="block">
+  <p class="eyebrow reveal">A palavra</p>
+  <h2 class="reveal d1">Os gregos tinham <em>dois</em> nomes para o tempo.</h2>
+  <div class="compare reveal d2">
+    <div class="c-chronos"><h3>Chronos</h3><p>O tempo do relógio. Sequencial, medido, igual para todos. As horas que passam, a idade no documento.</p></div>
+    <div class="c-kairos"><h3>Kairos</h3><p>O tempo da oportunidade. O instante em que as condições se alinham para que algo aconteça como em nenhum outro momento seria possível. O momento certo — que se reconhece ou se perde.</p></div>
+  </div>
+</section>
+
+<!-- ===== QUATRO DIMENSÕES ===== -->
+<section class="block">
+  <p class="eyebrow reveal">As quatro dimensões</p>
+  <h2 class="reveal d1">Quatro treinos, um só <em>ser</em>.</h2>
+  <div class="grid4 reveal d2">
+    <div class="cell"><h3>Físico</h3><p>O corpo como primeiro laboratório. Força, mobilidade e resistência para as transições que a vida não avisa.</p><p class="root">raiz: lutas e esportes</p></div>
+    <div class="cell"><h3>Mental</h3><p>Presença e clareza como músculos. Estar tão presente que se reconhece o momento certo de cada gesto.</p><p class="root">raiz: corrida, natação, dança</p></div>
+    <div class="cell"><h3>Espiritual</h3><p>Conexão com algo maior que o resultado — o propósito interno e o vínculo com a vida que nos cerca.</p><p class="root">raiz: caridade da umbanda, tantra</p></div>
+    <div class="cell"><h3>Social</h3><p>Como o indivíduo se move no grupo. A singularidade não isola — cada um contribui de forma irrepetível.</p><p class="root">raiz: esportes coletivos, capoeira</p></div>
+  </div>
+</section>
+
+<!-- ===== AS TRÊS SÉRIES ===== -->
+<section class="block" id="series">
+  <p class="eyebrow reveal">Conteúdo · em capítulos</p>
+  <h2 class="reveal d1">Três séries para <em>aprender</em> o corpo.</h2>
+  <p class="body-text reveal d2">Conteúdo que traduz ciência em prática — lido em capítulos, no seu tempo.</p>
+  <div class="series">
+    <div class="serie reveal d1">
+      <span class="n">Série 01</span>
+      <h3>A Ciência de Viver Mais e Melhor</h3>
+      <p>O objetivo nunca foi viver mais anos. Foi viver mais anos sendo capaz de aproveitar a própria vida.</p>
+      <div class="meta"><span>7 capítulos · e-book + artigos</span><span class="tag on">Disponível</span></div>
+      <a href="#" class="go">Ler a série →</a>
+    </div>
+    <div class="serie reveal d2">
+      <span class="n">Série 02</span>
+      <h3>A Arte do Treinamento</h3>
+      <p>Não existe o treino certo. Existe o treino certo para esta pessoa, agora.</p>
+      <div class="meta"><span>Pesquisa pronta · 5 temas</span><span class="tag soon">Em breve</span></div>
+    </div>
+    <div class="serie reveal d3">
+      <span class="n">Série 03</span>
+      <h3>Infância em Movimento</h3>
+      <p>O adulto que ela vai ser começa a se mover agora.</p>
+      <div class="meta"><span>Pesquisa pronta · 6 temas</span><span class="tag soon">Em breve</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA FINAL ===== -->
+<section class="block cta-block" id="avaliacao">
+  <p class="eyebrow reveal">Vamos começar</p>
+  <h2 class="reveal d1">O primeiro passo é a <em>Avaliação Inicial</em>.</h2>
+  <p class="body-text reveal d2">10–15 minutos, sem compromisso. É o que me permite te conhecer de verdade antes de qualquer treino.</p>
+  <a href="#" class="cta reveal d3" data-form="google-form">Fazer a Avaliação Inicial</a>
+  <p class="note reveal d3">Trocar por: link real do Google Form da Avaliação Inicial.</p>
+</section>
+
+<footer>
+  <span class="sign">Método Kairos · Jeffrey Arcanjo Reis</span>
+  <span><a href="login.html">Entrar no painel</a> · Mover-se no momento certo.</span>
+</footer>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+  import * as THREE from 'three';
+  const canvas = document.getElementById('scene');
+  const hero = document.querySelector('.hero');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  function size(){ renderer.setSize(hero.clientWidth, hero.clientHeight); camera.aspect = hero.clientWidth/hero.clientHeight; camera.updateProjectionMatrix(); }
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(45, 1, 0.1, 100);
+  camera.position.set(0, 0, 13);
+  scene.add(new THREE.AmbientLight(0xf0ebe0, 0.55));
+  const key = new THREE.PointLight(0xc89b4a, 90, 100); key.position.set(6,7,9); scene.add(key);
+  const fill = new THREE.PointLight(0xc2613f, 45, 100); fill.position.set(-7,-4,5); scene.add(fill);
+  const gold = new THREE.MeshStandardMaterial({ color:0xc89b4a, metalness:0.9, roughness:0.32 });
+  const clay = new THREE.MeshStandardMaterial({ color:0xc2613f, metalness:0.35, roughness:0.55 });
+  const bone = new THREE.MeshStandardMaterial({ color:0xf0ebe0, metalness:0.1, roughness:0.85, transparent:true, opacity:0.55 });
+  const outer = new THREE.Group(); const spin = new THREE.Group(); outer.add(spin); scene.add(outer);
+  spin.add(new THREE.Mesh(new THREE.TorusGeometry(4.6,0.05,16,160), gold));
+  spin.add(new THREE.Mesh(new THREE.TorusGeometry(3.4,0.16,20,160), clay));
+  spin.add(new THREE.Mesh(new THREE.BoxGeometry(0.08,6.8,0.08), bone));
+  const curve = new THREE.QuadraticBezierCurve3(new THREE.Vector3(0,0,0), new THREE.Vector3(2.0,1.2,0.35), new THREE.Vector3(1.4,2.8,0));
+  spin.add(new THREE.Mesh(new THREE.TubeGeometry(curve,64,0.13,14,false), gold));
+  spin.add(new THREE.Mesh(new THREE.SphereGeometry(0.35,32,32), clay));
+  outer.rotation.x = -0.28;
+  size(); window.addEventListener('resize', size);
+
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let tx=0, ty=0, heroVisible=true, running=false;
+  window.addEventListener('pointermove', e => { tx=e.clientX/window.innerWidth-0.5; ty=e.clientY/window.innerHeight-0.5; });
+  // performance: só renderiza enquanto o hero está visível
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; if(heroVisible) start(); }, {threshold:0.02}).observe(hero);
+  function start(){ if(running) return; running=true; tick(); }
+  function tick(){
+    if(!heroVisible){ running=false; return; }
+    if(!reduce){ spin.rotation.y += 0.004; outer.rotation.y += (tx*0.9 - outer.rotation.y)*0.05; outer.rotation.x += ((-0.28+ty*0.7)-outer.rotation.x)*0.05; }
+    renderer.render(scene, camera);
+    requestAnimationFrame(tick);
+  }
+  renderer.render(scene, camera); if(!reduce) start();
+
+  // nav sólida ao rolar
+  const nav = document.getElementById('nav');
+  window.addEventListener('scroll', () => { nav.classList.toggle('solid', window.scrollY > 40); });
+  // reveal
+  const io = new IntersectionObserver(es => es.forEach(x => { if(x.isIntersecting) x.target.classList.add('in'); }), {threshold:0.15});
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

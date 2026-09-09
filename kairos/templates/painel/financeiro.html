@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Do negócio</p>
+<h1>Financeiro</h1>
+<p>{{ mes_label }}</p>
+
+<div class="financeiro-resultado {{ 'positivo' if resultado_positivo else 'negativo' }}">
+    <p class="rotulo">Resultado do mês</p>
+    <p class="valor">{{ resultado }}</p>
+</div>
+
+<div class="grafico">
+    <p class="grafico-titulo">Entradas × Saídas · últimos meses</p>
+    {% if g_entradas.empty %}
+    <p class="none">Ainda sem dados para o período — o gráfico enche conforme você registra recebimentos e despesas.</p>
+    {% else %}
+    <svg class="chart" viewBox="0 0 {{ g_entradas.vb_w }} {{ g_entradas.vb_h }}" role="img" aria-label="Entradas e saídas por mês">
+        <line class="chart-axis" x1="{{ g_entradas.plot_left }}" y1="{{ g_entradas.baseline_y }}" x2="{{ g_entradas.plot_right }}" y2="{{ g_entradas.baseline_y }}"></line>
+        {% for t in g_entradas.y_ticks %}
+        <text class="chart-ylabel" x="{{ g_entradas.plot_left - 6 }}" y="{{ t.y + 3 }}">{{ t.text }}</text>
+        {% endfor %}
+        {% for b in g_entradas.bars %}
+        <rect class="serie-{{ b.serie }}" x="{{ b.x }}" y="{{ b.y }}" width="{{ b.w }}" height="{{ b.h }}" rx="3"><title>{{ b.titulo }}</title></rect>
+        {% endfor %}
+        {% for l in g_entradas.x_labels %}
+        <text class="chart-xlabel" x="{{ l.x }}" y="{{ g_entradas.vb_h - 10 }}" text-anchor="middle">{{ l.text }}</text>
+        {% endfor %}
+    </svg>
+    <div class="chart-legend">
+        <span class="leg leg-entrada">Entradas</span>
+        <span class="leg leg-saida">Saídas</span>
+    </div>
+    {% endif %}
+</div>
+
+<div class="grafico">
+    <p class="grafico-titulo">Projeção · próximos meses</p>
+    {% if g_projecao.empty %}
+    <p class="none">Sem planos ativos para projetar — defina o plano dos alunos para ver a previsão.</p>
+    {% else %}
+    <svg class="chart" viewBox="0 0 {{ g_projecao.vb_w }} {{ g_projecao.vb_h }}" role="img" aria-label="Projeção da receita recorrente para os próximos meses">
+        <line class="chart-axis" x1="{{ g_projecao.plot_left }}" y1="{{ g_projecao.baseline_y }}" x2="{{ g_projecao.plot_right }}" y2="{{ g_projecao.baseline_y }}"></line>
+        {% for t in g_projecao.y_ticks %}
+        <text class="chart-ylabel" x="{{ g_projecao.plot_left - 6 }}" y="{{ t.y + 3 }}">{{ t.text }}</text>
+        {% endfor %}
+        <polyline class="serie-projecao-line" points="{{ g_projecao.polyline }}"></polyline>
+        {% for p in g_projecao.points %}
+        <circle class="serie-projecao-dot" cx="{{ p.x }}" cy="{{ p.y }}" r="4"><title>{{ p.titulo }}</title></circle>
+        {% endfor %}
+        {% for l in g_projecao.x_labels %}
+        <text class="chart-xlabel" x="{{ l.x }}" y="{{ g_projecao.vb_h - 24 }}" text-anchor="middle">{{ l.text }}</text>
+        <text class="chart-sub" x="{{ l.x }}" y="{{ g_projecao.vb_h - 12 }}" text-anchor="middle">{{ l.alunos }} al.</text>
+        {% endfor %}
+    </svg>
+    <p class="chart-nota">Receita recorrente prevista, se os planos atuais continuarem.</p>
+    {% endif %}
+</div>
+
+<h2>Quem sustenta o mês</h2>
+
+{% if sustentam %}
+<ul class="card-list">
+    {% for s in sustentam %}
+    <li class="card">
+        <div class="card-header">
+            <span class="card-title">{{ s.aluno_nome }}</span>
+            <span>{{ s.valor }}</span>
+        </div>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="none">Ninguém pagou ainda neste mês.</p>
+{% endif %}
+
+<div class="financeiro-atalhos">
+    <a class="button-link" href="/financeiro/recebimentos">Recebimentos / mensalidades</a>
+    <a class="button-link" href="/financeiro/despesas">Despesas (saídas)</a>
+</div>
+{% endblock %}

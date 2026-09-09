@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Visão geral</p>
+<h1>Bom te ver, <em>Jeffrey</em>.</h1>
+
+{# toggle nativo (sem JS): o tile "Tarefas" abre/fecha a lista aqui no Início.
+   Fica aberto quando há um erro de validação, para a mensagem aparecer. #}
+<input type="checkbox" id="tarefas-toggle" class="toggle-input" {% if tarefa_error %}checked{% endif %}>
+{# idem para o tile "Novos contatos" / Avaliação Inicial. #}
+<input type="checkbox" id="contatos-toggle" class="toggle-input" {% if contato_error %}checked{% endif %}>
+
+<div class="stats">
+    <a class="stat" href="/alunos">
+        <div class="n">{{ counts.total }}</div>
+        <div class="l">Alunos</div>
+    </a>
+    <a class="stat" href="/alunos?status=active">
+        <div class="n gold">{{ counts.active }}</div>
+        <div class="l">Ativos</div>
+    </a>
+    <a class="stat" href="/agenda">
+        <div class="n">{{ counts.sessoes_hoje }}</div>
+        <div class="l">Sessões de hoje</div>
+    </a>
+    <label class="stat stat-toggle" for="contatos-toggle">
+        <div class="n">{{ contatos | length }}</div>
+        <div class="l">Novos contatos</div>
+    </label>
+    <a class="stat" href="/financeiro">
+        <div class="n">{{ mrr }}</div>
+        <div class="l">Financeiro</div>
+    </a>
+    <label class="stat stat-toggle" for="tarefas-toggle">
+        <div class="n">{{ tarefas | length }}</div>
+        <div class="l">Tarefas</div>
+    </label>
+</div>
+
+{# Modal das Tarefas: mesmo visual do modal de cadastro (v-modal*), aberto e
+   fechado sem JS pelo checkbox #tarefas-toggle (declarado acima, precisa vir
+   antes no DOM para o seletor ~ funcionar). Com JS, painel-tarefas.js troca
+   os fetches por AJAX; sem JS, os forms enviam normalmente e o servidor
+   re-renderiza esta página com o checkbox marcado (fallback). #}
+<div class="v-modal v-modal-tarefas" id="tarefas-modal">
+    <label class="v-modal-backdrop" for="tarefas-toggle" aria-hidden="true"></label>
+    <div class="v-modal-card" role="dialog" aria-modal="true" aria-labelledby="tarefas-modal-titulo">
+        <header class="v-modal-header">
+            <label class="v-modal-fechar" for="tarefas-toggle" aria-label="Fechar">&times;</label>
+            <p class="v-modal-kicker">Organização</p>
+            <h2 id="tarefas-modal-titulo" class="v-modal-titulo">Tarefas</h2>
+        </header>
+
+        <div class="v-modal-body">
+            <div class="message-error" id="tarefa-erro" {% if not tarefa_error %}hidden{% endif %}>{{ tarefa_error or '' }}</div>
+
+            <form class="tarefa-add field-row" method="post" action="/tarefas" id="tarefa-add-form">
+                <div class="field">
+                    <label for="tarefa-titulo">Título</label>
+                    <input type="text" id="tarefa-titulo" name="titulo" placeholder="Nova tarefa…" required
+                        value="{{ (tarefa_values.titulo if tarefa_values else '') or '' }}">
+                </div>
+                <div class="field">
+                    <label for="tarefa-categoria">Categoria</label>
+                    <select id="tarefa-categoria" name="categoria">
+                        <option value="">— sem categoria —</option>
+                        <option value="lembrete" {% if tarefa_values and tarefa_values.categoria == 'lembrete' %}selected{% endif %}>Lembrete</option>
+                        <option value="publicacao" {% if tarefa_values and tarefa_values.categoria == 'publicacao' %}selected{% endif %}>Publicação</option>
+                        <option value="contato" {% if tarefa_values and tarefa_values.categoria == 'contato' %}selected{% endif %}>Contato</option>
+                        <option value="campanha" {% if tarefa_values and tarefa_values.categoria == 'campanha' %}selected{% endif %}>Campanha</option>
+                    </select>
+                </div>
+                <div class="field">
+                    <label for="tarefa-prazo">Prazo</label>
+                    <input type="date" id="tarefa-prazo" name="prazo"
+                        value="{{ (tarefa_values.prazo if tarefa_values else '') or '' }}">
+                </div>
+                <div class="field tarefa-add-submit">
+                    <label>&nbsp;</label>
+                    <button type="submit">Adicionar</button>
+                </div>
+            </form>
+
+            <div id="tarefas-lista-container">
+                {% include "painel/_tarefas_lista.html" %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="contatos" id="contatos">
+    {% if contato_error %}
+    <div class="message-error">{{ contato_error }}</div>
+    {% endif %}
+
+    <div class="contatos-central">
+        <p class="contatos-central-titulo">Avaliação Inicial</p>
+        <a class="button-link" href="/comecar" target="_blank" rel="noopener">Compartilhar o cadastro</a>
+        <p class="contatos-central-nota">Envie este link para quem tem interesse — as respostas chegam aqui como novos contatos.</p>
+    </div>
+
+    <form class="contato-add field-row" method="post" action="/contatos">
+        <div class="field">
+            <label for="contato-nome">Nome</label>
+            <input type="text" id="contato-nome" name="nome" required
+                value="{{ (contato_values.nome if contato_values else '') or '' }}">
+        </div>
+        <div class="field">
+            <label for="contato-contato">Contato</label>
+            <input type="text" id="contato-contato" name="contato" placeholder="telefone / @ / e-mail"
+                value="{{ (contato_values.contato if contato_values else '') or '' }}">
+        </div>
+        <div class="field">
+            <label for="contato-observacao">Observação</label>
+            <input type="text" id="contato-observacao" name="observacao"
+                value="{{ (contato_values.observacao if contato_values else '') or '' }}">
+        </div>
+        <div class="field contato-add-submit">
+            <label>&nbsp;</label>
+            <button type="submit">Adicionar</button>
+        </div>
+    </form>
+
+    {% if contatos %}
+    <ul class="card-list">
+        {% for c in contatos %}
+        <li class="card contato-card">
+            <div class="card-header">
+                <span class="card-title">{{ c.nome }}</span>
+                <span class="contato-status">{{ c.status_label }}</span>
+            </div>
+            {% if c.contato %}
+            <p class="card-line">{{ c.contato }}</p>
+            {% endif %}
+            {% if c.observacao %}
+            <p class="card-line">{{ c.observacao }}</p>
+            {% endif %}
+            <div class="contato-acoes">
+                <a class="contato-ver" href="/contatos/{{ c.id }}">ver</a>
+                <form method="post" action="/contatos/{{ c.id }}/status">
+                    <select name="status">
+                        {% for valor, label in status_opcoes %}
+                        <option value="{{ valor }}" {% if valor == c.status %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit">Salvar</button>
+                </form>
+                <form method="post" action="/contatos/{{ c.id }}/remover">
+                    <button type="submit" class="button-danger-sm">remover</button>
+                </form>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p class="contatos-vazio none">Nenhum contato em acompanhamento.</p>
+    {% endif %}
+</section>
+{% endblock %}

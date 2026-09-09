@@ -1,0 +1,26 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Meu acompanhamento{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Meu acompanhamento</h1>
+
+  {% if sessoes %}
+  <ul class="aluno-lista">
+    {% for s in sessoes %}
+    <li class="aluno-lista-item">
+      <span class="aluno-item-principal">{{ s.data }}</span>
+      <span class="aluno-item-meta">{{ s.presenca_label }}</span>
+      {% if s.disposicao %}
+      <span class="aluno-item-meta">Disposição: {{ s.disposicao }}</span>
+      {% endif %}
+      <a href="/aluno/acompanhamento/{{ s.id }}">ver</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="aluno-vazio">Sem sessões registradas ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}

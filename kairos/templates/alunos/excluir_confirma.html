@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Excluir aluno</p>
+<h1>{{ aluno.name }}</h1>
+
+<div class="message-error">Esta ação é permanente e não pode ser desfeita.</div>
+
+{% if tem_historico %}
+<div class="message-error">
+    Este aluno tem histórico (avaliações, treinos, sessões, planos ou pagamentos), então não pode ser
+    excluído — para preservar esses registros. Se quiser tirá-lo da lista de ativos, use Arquivar.
+</div>
+<form method="post" action="/alunos/{{ aluno.id }}/arquivar">
+    <button type="submit" class="button-link">Arquivar</button>
+</form>
+<p><a href="/alunos/{{ aluno.id }}">Cancelar</a></p>
+{% else %}
+<form method="post" action="/alunos/{{ aluno.id }}/excluir">
+    <button type="submit" class="button-danger">Excluir definitivamente</button>
+</form>
+<p><a href="/alunos/{{ aluno.id }}">Cancelar</a></p>
+{% endif %}
+{% endblock %}
