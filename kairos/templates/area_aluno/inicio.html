@@ -23,6 +23,37 @@
   {% endif %}
 
   <section class="aluno-secao">
+    <h2>Check-in de hoje</h2>
+    {% if checkin_hoje %}
+    {% set partes = [] %}
+    {% if checkin_hoje.sono_horas is not none %}{% set _ = partes.append('Sono: ' ~ checkin_hoje.sono_horas ~ 'h') %}{% endif %}
+    {% if checkin_hoje.energia is not none %}{% set _ = partes.append('Energia: ' ~ checkin_hoje.energia ~ '/10') %}{% endif %}
+    {% if checkin_hoje.humor_label %}{% set _ = partes.append('Humor: ' ~ checkin_hoje.humor_label) %}{% endif %}
+    <div class="checkin-card">
+      <p class="checkin-resumo">{% if partes %}{{ partes|join(' · ') }}{% else %}Registrado hoje.{% endif %}</p>
+      <a href="/aluno/checkin">editar</a>
+    </div>
+    {% else %}
+    <a class="checkin-cta" href="/aluno/checkin">Como você está hoje? Fazer check-in</a>
+    {% endif %}
+  </section>
+
+  <section class="aluno-secao">
+    <h2>Treino de hoje</h2>
+    {% if treino_hoje %}
+    <div class="aluno-lista-item">
+      <span class="aluno-item-principal">{{ treino_hoje.hora }}</span>
+      <span class="aluno-item-meta">{{ treino_hoje.tipo_label }}</span>
+      {% if treino_hoje.treino_id %}
+      <a href="/aluno/treinos/{{ treino_hoje.treino_id }}">ver treino{% if treino_hoje.treino_nome %}: {{ treino_hoje.treino_nome }}{% endif %}</a>
+      {% endif %}
+    </div>
+    {% else %}
+    <p class="aluno-vazio">Nenhum treino marcado para hoje.</p>
+    {% endif %}
+  </section>
+
+  <section class="aluno-secao">
     <h2>Próxima sessão</h2>
     {% if proxima_sessao %}
     <div class="aluno-lista-item">

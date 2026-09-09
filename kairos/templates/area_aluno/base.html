@@ -24,6 +24,7 @@
 
   <nav class="aluno-nav" aria-label="Navegação da sua área">
     <a class="aluno-nav-link{% if p == '/aluno' %} is-active{% endif %}" href="/aluno">Início</a>
+    <a class="aluno-nav-link{% if p.startswith('/aluno/checkin') %} is-active{% endif %}" href="/aluno/checkin">Check-in</a>
     <a class="aluno-nav-link{% if p.startswith('/aluno/perfil') %} is-active{% endif %}" href="/aluno/perfil">Perfil</a>
     <a class="aluno-nav-link{% if p.startswith('/aluno/treinos') %} is-active{% endif %}" href="/aluno/treinos">Treinos</a>
     <a class="aluno-nav-link{% if p.startswith('/aluno/avaliacoes') %} is-active{% endif %}" href="/aluno/avaliacoes">Avaliações</a>

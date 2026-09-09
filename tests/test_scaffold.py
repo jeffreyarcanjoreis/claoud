@@ -25,7 +25,7 @@ import kairos.db
 from kairos.main import app
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0020"  # bumped by migration 0020_create_mensagens
+HEAD_REVISION = "0021"  # bumped by migration 0021_create_checkins
 
 
 @pytest.fixture

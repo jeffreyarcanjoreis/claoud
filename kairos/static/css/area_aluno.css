@@ -233,3 +233,81 @@
   font-size: var(--fs-small);
   color: var(--sage);
 }
+
+/* ===== check-in de hoje (Inicio) =====
+   CTA quando ainda não foi feito hoje (mesma linguagem do .recado-card:
+   borda em ouro, card clicável) e resumo curto quando já foi preenchido. */
+.checkin-cta {
+  display: block;
+  padding: var(--sp-4);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--void-2);
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: var(--fs-lead);
+  color: var(--bone);
+  text-align: center;
+  transition: color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.checkin-cta:hover {
+  color: var(--gold);
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .checkin-cta:hover {
+    transform: none;
+  }
+}
+
+.checkin-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--sp-3);
+  padding: var(--sp-4);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--void-2);
+}
+
+.checkin-resumo {
+  margin: 0;
+  font-size: var(--fs-body);
+  color: var(--bone-dim);
+}
+
+/* ===== formulario do check-in diario ===== */
+.checkin-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.checkin-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: 0;
+}
+
+.checkin-form .field label {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.checkin-form .field input,
+.checkin-form .field select,
+.checkin-form .field textarea {
+  width: 100%;
+}
+
+.checkin-form .field textarea {
+  min-height: 5.5rem;
+}

@@ -1,0 +1,46 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Check-ins</h2>
+
+{% if checkins %}
+<div class="table-wrap">
+    <table class="planilha">
+        <thead>
+            <tr>
+                <th>Data</th>
+                <th>Sono</th>
+                <th>Estresse</th>
+                <th>Energia</th>
+                <th>Humor</th>
+                <th>Dor</th>
+                <th>Observação</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for c in checkins %}
+            <tr>
+                <td>{{ c.data }}</td>
+                <td>
+                    {% if c.sono_horas is not none %}{{ c.sono_horas }}h{% else %}<span class="none">sem registro</span>{% endif %}
+                    {% if c.sono_qualidade_label %}<span class="item-obs">{{ c.sono_qualidade_label }}</span>{% endif %}
+                </td>
+                <td>{% if c.estresse is not none %}{{ c.estresse }}/10{% else %}<span class="none">sem registro</span>{% endif %}</td>
+                <td>{% if c.energia is not none %}{{ c.energia }}/10{% else %}<span class="none">sem registro</span>{% endif %}</td>
+                <td>{% if c.humor_label %}{{ c.humor_label }}{% else %}<span class="none">sem registro</span>{% endif %}</td>
+                <td>
+                    {% if c.dor_local %}{{ c.dor_local }}{% else %}<span class="none">sem registro</span>{% endif %}
+                    {% if c.dor_intensidade is not none %}<span class="item-obs">{{ c.dor_intensidade }}/10</span>{% endif %}
+                </td>
+                <td>{% if c.observacao %}{{ c.observacao }}{% else %}<span class="none">sem registro</span>{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="coming-soon">
+    <p>Nenhum check-in registrado ainda.</p>
+</div>
+{% endif %}
+{% endblock %}

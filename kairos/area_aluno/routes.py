@@ -22,6 +22,7 @@ from kairos.agenda.service import list_sessoes
 from kairos.alunos.service import get_aluno
 from kairos.auth.middleware import current_user
 from kairos.avaliacoes.service import get_avaliacao, get_avaliacao_detail, list_avaliacoes
+from kairos.checkin.service import checkin_de_hoje
 from kairos.financeiro.service import get_plano, pagamentos_do_aluno
 from kairos.mensagens.service import contar_nao_lidas, ultima_do_coach
 from kairos.treinos.service import get_treino, get_treino_detail, list_treinos
@@ -212,6 +213,18 @@ async def inicio(request: Request):
             recado = _to_recado_display(ultima)
         recado_novo = contar_nao_lidas(aluno_id, "aluno") > 0
 
+    checkin_hoje: Optional[Dict[str, Any]] = None
+    treino_hoje: Optional[Dict[str, Any]] = None
+    if aluno_id:
+        checkin_hoje = checkin_de_hoje(aluno_id)
+
+        hoje = datetime.date.today()
+        sessao_hoje = next(
+            (s for s in list_sessoes(aluno_id) if s["data"] == hoje), None
+        )
+        if sessao_hoje is not None:
+            treino_hoje = _to_agendamento_display(sessao_hoje)
+
     return templates.TemplateResponse(
         request,
         "area_aluno/inicio.html",
@@ -220,6 +233,8 @@ async def inicio(request: Request):
             "proxima_sessao": proxima_sessao,
             "recado": recado,
             "recado_novo": recado_novo,
+            "checkin_hoje": checkin_hoje,
+            "treino_hoje": treino_hoje,
         },
     )
 
