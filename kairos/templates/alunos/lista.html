@@ -23,7 +23,12 @@
     <li class="card">
         <div class="card-header">
             <a class="card-title" href="/alunos/{{ aluno.id }}">{{ aluno.name }}</a>
-            <span class="badge {{ aluno.status_class }}">{{ aluno.status_label }}</span>
+            <span class="card-header-badges">
+                {% if aluno.msgs_nao_lidas %}
+                <span class="badge badge-msgs-nao-lidas">{{ aluno.msgs_nao_lidas }} nova{% if aluno.msgs_nao_lidas > 1 %}s{% endif %}</span>
+                {% endif %}
+                <span class="badge {{ aluno.status_class }}">{{ aluno.status_label }}</span>
+            </span>
         </div>
         <p class="card-line"><strong>Objetivo:</strong> {{ aluno.objective_display }}</p>
         <p class="card-line"><strong>Plano:</strong> {{ aluno.period_display }}</p>

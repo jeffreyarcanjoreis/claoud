@@ -127,6 +127,63 @@
   margin-bottom: var(--sp-3);
 }
 
+/* ===== recado do coach (Inicio) ===== */
+.recado-card {
+  display: block;
+  margin-top: var(--sp-4);
+  padding: var(--sp-4);
+  border: 1px solid var(--gold);
+  border-radius: var(--radius);
+  background: var(--void-2);
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.2s var(--ease), transform 0.2s var(--ease);
+}
+
+.recado-card:hover {
+  transform: translateY(-2px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .recado-card:hover {
+    transform: none;
+  }
+}
+
+.recado-topo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+.recado-titulo {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-lead);
+  color: var(--bone);
+}
+
+.badge-recado-novo {
+  color: var(--void);
+  background: var(--gold);
+  border-color: var(--gold);
+  padding: 3px 10px;
+  font-size: 9px;
+}
+
+.recado-texto {
+  margin-top: var(--sp-2);
+  font-size: var(--fs-body);
+  color: var(--bone-dim);
+}
+
+.recado-data {
+  display: block;
+  margin-top: var(--sp-1);
+  font-size: var(--fs-eyebrow);
+  color: var(--sage);
+}
+
 /* ===== secoes do inicio (agendamentos, treinos, avaliacoes, sessoes) ===== */
 .aluno-secao {
   margin-top: var(--sp-6);

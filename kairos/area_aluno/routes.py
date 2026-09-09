@@ -23,6 +23,7 @@ from kairos.alunos.service import get_aluno
 from kairos.auth.middleware import current_user
 from kairos.avaliacoes.service import get_avaliacao, get_avaliacao_detail, list_avaliacoes
 from kairos.financeiro.service import get_plano, pagamentos_do_aluno
+from kairos.mensagens.service import contar_nao_lidas, ultima_do_coach
 from kairos.treinos.service import get_treino, get_treino_detail, list_treinos
 from kairos.web import formatar_reais, templates
 
@@ -127,6 +128,24 @@ def _to_sessao_realizada_detail_display(r: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
+_RECADO_TRECHO_MAX = 120
+
+
+def _to_recado_display(m: Dict[str, Any]) -> Dict[str, Any]:
+    """Format the coach's most recent message for the home's "Recado do
+    coach" card.
+
+    The full text is truncated to a short excerpt (the aluno reads the rest
+    on the mensagens page).
+    """
+    texto = m["texto"]
+    trecho = texto if len(texto) <= _RECADO_TRECHO_MAX else texto[:_RECADO_TRECHO_MAX].rstrip() + "…"
+    return {
+        "texto_trecho": trecho,
+        "data": m["created_at"].strftime("%d/%m/%Y %H:%M"),
+    }
+
+
 def _to_plano_display(plano: Dict[str, Any]) -> Dict[str, Any]:
     """Format a :func:`get_plano` dict for display.
 
@@ -185,12 +204,22 @@ async def inicio(request: Request):
         if proxima is not None:
             proxima_sessao = _to_agendamento_display(proxima)
 
+    recado: Optional[Dict[str, Any]] = None
+    recado_novo = False
+    if aluno_id:
+        ultima = ultima_do_coach(aluno_id)
+        if ultima is not None:
+            recado = _to_recado_display(ultima)
+        recado_novo = contar_nao_lidas(aluno_id, "aluno") > 0
+
     return templates.TemplateResponse(
         request,
         "area_aluno/inicio.html",
         {
             "primeiro_nome": primeiro_nome,
             "proxima_sessao": proxima_sessao,
+            "recado": recado,
+            "recado_novo": recado_novo,
         },
     )
 

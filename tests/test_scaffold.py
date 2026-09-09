@@ -2,7 +2,7 @@
 
 Covers the functional specification:
 - app startup (lifespan) creates the database file and stamps alembic_version
-  at the head revision ("0019");
+  at the head revision ("0020");
 - GET /health returns 200 with {"status": "ok"};
 - existing database + pending migration -> a backup file is created in
   backups/ BEFORE the upgrade;
@@ -25,7 +25,7 @@ import kairos.db
 from kairos.main import app
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0019"  # bumped by migration 0019_add_email_to_alunos
+HEAD_REVISION = "0020"  # bumped by migration 0020_create_mensagens
 
 
 @pytest.fixture

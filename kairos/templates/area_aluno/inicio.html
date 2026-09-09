@@ -11,6 +11,17 @@
   {% endif %}
   <p class="cad-sub">Esta é a sua área no Kairos.</p>
 
+  {% if recado %}
+  <a class="recado-card" href="/aluno/mensagens">
+    <span class="recado-topo">
+      <span class="recado-titulo">Recado do coach</span>
+      {% if recado_novo %}<span class="badge badge-recado-novo">novo</span>{% endif %}
+    </span>
+    <p class="recado-texto">{{ recado.texto_trecho }}</p>
+    <span class="recado-data">{{ recado.data }}</span>
+  </a>
+  {% endif %}
+
   <section class="aluno-secao">
     <h2>Próxima sessão</h2>
     {% if proxima_sessao %}

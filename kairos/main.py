@@ -20,6 +20,7 @@ from kairos.avaliacoes.routes import router as avaliacoes_router
 from kairos.contatos.routes import router as contatos_router
 from kairos.financeiro.routes import router as financeiro_router
 from kairos.log import setup_logging
+from kairos.mensagens.routes import router as mensagens_router
 from kairos.migrations_runner import run_migrations
 from kairos.painel.routes import router as painel_router
 from kairos.tarefas.routes import router as tarefas_router
@@ -70,6 +71,7 @@ app.include_router(area_aluno_router)
 app.include_router(avaliacoes_router)
 app.include_router(contatos_router)
 app.include_router(financeiro_router)
+app.include_router(mensagens_router)
 app.include_router(acompanhamento_router)
 app.include_router(agenda_router)
 app.include_router(tarefas_router)

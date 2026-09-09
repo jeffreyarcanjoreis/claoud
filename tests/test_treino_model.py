@@ -22,7 +22,7 @@ from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio, Treino, TreinoItem
 
-HEAD_REVISION = "0019"  # bumped by migration 0019_add_email_to_alunos
+HEAD_REVISION = "0020"  # bumped by migration 0020_create_mensagens
 
 
 @pytest.fixture

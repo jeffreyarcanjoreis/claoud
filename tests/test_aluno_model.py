@@ -3,7 +3,7 @@
 
 Covers the functional specification (issues 23 and 29):
 - after migrating, the "alunos" table exists and the database is stamped at
-  the head revision ("0019");
+  the head revision ("0020");
 - the table has exactly the expected columns, INCLUDING the profile fields
   added by issue 23 to carry a converted lead's full profile -- contact,
   sex, age_reported, weekly_frequency, conditioning_level, health_conditions
@@ -29,7 +29,7 @@ from kairos.alunos.models import Aluno
 from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0019"  # bumped by migration 0019_add_email_to_alunos
+HEAD_REVISION = "0020"  # bumped by migration 0020_create_mensagens
 
 
 @pytest.fixture

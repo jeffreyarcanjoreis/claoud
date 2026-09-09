@@ -28,6 +28,7 @@ from kairos.alunos.service import (
 )
 from kairos.auth.service import get_perfil_by_aluno
 from kairos.auth.tokens import MAX_AGE_SEGUNDOS, gerar_token_ativacao
+from kairos.mensagens.service import alunos_com_nao_lidas
 from kairos.web import templates
 
 router = APIRouter()
@@ -79,7 +80,7 @@ def _format_age(age: Optional[int]) -> str:
     return f"{age} anos"
 
 
-def _to_display(aluno: Dict[str, Any]) -> Dict[str, Any]:
+def _to_display(aluno: Dict[str, Any], msgs_nao_lidas: int = 0) -> Dict[str, Any]:
     """Map a service-layer aluno dict to ready-to-print display fields."""
     return {
         "id": aluno["id"],
@@ -88,6 +89,7 @@ def _to_display(aluno: Dict[str, Any]) -> Dict[str, Any]:
         "status_label": _STATUS_LABELS.get(aluno["status"], aluno["status"]),
         "status_class": _STATUS_CLASSES.get(aluno["status"], "badge-inactive"),
         "period_display": _format_period(aluno["plan_start"], aluno["plan_end"]),
+        "msgs_nao_lidas": msgs_nao_lidas,
     }
 
 
@@ -136,8 +138,12 @@ async def list_alunos_route(
     than "active"/"inactive" is ignored by the service layer (defensive,
     never a 500).
     """
+    nao_lidas = alunos_com_nao_lidas()
     context: dict = {
-        "alunos": [_to_display(aluno) for aluno in list_alunos(status=status)],
+        "alunos": [
+            _to_display(aluno, nao_lidas.get(aluno["id"], 0))
+            for aluno in list_alunos(status=status)
+        ],
         "current_filter": status,
     }
     if criado is not None:

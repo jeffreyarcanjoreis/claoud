@@ -1267,6 +1267,90 @@ label.stat-toggle:hover .l {
   }
 }
 
+/* ===== mensagens (conversa aluno <-> coach) =====
+   Compartilhado pelas duas pontas: area_aluno/mensagens.html e
+   mensagens/ficha_mensagens.html usam as mesmas classes pra ficarem
+   visualmente identicas. */
+.msg-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  margin: var(--sp-4) 0;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: var(--sp-1);
+}
+
+.msg-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 70%;
+  padding: var(--sp-2) var(--sp-3);
+  border-radius: var(--radius);
+  border: 1px solid var(--line);
+  background: var(--void-2);
+}
+
+.msg-aluno {
+  align-self: flex-end;
+  border-color: var(--gold);
+}
+
+.msg-coach {
+  align-self: flex-start;
+  border-color: var(--line);
+}
+
+.msg-autor {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--clay);
+}
+
+.msg-aluno .msg-autor {
+  color: var(--gold);
+}
+
+.msg-texto {
+  font-size: var(--fs-body);
+  color: var(--bone);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.msg-data {
+  font-size: var(--fs-eyebrow);
+  color: var(--bone-dim);
+}
+
+.msg-form {
+  margin-top: var(--sp-4);
+}
+
+@media (max-width: 640px) {
+  .msg-item {
+    max-width: 100%;
+  }
+}
+
+/* ===== selo de mensagens nao lidas (lista de alunos) ===== */
+.card-header-badges {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: none;
+}
+
+.badge-msgs-nao-lidas {
+  color: var(--void);
+  background: var(--gold);
+  border-color: var(--gold);
+}
+
 /* ===== detalhe do contato (lead_detalhe) ===== */
 .lead-secao-titulo {
   margin-top: var(--sp-5);
