@@ -1,0 +1,95 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Como foi o treino?{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Como foi o treino?</h1>
+  <p class="cad-sub">Um resumo rápido do seu treino ajuda seu coach a ajustar o plano.</p>
+
+  {% if erro %}
+  <div class="message-error">{{ erro }}</div>
+  {% endif %}
+
+  <form method="post" action="/aluno/registro" class="checkin-form">
+    <div class="field">
+      <label for="treino_id">Treino</label>
+      <select id="treino_id" name="treino_id">
+        <option value="">—</option>
+        {% for tid, nome in treinos %}
+        <option value="{{ tid }}" {% if valores and valores.treino_id and valores.treino_id|string == tid|string %}selected{% endif %}>{{ nome }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="rpe">Esforço percebido — RPE (0–10)</label>
+        <input
+          type="number"
+          id="rpe"
+          name="rpe"
+          min="0"
+          max="10"
+          value="{% if valores and valores.rpe is not none %}{{ valores.rpe }}{% endif %}"
+        >
+      </div>
+      <div class="field">
+        <label for="sensacao">Sensação</label>
+        <select id="sensacao" name="sensacao">
+          <option value="">—</option>
+          {% for valor, label in sensacao_opcoes %}
+          <option value="{{ valor }}" {% if valores and valores.sensacao == valor %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="o_que_mudou">O que mudou</label>
+      <textarea id="o_que_mudou" name="o_que_mudou">{% if valores and valores.o_que_mudou %}{{ valores.o_que_mudou }}{% endif %}</textarea>
+    </div>
+
+    <div class="field">
+      <label for="dor_nova">Dor nova</label>
+      <textarea id="dor_nova" name="dor_nova">{% if valores and valores.dor_nova %}{{ valores.dor_nova }}{% endif %}</textarea>
+    </div>
+
+    <button type="submit" class="button-primary">Salvar registro</button>
+  </form>
+
+  <section class="aluno-secao">
+    <h2>Meus registros</h2>
+    {% if registros %}
+    <ul class="aluno-registros">
+      {% for r in registros %}
+      <li class="registro-item">
+        <div class="registro-cabecalho">
+          <span class="aluno-item-principal">{{ r.data }}</span>
+          {% if r.treino_nome %}<span class="aluno-item-meta">{{ r.treino_nome }}</span>{% endif %}
+        </div>
+        <p class="registro-linha">
+          <strong>RPE</strong>
+          {% if r.rpe is not none %}{{ r.rpe }}{% else %}<span class="sem-registro">sem registro</span>{% endif %}
+        </p>
+        <p class="registro-linha">
+          <strong>Sensação</strong>
+          {% if r.sensacao_label %}{{ r.sensacao_label }}{% else %}<span class="sem-registro">sem registro</span>{% endif %}
+        </p>
+        <p class="registro-linha">
+          <strong>O que mudou</strong>
+          {% if r.o_que_mudou %}{{ r.o_que_mudou }}{% else %}<span class="sem-registro">sem registro</span>{% endif %}
+        </p>
+        <p class="registro-linha">
+          <strong>Dor nova</strong>
+          {% if r.dor_nova %}{{ r.dor_nova }}{% else %}<span class="sem-registro">sem registro</span>{% endif %}
+        </p>
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="aluno-vazio">Você ainda não registrou nenhum treino.</p>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}

@@ -51,6 +51,9 @@
     {% else %}
     <p class="aluno-vazio">Nenhum treino marcado para hoje.</p>
     {% endif %}
+    {% if pode_registrar_hoje %}
+    <a class="registro-cta" href="/aluno/registro">Como foi o treino de hoje? Registrar</a>
+    {% endif %}
   </section>
 
   <section class="aluno-secao">

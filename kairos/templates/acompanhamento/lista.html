@@ -32,4 +32,37 @@
     <p>Ainda não há sessões registradas.</p>
 </div>
 {% endif %}
+
+<h2>Registros do aluno</h2>
+<p class="card-line-dim">Registros que o próprio aluno preencheu após o treino.</p>
+
+{% if registros_aluno %}
+<ul class="card-list">
+    {% for r in registros_aluno %}
+    <li class="card">
+        <p class="card-title">{{ r.data }}{% if r.treino_nome %} &middot; {{ r.treino_nome }}{% endif %}</p>
+        <p class="card-line">
+            <strong>RPE</strong>
+            {% if r.rpe is not none %}{{ r.rpe }}{% else %}<span class="none">sem registro</span>{% endif %}
+        </p>
+        <p class="card-line">
+            <strong>Sensação</strong>
+            {% if r.sensacao_label %}{{ r.sensacao_label }}{% else %}<span class="none">sem registro</span>{% endif %}
+        </p>
+        <p class="card-line">
+            <strong>O que mudou</strong>
+            {% if r.o_que_mudou %}{{ r.o_que_mudou }}{% else %}<span class="none">sem registro</span>{% endif %}
+        </p>
+        <p class="card-line">
+            <strong>Dor nova</strong>
+            {% if r.dor_nova %}{{ r.dor_nova }}{% else %}<span class="none">sem registro</span>{% endif %}
+        </p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="coming-soon">
+    <p>O aluno ainda não registrou treinos.</p>
+</div>
+{% endif %}
 {% endblock %}
