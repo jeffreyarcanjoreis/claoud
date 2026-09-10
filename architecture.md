@@ -17,3 +17,10 @@ Regras fixas do projeto. Toda fatia obedece a isto; mudanças aqui são decisão
 8. **Logs e tratamento de erros desde a primeira fatia.** Toda operação de escrita gera log; erro nunca é engolido silenciosamente.
 9. **Backup barato desde o início.** SQLite facilita: cópia versionada do arquivo do banco antes de cada migração.
 10. **Idioma:** código e identificadores em inglês; textos exibidos ao coach em português.
+
+## Princípios do método na interface (valem para toda tela do aluno e do coach)
+
+11. **O nível é autodeterminado pelo aluno.** "Nível" (Fundação / Construção / Domínio / Maestria) e todo progresso no método são **reconhecidos pela própria pessoa**: ela se julga capaz ou não, realiza com maestria ou com dificuldade, identifica suas habilidades e reconhece suas necessidades — e pode rever quando sentir. A interface **nunca** dá nota, ranking ou nível concedido de cima; não há barra de progresso a "ganhar". A escolha de esforço/variação (base, regressão, progressão) é da pessoa, lendo o próprio corpo — não uma regra imposta.
+12. **O verbo é da pessoa.** Toda escrita voltada ao aluno usa a primeira pessoa do autoconhecimento — *eu reconheço, eu escolho, eu percebo* — e honra a autorregulação e a autonomia (criar autonomia, não dependência).
+13. **O papel do coach na interface é conscientizar, acolhe, respeitar, educar.** O coach aparece como espelho e presença que acompanha — nunca como régua que classifica, corrige de cima ou tutela. Mesmo a passagem de nível é reconhecida pela pessoa; o coach conscientiza, não concede.
+14. **O momento certo (kairos).** O que o aluno registra de si (check-in, sensação, limite do dia) é a pessoa se lendo; o sistema e o coach **respeitam e ajustam** a essa leitura — o limite de hoje é dela. "Mover-se no momento certo."
