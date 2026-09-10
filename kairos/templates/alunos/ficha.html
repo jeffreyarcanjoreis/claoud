@@ -95,6 +95,40 @@
         <dd class="v">{% if aluno.alert_display == NONE %}<span class="none">{{ aluno.alert_display }}</span>{% else %}{{ aluno.alert_display }}{% endif %}</dd>
     </div>
 </dl>
+
+<h2 class="lead-secao-titulo">Frente</h2>
+<dl class="profile">
+    <div class="row">
+        <dt class="k">Frente atual</dt>
+        <dd class="v">
+            {% if aluno.frente_label %}
+            {{ aluno.frente_label }}
+            {% if aluno.frente_significado %}
+            <p class="field-hint">{{ aluno.frente_significado }}</p>
+            {% endif %}
+            {% else %}
+            <span class="none">{{ NONE }}</span>
+            {% endif %}
+        </dd>
+    </div>
+</dl>
+
+{% if erro_frente %}
+<div class="message-error">{{ erro_frente }}</div>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/frente">
+    <div class="field">
+        <label for="frente">Definir frente</label>
+        <select id="frente" name="frente">
+            <option value="">—</option>
+            {% for valor, label in frente_opcoes %}
+            <option value="{{ valor }}" {% if aluno.frente == valor %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="button-primary">Salvar frente</button>
+</form>
 {% else %}
 {% set labels = {
     'avaliacoes': 'Avaliações físicas',

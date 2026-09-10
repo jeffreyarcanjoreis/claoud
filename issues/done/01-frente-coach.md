@@ -7,7 +7,7 @@ Cada aluno passa a ter uma frente principal entre Performance, Saúde Integrada 
 nenhuma
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 A `frente` é um atributo do aluno (como os demais campos de perfil), definido pelo coach por uma **mutação focada** (padrão de `set_status`/`set_aluno_foto`), não pelo formulário grande de edição.

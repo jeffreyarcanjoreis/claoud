@@ -15,6 +15,8 @@ from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 from kairos import config
 from kairos.alunos.fotos import delete_foto_file, save_foto
 from kairos.alunos.service import (
+    FRENTE_LABELS,
+    FRENTE_OPCOES,
     ValidationError,
     aluno_tem_historico,
     arquivar_aluno,
@@ -24,6 +26,7 @@ from kairos.alunos.service import (
     list_alunos,
     reativar_aluno,
     set_aluno_foto,
+    set_frente,
     update_aluno,
 )
 from kairos.auth.service import get_perfil_by_aluno
@@ -44,6 +47,8 @@ _FOTO_MEDIA_TYPES = {
 
 _STATUS_LABELS = {"active": "Ativo", "inactive": "Inativo"}
 _STATUS_CLASSES = {"active": "badge-active", "inactive": "badge-inactive"}
+
+_FRENTE_OPCOES_DISPLAY = [(v, FRENTE_LABELS[v]) for v in FRENTE_OPCOES]
 
 
 def _format_date(value: Optional[datetime.date]) -> str:
@@ -125,6 +130,9 @@ def _to_profile_display(aluno: Dict[str, Any]) -> Dict[str, str]:
         "conditioning_label": aluno.get("conditioning_label") or _NO_RECORD,
         "health_conditions_display": aluno.get("health_conditions") or _NO_RECORD,
         "medications_display": aluno.get("medications") or _NO_RECORD,
+        "frente": aluno.get("frente") or "",
+        "frente_label": aluno.get("frente_label") or _NO_RECORD,
+        "frente_significado": aluno.get("frente_significado") or "",
     }
 
 
@@ -483,6 +491,32 @@ async def reativar_aluno_route(request: Request, aluno_id: int):
     )
 
 
+@router.post("/alunos/{aluno_id}/frente")
+async def set_frente_route(
+    request: Request, aluno_id: int, frente: Optional[str] = Form(None)
+):
+    """Set (or clear) a student's "frente" via the service layer."""
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return templates.TemplateResponse(
+            request,
+            "alunos/nao_encontrado.html",
+            {},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+    try:
+        set_frente(aluno_id, frente)
+    except ValidationError as exc:
+        response = _render_ficha(
+            request, aluno_id, "perfil", {"erro_frente": str(exc)}
+        )
+        response.status_code = status.HTTP_400_BAD_REQUEST
+        return response
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}?atualizado=1", status_code=status.HTTP_303_SEE_OTHER
+    )
+
+
 @router.get("/alunos/{aluno_id}/excluir", response_class=HTMLResponse)
 async def excluir_aluno_confirma(request: Request, aluno_id: int) -> HTMLResponse:
     """Render the permanent-delete confirmation page for a student, or a
@@ -582,6 +616,7 @@ def _render_ficha(
     context: Dict[str, Any] = {
         "aluno": _to_profile_display(aluno),
         "subtab": subtab,
+        "frente_opcoes": _FRENTE_OPCOES_DISPLAY,
     }
     if extra_context:
         context.update(extra_context)

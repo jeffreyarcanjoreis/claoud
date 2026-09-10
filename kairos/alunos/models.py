@@ -39,6 +39,7 @@ class Aluno(Base):
     conditioning_level: Mapped[Optional[str]] = mapped_column(
         String(20), nullable=True
     )
+    frente: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     health_conditions: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     medications: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(

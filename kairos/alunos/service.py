@@ -46,6 +46,20 @@ CONDITIONING_LABELS = {
     "avancado": "Avançado",
 }
 
+FRENTE_OPCOES = ("performance", "saude_integrada", "longevidade")
+
+FRENTE_LABELS = {
+    "performance": "Performance",
+    "saude_integrada": "Saúde Integrada",
+    "longevidade": "Longevidade",
+}
+
+FRENTE_SIGNIFICADOS = {
+    "performance": "O corpo agora — técnica que vira potência.",
+    "saude_integrada": "O corpo equilibrado — criar hábito e sustentar.",
+    "longevidade": "O corpo no tempo longo — mobilidade e vitalidade.",
+}
+
 WEEKLY_FREQUENCIES = ("1-2", "3-4", "5+")
 
 WEEKLY_FREQUENCY_LABELS = {
@@ -183,6 +197,11 @@ def _to_dict(aluno: Aluno) -> Dict[str, Any]:
         "health_conditions": aluno.health_conditions,
         "medications": aluno.medications,
         "email": aluno.email,
+        "frente": aluno.frente,
+        "frente_label": FRENTE_LABELS.get(aluno.frente) if aluno.frente else None,
+        "frente_significado": (
+            FRENTE_SIGNIFICADOS.get(aluno.frente) if aluno.frente else None
+        ),
     }
 
 
@@ -518,6 +537,32 @@ def set_status(aluno_id: int, status: Optional[str]) -> Optional[Dict[str, Any]]
         result = _to_dict(aluno)
 
     logger.info("Aluno status updated: id=%s status=%s", result["id"], status)
+    return result
+
+
+def set_frente(aluno_id: int, frente: Optional[str]) -> Optional[Dict[str, Any]]:
+    """Set (or clear, with ``None``/empty) an Aluno's frente.
+
+    ``frente`` is normalized (empty or whitespace-only becomes None); None
+    is a valid value and clears the field back to "sem registro". Raises
+    :class:`ValidationError` (message in Portuguese) when ``frente`` is
+    present but not one of :data:`FRENTE_OPCOES`. Returns None when
+    ``aluno_id`` does not exist, otherwise the updated Aluno as a dict.
+    """
+    frente = _normalize(frente)
+    if frente is not None and frente not in FRENTE_OPCOES:
+        raise ValidationError("Frente inválida.")
+
+    with session_scope() as session:
+        aluno = session.get(Aluno, aluno_id)
+        if aluno is None:
+            return None
+        aluno.frente = frente
+        session.flush()
+        session.refresh(aluno)
+        result = _to_dict(aluno)
+
+    logger.info("Frente definida: aluno_id=%s frente=%s", aluno_id, frente)
     return result
 
 

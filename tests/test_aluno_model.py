@@ -29,7 +29,7 @@ from kairos.alunos.models import Aluno
 from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0022"  # bumped by migration 0022_create_registros_treino
+HEAD_REVISION = "0023"  # bumped by migration 0023_add_frente_to_alunos
 
 
 @pytest.fixture
@@ -107,6 +107,7 @@ def test_alunos_table_has_the_expanded_profile_columns(data_dir: Path) -> None:
         "notes",
         "foto",
         "created_at",
+        "frente",
     }
     assert columns == expected
 
