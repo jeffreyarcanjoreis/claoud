@@ -24,7 +24,7 @@ from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio
 
-HEAD_REVISION = "0023"  # bumped by migration 0023_add_frente_to_alunos
+HEAD_REVISION = "0024"  # bumped by migration 0024_create_reconhecimentos_nivel
 
 
 @pytest.fixture

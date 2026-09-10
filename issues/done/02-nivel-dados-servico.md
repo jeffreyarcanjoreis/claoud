@@ -7,7 +7,7 @@ A base do nível autodeterminado: guardar cada autorreconhecimento de nível de 
 nenhuma
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Domínio novo `nivel` (autorreconhecimento de nível), espelhando o módulo `registro_treino` (modelo + serviço, sem rotas nesta fatia). Cada reconhecimento é um registro imutável; **o atual é o mais recente** e os anteriores ficam no histórico (mostra evolução; regra 6: nada é sobrescrito nem inventado).
