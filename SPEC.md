@@ -1,66 +1,65 @@
 # SPEC — Sistema Kairos (plataforma do coach + área do aluno)
 
-> Fatia atual: **Autoavaliação** (Fase 4 do roadmap da área do aluno) — a 4ª válvula.
-> Fatias anteriores concluídas até a Fase 3 (registro pós-treino); **786 testes** (785 + 1 skip), head de migração **0022**.
-> Roadmap: `docs/roadmap-area-aluno.md`. Workflow: `App Kairos Movimento/10 - Workflow da Área do Coach.md`. Domínio: `09 - Modelo de Domínio.md`.
+> Fatia atual: **Frente + nível autorreconhecido** (1ª fatia da profundidade do Treino).
+> Primeira fatia que faz o app começar a *ser* Kairos: traz a frente e o nível do método para dentro do produto, com o nível **autodeterminado pelo aluno** (architecture.md, regras 11–14).
+> Fatias anteriores entregues até a Fase 3; **786 testes**, head de migração **0022**. As 7 issues da Autoavaliação (Fase 4) ficam **paradas** em `issues/` para retomar depois.
+> Método: skill `kairos-method`. Roadmap da área do aluno: `docs/roadmap-area-aluno.md`.
 
 ## Overview
 
-A **Autoavaliação** é a 4ª válvula do método (o aluno mede o que o mercado não mede) e o primeiro passo da Fase 4. O coach **envia** ao aluno uma autoavaliação — um questionário **fixo do método Kairos** (não é montado à mão nesta fatia) — e o aluno **responde** dando uma nota 0–10 a cada pergunta mais uma observação livre. O coach **lê** as respostas na ficha do aluno; os dois lados veem o histórico. É uma feature de dois lados, coach-primeiro: o coach precisa enviar antes de o aluno ter o que responder.
+Hoje o Treino é uma planilha plana — não carrega o método. Esta fatia traz duas ideias centrais do Kairos para dentro do produto: a **frente** (o arco de cada pessoa: Performance, Saúde Integrada ou Longevidade) e o **nível** (I–IV) dentro dessa frente. A frente nasce da avaliação inicial, então é o **coach** quem a define/ajusta na ficha; o nível é **autodeterminado** — quem se reconhece num nível é o **aluno**, que pode rever quando sentir. O coach vê o que o aluno reconheceu e acompanha (conscientiza, acolhe, respeita, educa), mas **nunca dá o nível**. É uma capacidade de dois lados, coach-primeiro para a frente.
 
-Decisões (com o PO): (a) o questionário é um **modelo fixo Kairos** — o coach só dispara, não escreve perguntas; editar o modelo fica fora desta fatia; (b) cada pergunta é uma **escala 0–10** (notas obrigatórias) mais **uma observação em texto livre** (opcional); (c) o coach envia **por aluno, sob demanda** (sem agendamento/recorrência); o aluno responde **uma vez** e a resposta passa a ser só-leitura; (d) o histórico (enviadas/respondidas) é visível para o aluno e para o coach.
+## Vocabulário fixo (o conteúdo do método)
 
-## Modelo fixo Kairos (v1)
+**Frentes** (uma principal por aluno nesta fatia):
+- **Performance** — o corpo agora: técnica → picos de atleta.
+- **Saúde Integrada** — o corpo equilibrado: criar hábito → saúde como identidade.
+- **Longevidade** — o corpo no tempo longo: mobilidade/segurança → vitalidade plena para a idade.
 
-Cinco perguntas de escala **0–10** (o aluno se avalia no período), mais uma observação livre. Textos refináveis depois (fora desta fatia):
-
-1. **Autorregulação** — "Consegui ajustar o esforço ao que meu corpo pedia."
-2. **Autonomia** — "Me senti capaz de conduzir meus treinos sem depender de instrução o tempo todo."
-3. **Consistência** — "Mantive a regularidade que combinei comigo."
-4. **Conexão** — "Me senti presente e conectado durante o movimento."
-5. **Evolução percebida** — "Senti evolução no meu corpo / condicionamento no período."
-6. **Observação** (texto livre, opcional) — "O que mais você quer me contar sobre esse período?"
+**Níveis** (os mesmos quatro em qualquer frente; textos em 1ª pessoa para o aluno):
+- **I · Fundação** — "aprendo a sentir, domino o simples."
+- **II · Construção** — "amplio a capacidade, com domínio crescente."
+- **III · Domínio** — "tenho autonomia, refino, encaro desafios reais."
+- **IV · Maestria** — "alta capacidade e autorregulação — quase me conduzo."
 
 ## Áreas
 
-- **Autoavaliações do aluno (coach)** (`/alunos/{id}/autoavaliacoes`) — sub-aba da ficha: lista as autoavaliações enviadas àquele aluno (data, estado pendente/respondida) e o botão "Enviar autoavaliação"; abrir uma respondida mostra as notas + observação (só-leitura).
-- **Autoavaliação (aluno)** (`/aluno/autoavaliacoes`) — nova aba na área do aluno: a(s) pendente(s) para responder + o histórico das respondidas; abrir uma pendente mostra o formulário; abrir uma respondida mostra as respostas (só-leitura).
-- **Início do aluno** (`/aluno`) — ganha um CTA leve quando há autoavaliação pendente (eco da regra de ouro).
+- **Ficha do aluno → Frente (coach)** (`/alunos/{id}/...`) — o coach vê a frente atual do aluno e a define/ajusta entre as três; vê (só leitura) o nível que o aluno reconheceu, o histórico e as notas.
+- **Meu Treino → Frente e nível (aluno)** (`/aluno/...`) — o aluno vê a sua frente e o que ela significa; se reconhece num nível I–IV (1ª pessoa), com nota opcional, revisável; e vê o histórico dos próprios reconhecimentos.
 
 ## Componentes
 
-- **Cartão de autoavaliação** — item de lista com data e estado (pendente / respondida), reutilizado nas duas listas (coach e aluno).
-- **Formulário do modelo Kairos** — as 5 escalas 0–10 + observação, renderizado no lado do aluno (resposta) e reusado como leitura no lado do coach.
+- **Seletor de frente** (coach) — as três frentes como opções; mostra a atual ou "sem registro".
+- **Cartão de frente** (aluno) — a frente e seu significado, só leitura.
+- **Reconhecimento de nível** (aluno) — os quatro níveis descritos em 1ª pessoa, o atual marcado como "me reconheço aqui", com nota opcional.
+- **Linha do tempo de reconhecimentos** — histórico (data, nível, nota), mais recente primeiro; reusada no aluno e (leitura) no coach.
 
 ## Comportamentos
 
-**Envio (coach-primeiro)**
-1. A sub-aba "Autoavaliações" na ficha do aluno lista as autoavaliações daquele aluno (data de envio, estado), mais recente primeiro; estado vazio quando não há nenhuma.
-2. O botão "Enviar autoavaliação" cria uma nova autoavaliação para o aluno no estado **pendente** (com a data de envio) a partir do modelo fixo, e volta à lista mostrando-a.
-3. Enviar quando o aluno já tem uma autoavaliação **pendente** é recusado com aviso (não empilha pendentes).
+**Frente (coach-primeiro)**
+1. Na ficha do aluno, o coach vê a frente atual do aluno, ou "sem registro" quando não há nenhuma.
+2. O coach define a frente do aluno escolhendo uma das três; grava e passa a exibir a frente escolhida.
+3. O coach troca a frente por outra das três; a atualização substitui a anterior (uma frente principal por aluno).
+4. Uma frente fora do conjunto das três é recusada; nada é gravado.
 
-**Resposta (aluno)**
-4. A aba "Autoavaliação" na área do aluno mostra a(s) pendente(s) para responder e o histórico das respondidas; estado vazio quando não há nenhuma.
-5. Abrir uma autoavaliação pendente mostra o formulário do modelo Kairos: as 5 perguntas em escala 0–10 e o campo de observação.
-6. Responder com as 5 notas válidas (0–10) grava as respostas, marca a autoavaliação como **respondida** (com a data de resposta) e redireciona à lista.
-7. Uma nota fora de 0–10, ou uma nota faltando, é recusada sem perder o que já foi digitado (a observação é opcional).
-8. Uma autoavaliação já **respondida** é só-leitura: mostra as respostas gravadas e não pode ser respondida de novo (novo envio de resposta é recusado).
-9. Isolamento: o aluno só vê e só responde autoavaliações do próprio (aluno_id da sessão); abrir/responder a de outro aluno devolve "não encontrado" (404, nunca 403).
+**Nível (autodeterminado pelo aluno)**
+5. Na sua área, o aluno vê a sua frente e o significado dela; sem frente definida, vê "sem registro" e um convite a falar com o coach (nada é inventado).
+6. O aluno vê os quatro níveis descritos em 1ª pessoa e pode se reconhecer em um deles.
+7. Reconhecer-se num nível grava um reconhecimento com a data e passa a mostrá-lo como "onde me reconheço hoje".
+8. O aluno pode rever o seu nível a qualquer momento; o novo reconhecimento passa a ser o atual (o anterior fica no histórico).
+9. Ao se reconhecer, o aluno pode deixar uma nota opcional do porquê; nota vazia fica NULL (regra 6).
+10. O aluno vê o histórico dos próprios reconhecimentos (data, nível, nota), mais recente primeiro; vazio quando ainda não se reconheceu.
+11. Isolamento: o aluno só vê e só registra o próprio nível (aluno_id da sessão); nunca o de outro.
 
-**Leitura (coach)**
-10. O coach abre uma autoavaliação **respondida** e vê as notas por pergunta e a observação (só-leitura); uma **pendente** aparece como "aguardando resposta".
-
-**Início (regra de ouro)**
-11. Quando o aluno tem autoavaliação pendente, o início mostra um CTA leve "Você tem uma autoavaliação para responder → responder"; sem pendente, o CTA não aparece.
+**Coach acompanha (não dá nota)**
+12. Na ficha, o coach vê o nível atual que o aluno reconheceu, o histórico e as notas — só leitura; "sem registro" quando o aluno ainda não se reconheceu. Em nenhum lugar o coach define o nível.
 
 **Geral**
-12. Toda escrita gera log; textos exibidos em português (regra 10); campo sem dado é NULL / "sem registro" (regra 6). Os 786 testes anteriores continuam verdes; nenhum comportamento anterior muda.
+13. Sem frente / sem nível = "sem registro", nunca um default falso (regra 6). Texto do aluno em 1ª pessoa; o coach como presença, não régua (regras 11–14). Toda escrita loga; textos pt-BR. Os 786 testes anteriores continuam verdes; nada anterior muda.
 
-## Fora desta fatia (Fase 4 seguinte / futuro)
+## Fora desta fatia
 
-- **Marcadores Kairos** (presença / autorregulação / autonomia por período, avaliados pelo coach) — fatia seguinte da Fase 4.
-- **Passagem de nível** — o conceito de **frente + nível I–IV** e o reconhecimento de subida de nível pelo coach — fatia seguinte da Fase 4.
-- **Coach escrever/editar o questionário** (perguntas próprias, editar o modelo fixo).
-- **Envio recorrente/agendado** e **notificações** de nova autoavaliação.
-- Outros tipos de resposta (múltipla escolha); gráfico de evolução das notas ao longo do tempo.
-- **Log de execução do treino** (cargas/reps reais por série — Fase 3b), independente desta fatia.
+- **Frente secundária** e as frentes futuras **Reabilitação** / **Bem-estar**.
+- **Conscientização ativa do coach sobre o nível** (comentar/sugerir no reconhecimento) — nesta fatia o coach só lê; conversa vai pelo canal de mensagens que já existe.
+- **Critérios/gate de passagem de nível** (os 4 critérios do método, marcadores Kairos) — aqui o reconhecimento é livre e revisável, sem gate.
+- **Periodização** (macro/meso/micro), **as 5 fases da sessão** e **vídeo no exercício** — fatias seguintes da profundidade do Treino.
