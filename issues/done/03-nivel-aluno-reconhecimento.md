@@ -7,7 +7,7 @@ Na sua área, o aluno vê a sua frente e o que ela significa (ou "sem registro" 
 01 (frente — para exibir frente + significado), 02 (dados + serviço do nível)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Lado do aluno, espelhando `kairos/registro_treino/routes.py` + `templates/area_aluno/registro.html`: rotas finas, `aluno_id` **sempre da sessão** (`current_user(request).get("aluno_id")`, nunca da URL), toda regra no serviço. Texto em 1ª pessoa (regras 11–14). Uma nova aba **"Nível"** na navegação do aluno leva a `/aluno/nivel`.

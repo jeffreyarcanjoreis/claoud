@@ -23,6 +23,7 @@ from kairos.financeiro.routes import router as financeiro_router
 from kairos.log import setup_logging
 from kairos.mensagens.routes import router as mensagens_router
 from kairos.migrations_runner import run_migrations
+from kairos.nivel.routes import router as nivel_router
 from kairos.painel.routes import router as painel_router
 from kairos.registro_treino.routes import router as registro_treino_router
 from kairos.tarefas.routes import router as tarefas_router
@@ -77,6 +78,7 @@ app.include_router(financeiro_router)
 app.include_router(mensagens_router)
 app.include_router(acompanhamento_router)
 app.include_router(agenda_router)
+app.include_router(nivel_router)
 app.include_router(registro_treino_router)
 app.include_router(tarefas_router)
 app.include_router(treinos_router)

@@ -1,0 +1,77 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Meu nível{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/css/components.css?v={{ asset_ver }}">
+{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Meu nível</h1>
+  <p class="cad-sub">Onde eu me reconheço hoje — e posso rever quando sentir.</p>
+
+  <section class="aluno-secao">
+    <h2>Minha frente</h2>
+    {% if frente_label %}
+    <p class="aluno-item-principal">{{ frente_label }}</p>
+    {% if frente_significado %}
+    <p class="field-hint">{{ frente_significado }}</p>
+    {% endif %}
+    {% else %}
+    <p><span class="none">sem registro</span></p>
+    <p class="aluno-vazio">Converse com seu coach para definir sua frente.</p>
+    {% endif %}
+  </section>
+
+  {% if erro %}
+  <div class="message-error">{{ erro }}</div>
+  {% endif %}
+
+  <form method="post" action="/aluno/nivel" class="checkin-form">
+    <div class="field">
+      <span class="nivel-pergunta">Onde eu me reconheço hoje?</span>
+      <div class="nivel-opcoes">
+        {% for valor, label, descricao in nivel_opcoes %}
+        <label class="nivel-opcao">
+          <input type="radio" name="nivel" value="{{ valor }}" {% if nivel_atual_valor == valor %}checked{% endif %}>
+          <span class="nivel-opcao-texto">
+            <span class="nivel-opcao-titulo">
+              {{ label }}
+              {% if nivel_atual_valor == valor %}<span class="badge badge-active">onde me reconheço hoje</span>{% endif %}
+            </span>
+            <span class="nivel-opcao-descricao">{{ descricao }}</span>
+          </span>
+        </label>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="nota">Por que me reconheço aqui? (opcional)</label>
+      <textarea id="nota" name="nota">{% if nota_valor %}{{ nota_valor }}{% endif %}</textarea>
+    </div>
+
+    <button type="submit" class="button-primary">Reconhecer meu nível</button>
+  </form>
+
+  <section class="aluno-secao">
+    <h2>Minha evolução</h2>
+    {% if reconhecimentos %}
+    <ul class="aluno-lista">
+      {% for r in reconhecimentos %}
+      <li class="aluno-lista-item">
+        <span class="aluno-item-meta">{{ r.data }}</span>
+        <span class="aluno-item-principal">{{ r.nivel_label }}</span>
+        {% if r.nota %}
+        <span class="aluno-item-meta">{{ r.nota }}</span>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p class="aluno-vazio">Você ainda não se reconheceu num nível.</p>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}

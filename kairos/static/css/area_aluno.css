@@ -311,3 +311,57 @@
 .checkin-form .field textarea {
   min-height: 5.5rem;
 }
+
+/* ===== opcoes de nivel (pagina "Meu nivel") ===== */
+.nivel-pergunta {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.nivel-opcoes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.nivel-opcao {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease);
+}
+
+.nivel-opcao:has(input:checked) {
+  border-color: var(--gold);
+}
+
+.nivel-opcao input {
+  margin-top: 4px;
+}
+
+.nivel-opcao-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.nivel-opcao-titulo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  color: var(--bone);
+}
+
+.nivel-opcao-descricao {
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+}
