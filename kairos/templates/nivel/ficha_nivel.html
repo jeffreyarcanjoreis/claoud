@@ -1,0 +1,39 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Nível reconhecido pelo aluno</h2>
+
+{% if nivel_atual %}
+<ul class="card-list">
+    <li class="card">
+        <p class="card-title">{{ nivel_atual.data }} &middot; {{ nivel_atual.nivel_label }}</p>
+        {% if nivel_atual.nota %}
+        <p class="card-line">{{ nivel_atual.nota }}</p>
+        {% endif %}
+    </li>
+</ul>
+{% else %}
+<div class="coming-soon">
+    <p>Sem registro — aguardando o aluno se reconhecer.</p>
+</div>
+{% endif %}
+
+<h2>Evolução</h2>
+
+{% if historico %}
+<ul class="card-list">
+    {% for h in historico %}
+    <li class="card">
+        <p class="card-title">{{ h.data }} &middot; {{ h.nivel_label }}</p>
+        {% if h.nota %}
+        <p class="card-line">{{ h.nota }}</p>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="coming-soon">
+    <p>Ainda não há histórico de nível registrado.</p>
+</div>
+{% endif %}
+{% endblock %}

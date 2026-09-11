@@ -5,9 +5,15 @@ Thin routes only: they collect data, delegate every business rule to
 :mod:`kairos.nivel.service`, and render templates. Displayed texts are in
 Portuguese (architecture rule 10).
 
-Only the aluno's own side exists here: ``aluno_id`` is always resolved from
-the session (never from the URL), matching the isolation rule used
-throughout :mod:`kairos.registro_treino.routes`.
+Two sides exist:
+
+- The aluno's own side (``/aluno/nivel``) always resolves ``aluno_id`` from
+  the session (never from the URL), matching the isolation rule used
+  throughout :mod:`kairos.registro_treino.routes`.
+- The coach's side (``/alunos/{aluno_id}/nivel``) takes ``aluno_id`` from the
+  URL, is read-only (the coach never sets the aluno's level — architecture
+  rules 11-14), and follows the get-or-404 + ``ficha_header``/``subtab``
+  pattern used throughout :mod:`kairos.checkin.routes`.
 """
 
 from typing import Any, Dict, List, Optional
@@ -26,7 +32,7 @@ from kairos.nivel.service import (
     nivel_atual,
     reconhecer,
 )
-from kairos.web import templates
+from kairos.web import ficha_header, templates
 
 router = APIRouter()
 
@@ -107,3 +113,33 @@ async def aluno_reconhecer(
         )
 
     return RedirectResponse(url="/aluno/nivel", status_code=status.HTTP_303_SEE_OTHER)
+
+
+@router.get("/alunos/{aluno_id}/nivel", response_class=HTMLResponse)
+async def coach_nivel(request: Request, aluno_id: int) -> HTMLResponse:
+    """Render the "Nível" sub-tab of the student's ficha, or a 404 page.
+
+    Read-only: the coach only observes the aluno's self-recognized level and
+    history here; the coach never sets it (architecture rules 11-14).
+    """
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return templates.TemplateResponse(
+            request,
+            "alunos/nao_encontrado.html",
+            {},
+            status_code=status.HTTP_404_NOT_FOUND,
+        )
+
+    atual = nivel_atual(aluno_id)
+
+    return templates.TemplateResponse(
+        request,
+        "nivel/ficha_nivel.html",
+        {
+            "aluno": ficha_header(aluno),
+            "subtab": "nivel",
+            "nivel_atual": _to_reconhecimento_display(atual) if atual else None,
+            "historico": _reconhecimentos_display(aluno_id),
+        },
+    )

@@ -7,7 +7,7 @@ Na ficha do aluno, o coach vê o nível atual que o aluno reconheceu, o históri
 01 (frente na ficha — onde a seção se acomoda), 02 (dados + serviço do nível)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Espelha EXATAMENTE o padrão da sub-aba de coach do domínio `checkin`: uma rota `GET /alunos/{aluno_id}/...` em `kairos/checkin/routes.py` (`coach_checkins`) renderiza `checkin/ficha_checkins.html` (que estende `alunos/ficha_layout.html`) com `aluno=ficha_header(aluno)` e `subtab`, e há um link na subnav de `ficha_layout.html`. Mantém a lógica do nível dentro do módulo `nivel` (isolamento), sem acoplar `alunos/routes.py`.
