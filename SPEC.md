@@ -1,65 +1,57 @@
 # SPEC — Sistema Kairos (plataforma do coach + área do aluno)
 
-> Fatia atual: **Frente + nível autorreconhecido** (1ª fatia da profundidade do Treino).
-> Primeira fatia que faz o app começar a *ser* Kairos: traz a frente e o nível do método para dentro do produto, com o nível **autodeterminado pelo aluno** (architecture.md, regras 11–14).
-> Fatias anteriores entregues até a Fase 3; **786 testes**, head de migração **0022**. As 7 issues da Autoavaliação (Fase 4) ficam **paradas** em `issues/` para retomar depois.
-> Método: skill `kairos-method`. Roadmap da área do aluno: `docs/roadmap-area-aluno.md`.
+> Fatia atual: **As 5 fases da sessão — organizar a planilha do treino** (profundidade do Treino).
+> Recorte enxuto: cada exercício do treino pertence a uma das 5 fases; a planilha (coach e aluno) passa a mostrar os exercícios agrupados nas fases, cada uma com sua pergunta-guia.
+> Fatia anterior (Frente + nível) concluída; **826 testes**, head de migração **0024**. As 7 issues da Autoavaliação (Fase 4) seguem paradas em `issues/parked/`.
+> Método: skill `kairos-method` (as 5 fases estão em `references/pratica.md`). Roadmap: `docs/roadmap-area-aluno.md`.
 
 ## Overview
 
-Hoje o Treino é uma planilha plana — não carrega o método. Esta fatia traz duas ideias centrais do Kairos para dentro do produto: a **frente** (o arco de cada pessoa: Performance, Saúde Integrada ou Longevidade) e o **nível** (I–IV) dentro dessa frente. A frente nasce da avaliação inicial, então é o **coach** quem a define/ajusta na ficha; o nível é **autodeterminado** — quem se reconhece num nível é o **aluno**, que pode rever quando sentir. O coach vê o que o aluno reconheceu e acompanha (conscientiza, acolhe, respeita, educa), mas **nunca dá o nível**. É uma capacidade de dois lados, coach-primeiro para a frente.
+Hoje o treino de um aluno é uma **planilha plana** — uma lista de exercícios sem estrutura. Esta fatia traz a primeira camada do método para dentro dela: as **5 fases da sessão**. Cada exercício passa a pertencer a uma fase (Preparação → Aquecimento → Skill → Ápice → Volta à calma); o coach escolhe a fase ao montar o treino, e a planilha — do coach e do aluno — passa a se ler como uma **sessão em fases**, cada uma com a sua pergunta-guia, em vez de uma lista solta. É a estrutura fixa do método aparecendo no produto (proporções/tempos e ajuste ao momento vêm depois).
 
-## Vocabulário fixo (o conteúdo do método)
+## Vocabulário fixo (as 5 fases, do método)
 
-**Frentes** (uma principal por aluno nesta fatia):
-- **Performance** — o corpo agora: técnica → picos de atleta.
-- **Saúde Integrada** — o corpo equilibrado: criar hábito → saúde como identidade.
-- **Longevidade** — o corpo no tempo longo: mobilidade/segurança → vitalidade plena para a idade.
+Ordem canônica, cada fase com a sua pergunta-guia:
 
-**Níveis** (os mesmos quatro em qualquer frente; textos em 1ª pessoa para o aluno):
-- **I · Fundação** — "aprendo a sentir, domino o simples."
-- **II · Construção** — "amplio a capacidade, com domínio crescente."
-- **III · Domínio** — "tenho autonomia, refino, encaro desafios reais."
-- **IV · Maestria** — "alta capacidade e autorregulação — quase me conduzo."
+1. **Preparação** — "Quem chegou hoje?"
+2. **Aquecimento** — "O corpo está aqui agora?"
+3. **Skill** — "Este corpo está pronto?"
+4. **Ápice** — "Qual o limite de hoje?"
+5. **Volta à calma** — "O que mudou?"
+
+Um exercício sem fase definida (inclusive os de treinos já existentes) aparece num grupo **"Sem fase"** ao fim — nunca numa fase inventada (regra 6).
 
 ## Áreas
 
-- **Ficha do aluno → Frente (coach)** (`/alunos/{id}/...`) — o coach vê a frente atual do aluno e a define/ajusta entre as três; vê (só leitura) o nível que o aluno reconheceu, o histórico e as notas.
-- **Meu Treino → Frente e nível (aluno)** (`/aluno/...`) — o aluno vê a sua frente e o que ela significa; se reconhece num nível I–IV (1ª pessoa), com nota opcional, revisável; e vê o histórico dos próprios reconhecimentos.
+- **Planilha do treino (coach)** (`/alunos/{id}/treino/{treino_id}`) — ao adicionar um exercício, o coach escolhe a fase; a planilha mostra os exercícios agrupados nas 5 fases (ordem canônica, com a pergunta-guia), mais o grupo "Sem fase" quando houver.
+- **Treino do aluno (leitura)** (`/aluno/treinos/{treino_id}`) — a mesma planilha, agrupada nas 5 fases com as perguntas-guia, só leitura.
 
 ## Componentes
 
-- **Seletor de frente** (coach) — as três frentes como opções; mostra a atual ou "sem registro".
-- **Cartão de frente** (aluno) — a frente e seu significado, só leitura.
-- **Reconhecimento de nível** (aluno) — os quatro níveis descritos em 1ª pessoa, o atual marcado como "me reconheço aqui", com nota opcional.
-- **Linha do tempo de reconhecimentos** — histórico (data, nível, nota), mais recente primeiro; reusada no aluno e (leitura) no coach.
+- **Seletor de fase** — as 5 fases como opções no formulário de adicionar exercício (mais "—" para sem fase).
+- **Bloco de fase** — cabeçalho com o nome da fase + a pergunta-guia, seguido dos exercícios daquela fase (ou "nenhum exercício nesta fase"); reutilizado na planilha do coach e na do aluno.
 
 ## Comportamentos
 
-**Frente (coach-primeiro)**
-1. Na ficha do aluno, o coach vê a frente atual do aluno, ou "sem registro" quando não há nenhuma.
-2. O coach define a frente do aluno escolhendo uma das três; grava e passa a exibir a frente escolhida.
-3. O coach troca a frente por outra das três; a atualização substitui a anterior (uma frente principal por aluno).
-4. Uma frente fora do conjunto das três é recusada; nada é gravado.
+**Montar (coach)**
+1. Ao adicionar um exercício ao treino, o coach pode escolher a fase dele entre as 5 (ou deixar sem fase).
+2. Adicionar um exercício com uma fase válida grava o exercício naquela fase; uma fase fora do conjunto das 5 é recusada (nada gravado).
+3. Adicionar um exercício sem escolher fase grava-o sem fase (NULL / "Sem fase"), sem inventar.
 
-**Nível (autodeterminado pelo aluno)**
-5. Na sua área, o aluno vê a sua frente e o significado dela; sem frente definida, vê "sem registro" e um convite a falar com o coach (nada é inventado).
-6. O aluno vê os quatro níveis descritos em 1ª pessoa e pode se reconhecer em um deles.
-7. Reconhecer-se num nível grava um reconhecimento com a data e passa a mostrá-lo como "onde me reconheço hoje".
-8. O aluno pode rever o seu nível a qualquer momento; o novo reconhecimento passa a ser o atual (o anterior fica no histórico).
-9. Ao se reconhecer, o aluno pode deixar uma nota opcional do porquê; nota vazia fica NULL (regra 6).
-10. O aluno vê o histórico dos próprios reconhecimentos (data, nível, nota), mais recente primeiro; vazio quando ainda não se reconheceu.
-11. Isolamento: o aluno só vê e só registra o próprio nível (aluno_id da sessão); nunca o de outro.
+**Ver a planilha em fases (coach)**
+4. A planilha do treino do coach mostra os exercícios agrupados nas 5 fases, sempre na ordem canônica, cada fase com o seu nome e a sua pergunta-guia.
+5. Uma fase sem exercícios aparece com "nenhum exercício nesta fase"; exercícios sem fase aparecem num grupo "Sem fase" ao fim (omitido quando não há nenhum).
 
-**Coach acompanha (não dá nota)**
-12. Na ficha, o coach vê o nível atual que o aluno reconheceu, o histórico e as notas — só leitura; "sem registro" quando o aluno ainda não se reconheceu. Em nenhum lugar o coach define o nível.
+**Ver a planilha em fases (aluno)**
+6. A planilha do treino do aluno mostra os mesmos exercícios agrupados nas 5 fases, na ordem canônica, cada fase com a sua pergunta-guia (só leitura).
 
 **Geral**
-13. Sem frente / sem nível = "sem registro", nunca um default falso (regra 6). Texto do aluno em 1ª pessoa; o coach como presença, não régua (regras 11–14). Toda escrita loga; textos pt-BR. Os 786 testes anteriores continuam verdes; nada anterior muda.
+7. Dentro de cada fase, os exercícios mantêm a ordem em que foram adicionados. Trocar a fase de um exercício é remover e adicionar de novo (mesmo padrão atual do treino — sem edição in-place nesta fatia).
+8. Toda escrita loga; textos pt-BR; campo sem dado = "Sem fase" (regra 6). Os 826 testes anteriores continuam verdes; nenhum comportamento anterior muda (treinos existentes seguem funcionando, com seus exercícios em "Sem fase").
 
 ## Fora desta fatia
 
-- **Frente secundária** e as frentes futuras **Reabilitação** / **Bem-estar**.
-- **Conscientização ativa do coach sobre o nível** (comentar/sugerir no reconhecimento) — nesta fatia o coach só lê; conversa vai pelo canal de mensagens que já existe.
-- **Critérios/gate de passagem de nível** (os 4 critérios do método, marcadores Kairos) — aqui o reconhecimento é livre e revisável, sem gate.
-- **Periodização** (macro/meso/micro), **as 5 fases da sessão** e **vídeo no exercício** — fatias seguintes da profundidade do Treino.
+- **Tempos / proporção por fase** (ex.: 45min → 4/7/11/16/7) e o **ajuste ao momento** (a sessão que reage ao check-in).
+- **Timer / sessão guiada** (conduzir a sessão fase a fase no app).
+- **Editar a fase de um item in-place** (por ora: remover + adicionar).
+- **Vídeo no exercício** e **periodização** (macro/meso/micro) — fatias seguintes da profundidade do Treino.
