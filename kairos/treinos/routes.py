@@ -15,8 +15,11 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 from kairos.alunos.service import get_aluno
 from kairos.treinos.service import (
+    FASE_LABELS,
+    FASE_OPCOES,
     ValidationError,
     add_item_to_treino,
+    agrupar_itens_por_fase,
     create_exercicio,
     create_treino,
     delete_treino,
@@ -26,6 +29,7 @@ from kairos.treinos.service import (
     list_exercicios,
     list_treinos,
     remove_item,
+    set_apresentacao,
 )
 from kairos.web import ficha_header, templates
 
@@ -134,7 +138,26 @@ def _to_item_display(item: Dict[str, Any]) -> Dict[str, Any]:
         "reps": item["reps"] or _NO_RECORD,
         "carga": item["carga"] or _NO_RECORD,
         "observacao": item["observacao"] or None,
+        "fase": item["fase"],
+        "fase_label": item["fase_label"],
     }
+
+
+_FASE_OPCOES_DISPLAY = [(v, FASE_LABELS[v]) for v in FASE_OPCOES]
+
+
+def _fases_display(detalhe: Dict[str, Any]) -> list:
+    """Group a workout's items by phase, ready to print."""
+    grupos = agrupar_itens_por_fase(detalhe["itens"])
+    return [
+        {
+            "fase": g["fase"],
+            "fase_label": g["fase_label"],
+            "fase_pergunta": g["fase_pergunta"],
+            "itens": [_to_item_display(i) for i in g["itens"]],
+        }
+        for g in grupos
+    ]
 
 
 @router.get("/alunos/{aluno_id}/treino", response_class=HTMLResponse)
@@ -226,7 +249,9 @@ async def treino_detail(
                 "nome": detalhe["nome"],
                 "observacao": detalhe["observacao"] or None,
             },
-            "itens": [_to_item_display(i) for i in detalhe["itens"]],
+            "fases": _fases_display(detalhe),
+            "fase_opcoes": _FASE_OPCOES_DISPLAY,
+            "apresentacao": detalhe["observacao"] or None,
             "exercicios": list_exercicios(),
         },
     )
@@ -242,6 +267,7 @@ async def add_item_route(
     reps: Optional[str] = Form(None),
     carga: Optional[str] = Form(None),
     observacao: Optional[str] = Form(None),
+    fase: Optional[str] = Form(None),
 ):
     """Add an exercise to the workout; delegate every rule to the service."""
     aluno = get_aluno(aluno_id)
@@ -260,6 +286,7 @@ async def add_item_route(
             reps=reps,
             carga=carga,
             observacao=observacao,
+            fase=fase,
         )
     except ValidationError as exc:
         return templates.TemplateResponse(
@@ -273,7 +300,9 @@ async def add_item_route(
                     "nome": detalhe["nome"],
                     "observacao": detalhe["observacao"] or None,
                 },
-                "itens": [_to_item_display(i) for i in detalhe["itens"]],
+                "fases": _fases_display(detalhe),
+                "fase_opcoes": _FASE_OPCOES_DISPLAY,
+                "apresentacao": detalhe["observacao"] or None,
                 "exercicios": list_exercicios(),
                 "error": str(exc),
             },
@@ -306,6 +335,29 @@ async def remove_item_route(
         return _aluno_nao_encontrado(request)
 
     remove_item(item_id)
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}/treino/{treino_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/alunos/{aluno_id}/treino/{treino_id}/apresentacao")
+async def set_apresentacao_route(
+    request: Request,
+    aluno_id: int,
+    treino_id: int,
+    apresentacao: Optional[str] = Form(None),
+):
+    """Set the workout's apresentacao text, checking ownership (404 otherwise)."""
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return _aluno_nao_encontrado(request)
+
+    treino = get_treino(treino_id)
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return _aluno_nao_encontrado(request)
+
+    set_apresentacao(treino_id, apresentacao)
     return RedirectResponse(
         url=f"/alunos/{aluno_id}/treino/{treino_id}",
         status_code=status.HTTP_303_SEE_OTHER,

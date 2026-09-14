@@ -2,53 +2,74 @@
 
 {% block ficha_content %}
 <h2>{{ treino.nome }}</h2>
-{% if treino.observacao %}
-<p class="card-line card-line-dim">{{ treino.observacao }}</p>
+
+<h3>Apresentação</h3>
+{% if apresentacao %}
+<p class="card-line card-line-dim">{{ apresentacao }}</p>
+{% else %}
+<p><span class="none">sem registro</span></p>
 {% endif %}
+<details>
+    <summary>Editar apresentação</summary>
+    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/apresentacao">
+        <div class="field">
+            <label for="apresentacao">Apresentação</label>
+            <textarea id="apresentacao" name="apresentacao" rows="3">{{ apresentacao or '' }}</textarea>
+        </div>
+        <button type="submit">Salvar apresentação</button>
+    </form>
+</details>
 
 {% if error %}
 <div class="message-error">{{ error }}</div>
 {% endif %}
 
-{% if itens %}
-<div class="table-wrap">
-    <table class="planilha">
-        <thead>
-            <tr>
-                <th>Exercício</th>
-                <th>Grupo</th>
-                <th>Séries</th>
-                <th>Reps</th>
-                <th>Carga</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for i in itens %}
-            <tr>
-                <td>
-                    {{ i.exercicio_nome }}
-                    {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
-                </td>
-                <td>{{ i.grupo_muscular or '—' }}</td>
-                <td>{{ i.series }}</td>
-                <td>{{ i.reps }}</td>
-                <td>{{ i.carga }}</td>
-                <td>
-                    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/remover">
-                        <button type="submit" class="button-danger-sm">Remover</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<h3>Planilha</h3>
+{% for g in fases %}
+<div class="fase-bloco">
+    <h4 class="fase-titulo">
+        {{ g.fase_label }}
+        {% if g.fase_pergunta %}<span class="fase-pergunta">{{ g.fase_pergunta }}</span>{% endif %}
+    </h4>
+    {% if g.itens %}
+    <div class="table-wrap">
+        <table class="planilha">
+            <thead>
+                <tr>
+                    <th>Exercício</th>
+                    <th>Grupo</th>
+                    <th>Séries</th>
+                    <th>Reps</th>
+                    <th>Carga</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for i in g.itens %}
+                <tr>
+                    <td>
+                        {{ i.exercicio_nome }}
+                        {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
+                    </td>
+                    <td>{{ i.grupo_muscular or '—' }}</td>
+                    <td>{{ i.series }}</td>
+                    <td>{{ i.reps }}</td>
+                    <td>{{ i.carga }}</td>
+                    <td>
+                        <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/remover">
+                            <button type="submit" class="button-danger-sm">Remover</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="aluno-vazio">nenhum exercício nesta fase</p>
+    {% endif %}
 </div>
-{% else %}
-<div class="coming-soon">
-    <p>Este treino ainda não tem exercícios. Adicione o primeiro abaixo.</p>
-</div>
-{% endif %}
+{% endfor %}
 
 <h3>Adicionar exercício</h3>
 {% if exercicios %}
@@ -59,6 +80,16 @@
             <option value="">— escolher da biblioteca —</option>
             {% for e in exercicios %}
             <option value="{{ e.id }}">{{ e.nome }}{% if e.grupo_muscular %} ({{ e.grupo_muscular }}){% endif %}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="fase">Fase</label>
+        <select id="fase" name="fase">
+            <option value="">—</option>
+            {% for valor, label in fase_opcoes %}
+            <option value="{{ valor }}">{{ label }}</option>
             {% endfor %}
         </select>
     </div>

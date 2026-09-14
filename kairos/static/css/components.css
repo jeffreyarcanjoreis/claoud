@@ -447,6 +447,53 @@ button:hover,
   margin-top: 2px;
 }
 
+/* ===== treino: apresentação (details/summary nativo) ===== */
+details summary {
+  cursor: pointer;
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+  margin: var(--sp-1) 0 var(--sp-3);
+  transition: color 0.2s var(--ease);
+}
+
+details summary:hover {
+  color: var(--gold);
+}
+
+details form {
+  margin-top: var(--sp-2);
+}
+
+/* ===== treino: blocos por fase ===== */
+.fase-bloco {
+  margin-top: var(--sp-5);
+}
+
+.fase-titulo {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--gold);
+  padding-bottom: var(--sp-2);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: baseline;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.fase-pergunta {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: var(--fs-body);
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--sage);
+}
+
 /* ===== treino: planilha e ações ===== */
 .table-wrap {
   overflow-x: auto;

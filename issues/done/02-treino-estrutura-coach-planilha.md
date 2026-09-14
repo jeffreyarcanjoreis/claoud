@@ -7,7 +7,7 @@ Na planilha do treino do coach (`/alunos/{id}/treino/{treino_id}`): ao adicionar
 01 (fase no item + serviço + apresentação + agrupamento)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Reaproveita a rota e o template que já existem (`treino_detail` + `treinos/aluno_detalhe.html`). O serviço da issue 01 já entrega tudo: `agrupar_itens_por_fase`, `add_item_to_treino(..., fase=...)`, `set_apresentacao`, `FASE_OPCOES`/`FASE_LABELS`. O campo de observação por item **já existe** no form e na exibição — manter.
