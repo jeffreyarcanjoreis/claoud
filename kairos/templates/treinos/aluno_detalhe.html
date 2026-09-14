@@ -56,6 +56,7 @@
                     <td>{{ i.reps }}</td>
                     <td>{{ i.carga }}</td>
                     <td>
+                        <a class="button-link" href="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/editar">Editar</a>
                         <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/remover">
                             <button type="submit" class="button-danger-sm">Remover</button>
                         </form>

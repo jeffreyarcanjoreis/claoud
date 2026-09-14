@@ -366,6 +366,57 @@ def get_item(item_id: int) -> Optional[Dict[str, Any]]:
         return {"id": item.id, "treino_id": item.treino_id}
 
 
+def update_item(
+    item_id: int,
+    *,
+    series: Optional[str] = None,
+    reps: Optional[str] = None,
+    carga: Optional[str] = None,
+    observacao: Optional[str] = None,
+    fase: Optional[str] = None,
+) -> Optional[Dict[str, Any]]:
+    """Edit a workout item's prescription and phase (not its exercise or order).
+
+    Raises :class:`ValidationError` when ``series`` or ``fase`` are invalid;
+    nothing is persisted in that case — all validation happens before the
+    session is touched. Returns None when the item does not exist (the caller
+    route handles the 404).
+    """
+    parsed_series = _parse_series(series)
+    parsed_fase = _parse_fase(fase)
+    parsed_reps = _normalize(reps)
+    parsed_carga = _normalize(carga)
+    parsed_observacao = _normalize(observacao)
+
+    with session_scope() as session:
+        item = session.get(TreinoItem, item_id)
+        if item is None:
+            return None
+
+        item.series = parsed_series
+        item.reps = parsed_reps
+        item.carga = parsed_carga
+        item.observacao = parsed_observacao
+        item.fase = parsed_fase
+        session.flush()
+        session.refresh(item)
+        result = {
+            "id": item.id,
+            "treino_id": item.treino_id,
+            "exercicio_id": item.exercicio_id,
+            "ordem": item.ordem,
+            "series": item.series,
+            "reps": item.reps,
+            "carga": item.carga,
+            "observacao": item.observacao,
+            "fase": item.fase,
+            "fase_label": FASE_LABELS.get(item.fase) if item.fase else None,
+        }
+
+    logger.info("TreinoItem updated: id=%s", item_id)
+    return result
+
+
 def remove_item(item_id: int) -> bool:
     """Remove one exercise from a workout. Returns True when it existed."""
     with session_scope() as session:

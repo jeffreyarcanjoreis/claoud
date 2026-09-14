@@ -30,6 +30,7 @@ from kairos.treinos.service import (
     list_treinos,
     remove_item,
     set_apresentacao,
+    update_item,
 )
 from kairos.web import ficha_header, templates
 
@@ -335,6 +336,103 @@ async def remove_item_route(
         return _aluno_nao_encontrado(request)
 
     remove_item(item_id)
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}/treino/{treino_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.get(
+    "/alunos/{aluno_id}/treino/{treino_id}/itens/{item_id}/editar",
+    response_class=HTMLResponse,
+)
+async def edit_item_form(
+    request: Request, aluno_id: int, treino_id: int, item_id: int
+) -> HTMLResponse:
+    """Render the edit form for a single workout item, or a 404 page."""
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return _aluno_nao_encontrado(request)
+
+    detalhe = get_treino_detail(treino_id)
+    if detalhe is None or detalhe["aluno_id"] != aluno_id:
+        return _aluno_nao_encontrado(request)
+
+    item = next((i for i in detalhe["itens"] if i["id"] == item_id), None)
+    if item is None:
+        return _aluno_nao_encontrado(request)
+
+    return templates.TemplateResponse(
+        request,
+        "treinos/item_editar.html",
+        {
+            "aluno": ficha_header(aluno),
+            "subtab": "treino",
+            "treino": {"id": detalhe["id"], "nome": detalhe["nome"]},
+            "item": _to_item_display(item),
+            "fase_opcoes": _FASE_OPCOES_DISPLAY,
+        },
+    )
+
+
+@router.post("/alunos/{aluno_id}/treino/{treino_id}/itens/{item_id}")
+async def update_item_route(
+    request: Request,
+    aluno_id: int,
+    treino_id: int,
+    item_id: int,
+    series: Optional[str] = Form(None),
+    reps: Optional[str] = Form(None),
+    carga: Optional[str] = Form(None),
+    observacao: Optional[str] = Form(None),
+    fase: Optional[str] = Form(None),
+):
+    """Update a workout item's prescription; delegate every rule to the service."""
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return _aluno_nao_encontrado(request)
+
+    detalhe = get_treino_detail(treino_id)
+    if detalhe is None or detalhe["aluno_id"] != aluno_id:
+        return _aluno_nao_encontrado(request)
+
+    item = next((i for i in detalhe["itens"] if i["id"] == item_id), None)
+    if item is None:
+        return _aluno_nao_encontrado(request)
+
+    try:
+        update_item(
+            item_id,
+            series=series,
+            reps=reps,
+            carga=carga,
+            observacao=observacao,
+            fase=fase,
+        )
+    except ValidationError as exc:
+        values = {
+            "id": item_id,
+            "exercicio_nome": item["exercicio_nome"],
+            "series": series,
+            "reps": reps,
+            "carga": carga,
+            "observacao": observacao,
+            "fase": fase,
+        }
+        return templates.TemplateResponse(
+            request,
+            "treinos/item_editar.html",
+            {
+                "aluno": ficha_header(aluno),
+                "subtab": "treino",
+                "treino": {"id": detalhe["id"], "nome": detalhe["nome"]},
+                "item": values,
+                "fase_opcoes": _FASE_OPCOES_DISPLAY,
+                "error": str(exc),
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
     return RedirectResponse(
         url=f"/alunos/{aluno_id}/treino/{treino_id}",
         status_code=status.HTTP_303_SEE_OTHER,

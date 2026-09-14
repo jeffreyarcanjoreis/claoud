@@ -7,7 +7,7 @@ Na planilha do coach, editar um exercício sem remover e adicionar de novo: sér
 nenhuma (a coluna fase já existe; serviço de treino já existe)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 O exercício em si (qual exercício da biblioteca) e a `ordem` **não** mudam na edição — só a prescrição e a fase. Reaproveita validações já existentes (`_parse_series`, `_parse_fase`, `_normalize`).

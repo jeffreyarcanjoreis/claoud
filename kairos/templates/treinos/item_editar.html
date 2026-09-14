@@ -1,0 +1,46 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Editar exercício</h2>
+<p class="card-line-dim">{{ item.exercicio_nome }}</p>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ item.id }}">
+    <div class="field">
+        <label for="fase">Fase</label>
+        <select id="fase" name="fase">
+            <option value="">—</option>
+            {% for valor, label in fase_opcoes %}
+            <option value="{{ valor }}" {% if item.fase == valor %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="field-row">
+        <div class="field">
+            <label for="series">Séries</label>
+            <input type="number" inputmode="numeric" id="series" name="series" min="1" value="{{ item.series or '' }}">
+        </div>
+        <div class="field">
+            <label for="reps">Reps</label>
+            <input type="text" id="reps" name="reps" value="{{ item.reps or '' }}" placeholder="ex.: 8-10">
+        </div>
+        <div class="field">
+            <label for="carga">Carga</label>
+            <input type="text" id="carga" name="carga" value="{{ item.carga or '' }}" placeholder="ex.: 40 kg">
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="observacao">Observação</label>
+        <input type="text" id="observacao" name="observacao" value="{{ item.observacao or '' }}" placeholder="ex.: cadência lenta">
+    </div>
+
+    <button type="submit">Salvar</button>
+</form>
+
+<p><a href="/alunos/{{ aluno.id }}/treino/{{ treino.id }}">Cancelar</a></p>
+{% endblock %}
