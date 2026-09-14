@@ -7,7 +7,7 @@ Um exercício da biblioteca pode ter um vídeo de demonstração, enviado por **
 nenhuma
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Espelha o fluxo de foto do aluno (`kairos/alunos/fotos.py` + rota de servir + rota de upload), aplicado ao `Exercicio`. O vídeo é **por exercício** (da biblioteca), não por item do treino — assim vale para toda planilha que use aquele exercício.

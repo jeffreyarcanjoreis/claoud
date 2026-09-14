@@ -25,7 +25,7 @@ import kairos.db
 from kairos.main import app
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0025"  # bumped by migration 0025_add_fase_to_treino_itens
+HEAD_REVISION = "0026"  # bumped by migration 0026_add_video_to_exercicios
 
 
 @pytest.fixture

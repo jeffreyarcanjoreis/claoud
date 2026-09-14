@@ -50,6 +50,28 @@
                     <td>
                         {{ i.exercicio_nome }}
                         {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
+                        <details class="video-details">
+                            <summary>Vídeo de demonstração</summary>
+                            {% if i.video_filename %}
+                            <video controls preload="metadata" class="exercicio-video">
+                                <source src="/exercicios/{{ i.exercicio_id }}/video">
+                            </video>
+                            <form method="post" action="/exercicios/{{ i.exercicio_id }}/video/remover">
+                                <input type="hidden" name="next" value="/alunos/{{ aluno.id }}/treino/{{ treino.id }}">
+                                <button type="submit" class="button-danger-sm">Remover vídeo</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" action="/exercicios/{{ i.exercicio_id }}/video" enctype="multipart/form-data">
+                                <input type="hidden" name="next" value="/alunos/{{ aluno.id }}/treino/{{ treino.id }}">
+                                <input type="hidden" name="aluno_id" value="{{ aluno.id }}">
+                                <input type="hidden" name="treino_id" value="{{ treino.id }}">
+                                <div class="field">
+                                    <label for="video-{{ i.id }}">Arquivo de vídeo</label>
+                                    <input type="file" id="video-{{ i.id }}" name="video" accept="video/*">
+                                </div>
+                                <button type="submit">Enviar vídeo</button>
+                            </form>
+                        </details>
                     </td>
                     <td>{{ i.grupo_muscular or '—' }}</td>
                     <td>{{ i.series }}</td>

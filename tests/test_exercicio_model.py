@@ -24,7 +24,7 @@ from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio
 
-HEAD_REVISION = "0025"  # bumped by migration 0025_add_fase_to_treino_itens
+HEAD_REVISION = "0026"  # bumped by migration 0026_add_video_to_exercicios
 
 
 @pytest.fixture
@@ -76,7 +76,14 @@ def test_exercicios_table_has_no_derived_columns(data_dir: Path) -> None:
     finally:
         engine.dispose()
 
-    assert columns == {"id", "nome", "grupo_muscular", "observacao", "created_at"}
+    assert columns == {
+        "id",
+        "nome",
+        "grupo_muscular",
+        "observacao",
+        "video_filename",
+        "created_at",
+    }
 
 
 def test_insert_and_read_back_exercicio(data_dir: Path) -> None:
@@ -95,4 +102,5 @@ def test_insert_and_read_back_exercicio(data_dir: Path) -> None:
         assert loaded.nome == "Agachamento livre"
         assert loaded.grupo_muscular is None
         assert loaded.observacao is None
+        assert loaded.video_filename is None
         assert loaded.created_at is not None

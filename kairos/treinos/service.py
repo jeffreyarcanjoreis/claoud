@@ -72,6 +72,7 @@ def _to_dict(exercicio: Exercicio) -> Dict[str, Any]:
         "grupo_muscular": exercicio.grupo_muscular,
         "observacao": exercicio.observacao,
         "created_at": exercicio.created_at,
+        "video_filename": exercicio.video_filename,
     }
 
 
@@ -262,7 +263,12 @@ def get_treino_detail(treino_id: int) -> Optional[Dict[str, Any]]:
             return None
 
         rows = session.execute(
-            select(TreinoItem, Exercicio.nome, Exercicio.grupo_muscular)
+            select(
+                TreinoItem,
+                Exercicio.nome,
+                Exercicio.grupo_muscular,
+                Exercicio.video_filename,
+            )
             .join(Exercicio, TreinoItem.exercicio_id == Exercicio.id)
             .where(TreinoItem.treino_id == treino_id)
             .order_by(TreinoItem.ordem.asc(), TreinoItem.id.asc())
@@ -281,8 +287,9 @@ def get_treino_detail(treino_id: int) -> Optional[Dict[str, Any]]:
                 "observacao": item.observacao,
                 "fase": item.fase,
                 "fase_label": FASE_LABELS.get(item.fase) if item.fase else None,
+                "video_filename": video_filename,
             }
-            for item, exercicio_nome, grupo_muscular in rows
+            for item, exercicio_nome, grupo_muscular, video_filename in rows
         ]
 
         result = _treino_to_dict(treino)
@@ -551,4 +558,63 @@ def mover_item(item_id: int, direcao: str) -> bool:
         session.flush()
 
     logger.info("TreinoItem moved: id=%s direcao=%s", item_id, direcao)
+    return True
+
+
+def set_exercicio_video(
+    exercicio_id: int, file_bytes: bytes, content_type: str, original_filename: str
+) -> Optional[Dict[str, Any]]:
+    """Validate and store a new demonstration video for an exercise.
+
+    Returns None when the exercise does not exist (the caller route handles
+    the 404). Raises :class:`ValidationError` when the upload is invalid; in
+    that case nothing changes, and the previous video (if any) remains
+    intact — the old file is only deleted after the new one has been saved
+    successfully.
+    """
+    # Imported lazily to avoid a circular import: kairos.treinos.videos
+    # reuses ValidationError from this module.
+    from kairos.treinos.videos import delete_video_file, save_video
+
+    with session_scope() as session:
+        exercicio = session.get(Exercicio, exercicio_id)
+        if exercicio is None:
+            return None
+
+        old_filename = exercicio.video_filename
+        new_filename = save_video(file_bytes, content_type, original_filename)
+
+        exercicio.video_filename = new_filename
+        session.flush()
+        session.refresh(exercicio)
+        result = _to_dict(exercicio)
+
+    delete_video_file(old_filename)
+
+    logger.info(
+        "Exercicio video set: id=%s filename=%s", exercicio_id, new_filename
+    )
+    return result
+
+
+def remove_exercicio_video(exercicio_id: int) -> bool:
+    """Remove an exercise's demonstration video (field and file).
+
+    Returns True when the exercise existed (regardless of whether it had a
+    video), or False when it does not exist.
+    """
+    from kairos.treinos.videos import delete_video_file
+
+    with session_scope() as session:
+        exercicio = session.get(Exercicio, exercicio_id)
+        if exercicio is None:
+            return False
+
+        old_filename = exercicio.video_filename
+        exercicio.video_filename = None
+        session.flush()
+
+    delete_video_file(old_filename)
+
+    logger.info("Exercicio video removed: id=%s", exercicio_id)
     return True

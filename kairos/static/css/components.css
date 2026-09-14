@@ -533,6 +533,22 @@ details form {
   margin-top: 2px;
 }
 
+/* ===== treino: video de demonstracao do exercicio ===== */
+.exercicio-video {
+  max-width: 100%;
+  border-radius: var(--radius);
+  display: block;
+  margin-top: var(--sp-2);
+}
+
+.video-details {
+  margin-top: var(--sp-2);
+}
+
+.video-details .field {
+  margin-bottom: var(--sp-2);
+}
+
 .field-row {
   display: flex;
   gap: var(--sp-3);

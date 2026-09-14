@@ -38,6 +38,11 @@
             <td>
               {{ i.exercicio_nome }}
               {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
+              {% if i.video_filename %}
+              <video controls preload="metadata" class="exercicio-video">
+                <source src="/exercicios/{{ i.exercicio_id }}/video">
+              </video>
+              {% endif %}
             </td>
             <td>{{ i.grupo_muscular or '—' }}</td>
             <td>{{ i.series or '—' }}</td>

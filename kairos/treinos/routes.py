@@ -10,9 +10,10 @@ and the agenda link come in later slices.
 
 from typing import Any, Dict, Optional
 
-from fastapi import APIRouter, Form, Request, status
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi import APIRouter, File, Form, Request, Response, UploadFile, status
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
+from kairos import config
 from kairos.alunos.service import get_aluno
 from kairos.treinos.service import (
     FASE_LABELS,
@@ -23,14 +24,17 @@ from kairos.treinos.service import (
     create_exercicio,
     create_treino,
     delete_treino,
+    get_exercicio,
     get_item,
     get_treino,
     get_treino_detail,
     list_exercicios,
     list_treinos,
     mover_item,
+    remove_exercicio_video,
     remove_item,
     set_apresentacao,
+    set_exercicio_video,
     update_item,
 )
 from kairos.web import ficha_header, templates
@@ -38,6 +42,30 @@ from kairos.web import ficha_header, templates
 router = APIRouter()
 
 _NO_RECORD = "sem registro"
+
+_VIDEO_MEDIA_TYPES = {
+    "mp4": "video/mp4",
+    "webm": "video/webm",
+    "mov": "video/quicktime",
+}
+
+
+def _safe_next(nxt: Optional[str]) -> str:
+    """Return ``nxt`` only when it is a safe, local redirect path.
+
+    Same open-redirect guard used by the auth login flow
+    (:func:`kairos.auth.routes._safe_next`): a relative path is fine, a
+    protocol-relative ("//host/...") or absolute ("http://...") URL is not.
+    Falls back to the exercise library when ``nxt`` is absent or unsafe.
+    """
+    if (
+        nxt
+        and nxt.startswith("/")
+        and not nxt.startswith("//")
+        and "://" not in nxt
+    ):
+        return nxt
+    return "/treinos"
 
 
 def _aluno_nao_encontrado(request: Request) -> HTMLResponse:
@@ -519,4 +547,157 @@ async def delete_treino_route(
     return RedirectResponse(
         url=f"/alunos/{aluno_id}/treino",
         status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Vídeo de demonstração do exercício (biblioteca, não por item do treino)     #
+# --------------------------------------------------------------------------- #
+
+
+@router.get("/exercicios/{exercicio_id}/video")
+async def exercicio_video(exercicio_id: int):
+    """Serve an exercise's stored demonstration video, or a plain 404.
+
+    404 covers every case that is not "file on disk": exercise not found,
+    exercise without a video (``video_filename`` is None), and an orphaned
+    ``video_filename`` whose file was removed from disk (never a 500).
+    """
+    exercicio = get_exercicio(exercicio_id)
+    if exercicio is None or exercicio.get("video_filename") is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    filename = exercicio["video_filename"]
+    path = config.videos_dir() / filename
+    if not path.exists():
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    ext = filename.rsplit(".", 1)[-1].lower()
+    media_type = _VIDEO_MEDIA_TYPES.get(ext, "application/octet-stream")
+    return FileResponse(path, media_type=media_type)
+
+
+def _render_planilha_com_video_erro(
+    request: Request, aluno: Dict[str, Any], detalhe: Dict[str, Any], erro: str
+) -> HTMLResponse:
+    """Reexibe a planilha do treino com o erro de validação do vídeo.
+
+    Same "reexibir com erro, 400" mechanism used everywhere else in this
+    file for a :class:`ValidationError` (see ``add_item_route`` /
+    ``update_item_route``): re-render the exact page the coach was on,
+    passing the Portuguese message through ``error`` in the template
+    context, instead of a bare redirect that would drop it silently.
+    """
+    return templates.TemplateResponse(
+        request,
+        "treinos/aluno_detalhe.html",
+        {
+            "aluno": ficha_header(aluno),
+            "subtab": "treino",
+            "treino": {
+                "id": detalhe["id"],
+                "nome": detalhe["nome"],
+                "observacao": detalhe["observacao"] or None,
+            },
+            "fases": _fases_display(detalhe),
+            "fase_opcoes": _FASE_OPCOES_DISPLAY,
+            "apresentacao": detalhe["observacao"] or None,
+            "exercicios": list_exercicios(),
+            "error": erro,
+        },
+        status_code=status.HTTP_400_BAD_REQUEST,
+    )
+
+
+@router.post("/exercicios/{exercicio_id}/video")
+async def upload_exercicio_video_route(
+    request: Request,
+    exercicio_id: int,
+    video: UploadFile = File(...),
+    aluno_id: Optional[int] = Form(None),
+    treino_id: Optional[int] = Form(None),
+    next: Optional[str] = Form(None),
+):
+    """Upload a new demonstration video for an exercise.
+
+    Thin route: reads the raw bytes and delegates every validation rule
+    (format, size) to the service layer. The video belongs to the exercise
+    (biblioteca), not to a single planilha item, so this route's own path
+    only carries ``exercicio_id``; the form embedded in the coach's planilha
+    (``treinos/aluno_detalhe.html``) additionally sends the hidden
+    ``aluno_id``/``treino_id`` it already has on that page, so a
+    :class:`ValidationError` can reexibir that same planilha with the error —
+    the same mechanism ``add_item_route``/``update_item_route`` use, never a
+    bare redirect that would drop the message. When those hidden fields are
+    absent (upload triggered from elsewhere), ``next`` — the same
+    safe-redirect idiom the login flow uses
+    (:func:`kairos.auth.routes._safe_next`) — decides where a successful
+    upload goes, defaulting to the exercise library.
+    """
+    exercicio = get_exercicio(exercicio_id)
+    if exercicio is None:
+        return _aluno_nao_encontrado(request)
+
+    aluno = None
+    detalhe = None
+    if aluno_id is not None and treino_id is not None:
+        aluno = get_aluno(aluno_id)
+        detalhe = get_treino_detail(treino_id)
+        if aluno is None or detalhe is None or detalhe["aluno_id"] != aluno_id:
+            aluno = None
+            detalhe = None
+
+    data = await video.read()
+    try:
+        set_exercicio_video(
+            exercicio_id, data, video.content_type or "", video.filename or ""
+        )
+    except ValidationError as exc:
+        if aluno is not None and detalhe is not None:
+            return _render_planilha_com_video_erro(request, aluno, detalhe, str(exc))
+        # No planilha context to reexibir into: fail closed with the
+        # validation status rather than silently redirecting past the error.
+        return Response(status_code=status.HTTP_400_BAD_REQUEST)
+
+    if detalhe is not None:
+        return RedirectResponse(
+            url=f"/alunos/{aluno_id}/treino/{treino_id}",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+    return RedirectResponse(
+        url=_safe_next(next), status_code=status.HTTP_303_SEE_OTHER
+    )
+
+
+@router.post("/exercicios/{exercicio_id}/video/remover")
+async def remove_exercicio_video_route(
+    request: Request,
+    exercicio_id: int,
+    aluno_id: Optional[int] = Form(None),
+    treino_id: Optional[int] = Form(None),
+    next: Optional[str] = Form(None),
+):
+    """Remove an exercise's demonstration video, checking existence first."""
+    exercicio = get_exercicio(exercicio_id)
+    if exercicio is None:
+        return _aluno_nao_encontrado(request)
+
+    if aluno_id is not None and treino_id is not None:
+        aluno = get_aluno(aluno_id)
+        treino = get_treino(treino_id)
+        if aluno is not None and treino is not None and treino["aluno_id"] == aluno_id:
+            remove_exercicio_video(exercicio_id)
+            return RedirectResponse(
+                url=f"/alunos/{aluno_id}/treino/{treino_id}",
+                status_code=status.HTTP_303_SEE_OTHER,
+            )
+
+    remove_exercicio_video(exercicio_id)
+    return RedirectResponse(
+        url=_safe_next(next), status_code=status.HTTP_303_SEE_OTHER
+    )
+
+    remove_exercicio_video(exercicio_id)
+    return RedirectResponse(
+        url=_safe_next(next), status_code=status.HTTP_303_SEE_OTHER
     )
