@@ -50,6 +50,20 @@
                     <td>
                         {{ i.exercicio_nome }}
                         {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
+                        {% if i.variacao_base or i.variacao_regressao or i.variacao_progressao %}
+                        <div class="variacoes">
+                            <span class="variacoes-titulo">Variações</span>
+                            {% if i.variacao_base %}
+                            <p class="variacao-item"><span class="variacao-rotulo">Base</span>{{ i.variacao_base }}</p>
+                            {% endif %}
+                            {% if i.variacao_regressao %}
+                            <p class="variacao-item"><span class="variacao-rotulo">Regressão</span>{{ i.variacao_regressao }}</p>
+                            {% endif %}
+                            {% if i.variacao_progressao %}
+                            <p class="variacao-item"><span class="variacao-rotulo">Progressão</span>{{ i.variacao_progressao }}</p>
+                            {% endif %}
+                        </div>
+                        {% endif %}
                         <details class="video-details">
                             <summary>Vídeo de demonstração</summary>
                             {% if i.video_filename %}

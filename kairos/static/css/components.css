@@ -1439,6 +1439,35 @@ label.stat-toggle:hover .l {
   border-color: var(--gold);
 }
 
+/* ===== treino: variações do exercício (base/regressão/progressão) ===== */
+.variacoes {
+  margin-top: var(--sp-2);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line);
+}
+
+.variacoes-titulo {
+  display: block;
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-bottom: 2px;
+}
+
+.variacao-item {
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+  margin-top: 2px;
+}
+
+.variacao-rotulo {
+  font-weight: 500;
+  color: var(--clay);
+  margin-right: 5px;
+}
+
 /* ===== detalhe do contato (lead_detalhe) ===== */
 .lead-secao-titulo {
   margin-top: var(--sp-5);

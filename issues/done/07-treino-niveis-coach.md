@@ -7,7 +7,7 @@ Ao montar o treino, o coach descreve as três variações de um exercício: base
 nenhuma
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 As três variações são **por item do treino** (`TreinoItem`) — o coach as descreve no contexto daquela planilha, não na biblioteca. São textos livres, nulos por padrão ("sem registro", regra 6): um exercício pode não ter variações descritas. O coach as edita **junto da edição do item** (mesmo formulário da fatia 04), mantendo um só lugar para configurar o exercício. Fidelidade ao método (regras 11–14): o coach **descreve/oferece caminhos** (base, um passo atrás, um passo adiante) — não gradua nem obriga.

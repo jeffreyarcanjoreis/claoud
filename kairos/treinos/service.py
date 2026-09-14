@@ -288,6 +288,9 @@ def get_treino_detail(treino_id: int) -> Optional[Dict[str, Any]]:
                 "fase": item.fase,
                 "fase_label": FASE_LABELS.get(item.fase) if item.fase else None,
                 "video_filename": video_filename,
+                "variacao_base": item.variacao_base,
+                "variacao_regressao": item.variacao_regressao,
+                "variacao_progressao": item.variacao_progressao,
             }
             for item, exercicio_nome, grupo_muscular, video_filename in rows
         ]
@@ -381,8 +384,12 @@ def update_item(
     carga: Optional[str] = None,
     observacao: Optional[str] = None,
     fase: Optional[str] = None,
+    variacao_base: Optional[str] = None,
+    variacao_regressao: Optional[str] = None,
+    variacao_progressao: Optional[str] = None,
 ) -> Optional[Dict[str, Any]]:
-    """Edit a workout item's prescription and phase (not its exercise or order).
+    """Edit a workout item's prescription, phase and variations (not its
+    exercise or order).
 
     Raises :class:`ValidationError` when ``series`` or ``fase`` are invalid;
     nothing is persisted in that case — all validation happens before the
@@ -394,6 +401,9 @@ def update_item(
     parsed_reps = _normalize(reps)
     parsed_carga = _normalize(carga)
     parsed_observacao = _normalize(observacao)
+    parsed_variacao_base = _normalize(variacao_base)
+    parsed_variacao_regressao = _normalize(variacao_regressao)
+    parsed_variacao_progressao = _normalize(variacao_progressao)
 
     with session_scope() as session:
         item = session.get(TreinoItem, item_id)
@@ -405,6 +415,9 @@ def update_item(
         item.carga = parsed_carga
         item.observacao = parsed_observacao
         item.fase = parsed_fase
+        item.variacao_base = parsed_variacao_base
+        item.variacao_regressao = parsed_variacao_regressao
+        item.variacao_progressao = parsed_variacao_progressao
         session.flush()
         session.refresh(item)
         result = {
@@ -418,6 +431,9 @@ def update_item(
             "observacao": item.observacao,
             "fase": item.fase,
             "fase_label": FASE_LABELS.get(item.fase) if item.fase else None,
+            "variacao_base": item.variacao_base,
+            "variacao_regressao": item.variacao_regressao,
+            "variacao_progressao": item.variacao_progressao,
         }
 
     logger.info("TreinoItem updated: id=%s", item_id)

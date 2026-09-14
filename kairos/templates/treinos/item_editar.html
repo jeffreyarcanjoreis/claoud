@@ -39,6 +39,21 @@
         <input type="text" id="observacao" name="observacao" value="{{ item.observacao or '' }}" placeholder="ex.: cadência lenta">
     </div>
 
+    <p class="field-hint">O coach oferece caminhos — não gradua: a base, um passo atrás (regressão) e um passo adiante (progressão).</p>
+
+    <div class="field">
+        <label for="variacao_base">Base</label>
+        <textarea id="variacao_base" name="variacao_base" rows="2">{{ item.variacao_base or '' }}</textarea>
+    </div>
+    <div class="field">
+        <label for="variacao_regressao">Regressão</label>
+        <textarea id="variacao_regressao" name="variacao_regressao" rows="2">{{ item.variacao_regressao or '' }}</textarea>
+    </div>
+    <div class="field">
+        <label for="variacao_progressao">Progressão</label>
+        <textarea id="variacao_progressao" name="variacao_progressao" rows="2">{{ item.variacao_progressao or '' }}</textarea>
+    </div>
+
     <button type="submit">Salvar</button>
 </form>
 

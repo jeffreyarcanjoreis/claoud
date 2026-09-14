@@ -76,6 +76,9 @@ class TreinoItem(Base):
     carga: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     observacao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     fase: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    variacao_base: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    variacao_regressao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    variacao_progressao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
     def __repr__(self) -> str:
         return (

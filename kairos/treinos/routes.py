@@ -170,6 +170,9 @@ def _to_item_display(item: Dict[str, Any]) -> Dict[str, Any]:
         "observacao": item["observacao"] or None,
         "fase": item["fase"],
         "fase_label": item["fase_label"],
+        "variacao_base": item["variacao_base"] or None,
+        "variacao_regressao": item["variacao_regressao"] or None,
+        "variacao_progressao": item["variacao_progressao"] or None,
     }
 
 
@@ -454,6 +457,9 @@ async def update_item_route(
     carga: Optional[str] = Form(None),
     observacao: Optional[str] = Form(None),
     fase: Optional[str] = Form(None),
+    variacao_base: Optional[str] = Form(None),
+    variacao_regressao: Optional[str] = Form(None),
+    variacao_progressao: Optional[str] = Form(None),
 ):
     """Update a workout item's prescription; delegate every rule to the service."""
     aluno = get_aluno(aluno_id)
@@ -476,6 +482,9 @@ async def update_item_route(
             carga=carga,
             observacao=observacao,
             fase=fase,
+            variacao_base=variacao_base,
+            variacao_regressao=variacao_regressao,
+            variacao_progressao=variacao_progressao,
         )
     except ValidationError as exc:
         values = {
@@ -486,6 +495,9 @@ async def update_item_route(
             "carga": carga,
             "observacao": observacao,
             "fase": fase,
+            "variacao_base": variacao_base,
+            "variacao_regressao": variacao_regressao,
+            "variacao_progressao": variacao_progressao,
         }
         return templates.TemplateResponse(
             request,
