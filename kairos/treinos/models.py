@@ -74,6 +74,7 @@ class TreinoItem(Base):
     reps: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     carga: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
     observacao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    fase: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
 
     def __repr__(self) -> str:
         return (

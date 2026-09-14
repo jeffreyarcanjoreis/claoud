@@ -17,6 +17,22 @@ from kairos.treinos.models import Exercicio, Treino, TreinoItem
 
 logger = logging.getLogger(__name__)
 
+FASE_OPCOES = ("preparacao", "aquecimento", "skill", "apice", "volta_a_calma")
+FASE_LABELS = {
+    "preparacao": "Preparação",
+    "aquecimento": "Aquecimento",
+    "skill": "Skill",
+    "apice": "Ápice",
+    "volta_a_calma": "Volta à calma",
+}
+FASE_PERGUNTAS = {
+    "preparacao": "Quem chegou hoje?",
+    "aquecimento": "O corpo está aqui agora?",
+    "skill": "Este corpo está pronto?",
+    "apice": "Qual o limite de hoje?",
+    "volta_a_calma": "O que mudou?",
+}
+
 
 class ValidationError(Exception):
     """Raised when user-supplied data is invalid.
@@ -156,6 +172,17 @@ def _parse_series(value: Optional[str]) -> Optional[int]:
     return series
 
 
+def _parse_fase(value: Optional[str]) -> Optional[str]:
+    """Parse an optional workout phase: empty -> None ("Sem fase"), else must
+    be one of :data:`FASE_OPCOES`."""
+    value = _normalize(value)
+    if value is None:
+        return None
+    if value not in FASE_OPCOES:
+        raise ValidationError("Fase inválida.")
+    return value
+
+
 def _treino_to_dict(treino: Treino) -> Dict[str, Any]:
     return {
         "id": treino.id,
@@ -252,6 +279,8 @@ def get_treino_detail(treino_id: int) -> Optional[Dict[str, Any]]:
                 "reps": item.reps,
                 "carga": item.carga,
                 "observacao": item.observacao,
+                "fase": item.fase,
+                "fase_label": FASE_LABELS.get(item.fase) if item.fase else None,
             }
             for item, exercicio_nome, grupo_muscular in rows
         ]
@@ -269,18 +298,21 @@ def add_item_to_treino(
     reps: Optional[str] = None,
     carga: Optional[str] = None,
     observacao: Optional[str] = None,
+    fase: Optional[str] = None,
 ) -> Dict[str, Any]:
-    """Add an exercise (with optional séries/reps/carga) to a workout.
+    """Add an exercise (with optional séries/reps/carga/fase) to a workout.
 
-    Raises :class:`ValidationError` when no valid exercise is chosen or the
-    chosen exercise does not exist. The workout's existence/ownership is the
-    caller route's responsibility (404).
+    Raises :class:`ValidationError` when no valid exercise is chosen, the
+    chosen exercise does not exist, or ``fase`` is not one of
+    :data:`FASE_OPCOES`. The workout's existence/ownership is the caller
+    route's responsibility (404).
     """
     parsed_exercicio_id = _parse_exercicio_id_required(exercicio_id)
     parsed_series = _parse_series(series)
     parsed_reps = _normalize(reps)
     parsed_carga = _normalize(carga)
     parsed_observacao = _normalize(observacao)
+    parsed_fase = _parse_fase(fase)
 
     with session_scope() as session:
         if session.get(Exercicio, parsed_exercicio_id) is None:
@@ -300,6 +332,7 @@ def add_item_to_treino(
             reps=parsed_reps,
             carga=parsed_carga,
             observacao=parsed_observacao,
+            fase=parsed_fase,
         )
         session.add(item)
         session.flush()
@@ -313,6 +346,8 @@ def add_item_to_treino(
             "reps": item.reps,
             "carga": item.carga,
             "observacao": item.observacao,
+            "fase": item.fase,
+            "fase_label": FASE_LABELS.get(item.fase) if item.fase else None,
         }
 
     logger.info(
@@ -354,3 +389,59 @@ def delete_treino(treino_id: int) -> bool:
         session.delete(treino)
         logger.info("Treino deleted: id=%s", treino_id)
         return True
+
+
+def agrupar_itens_por_fase(itens: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """Group a workout's items (as returned by :func:`get_treino_detail`) into
+    the canonical phase order.
+
+    Every phase in :data:`FASE_OPCOES` is present, even with an empty item
+    list. A trailing "Sem fase" group is appended only when there is at least
+    one item without a phase. Item order within each group is preserved (they
+    already arrive ordered by ``ordem``). Pure function: no database access,
+    no log.
+    """
+    grupos = [
+        {
+            "fase": fase,
+            "fase_label": FASE_LABELS[fase],
+            "fase_pergunta": FASE_PERGUNTAS[fase],
+            "itens": [item for item in itens if item["fase"] == fase],
+        }
+        for fase in FASE_OPCOES
+    ]
+
+    sem_fase = [item for item in itens if item["fase"] in (None, "")]
+    if sem_fase:
+        grupos.append(
+            {
+                "fase": None,
+                "fase_label": "Sem fase",
+                "fase_pergunta": None,
+                "itens": sem_fase,
+            }
+        )
+
+    return grupos
+
+
+def set_apresentacao(treino_id: int, texto: Optional[str] = None) -> Optional[Dict[str, Any]]:
+    """Set (or clear) a workout's apresentação (its ``observacao`` field).
+
+    Empty/whitespace-only text is normalized to None ("sem registro"). Returns
+    the updated workout as a dict, or None when it does not exist (the caller
+    route handles the 404).
+    """
+    parsed_texto = _normalize(texto)
+
+    with session_scope() as session:
+        treino = session.get(Treino, treino_id)
+        if treino is None:
+            return None
+        treino.observacao = parsed_texto
+        session.flush()
+        session.refresh(treino)
+        result = _treino_to_dict(treino)
+
+    logger.info("Apresentação do treino definida: id=%s", treino_id)
+    return result

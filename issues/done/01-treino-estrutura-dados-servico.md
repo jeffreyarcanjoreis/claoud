@@ -7,7 +7,7 @@ Cada exercício do treino passa a ter uma fase da sessão (Preparação, Aquecim
 nenhuma
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Tudo no domínio `treinos` (reaproveita o máximo do que já existe). Descobertas da pesquisa: `add_item_to_treino` **já aceita e grava `observacao`** e `get_treino_detail` **já devolve `observacao`** por item — a observação por exercício já está pronta no serviço; só a **fase** é nova. A apresentação do treino = `Treino.observacao` (já existe no modelo, em `create_treino` e em `_treino_to_dict`); falta só uma mutação para **editar** depois da criação.

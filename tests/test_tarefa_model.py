@@ -26,7 +26,7 @@ from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 from kairos.tarefas.models import Tarefa
 
-HEAD_REVISION = "0024"  # bumped by migration 0024_create_reconhecimentos_nivel
+HEAD_REVISION = "0025"  # bumped by migration 0025_add_fase_to_treino_itens
 
 
 @pytest.fixture
