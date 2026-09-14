@@ -7,7 +7,7 @@ Na página do treino do aluno (`/aluno/treinos/{treino_id}`, só leitura): os ex
 01 (serviço + agrupamento), 02 (mesmos blocos de fase já consolidados no coach)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Reaproveita a rota `treino_detalhe` (`GET /aluno/treinos/{treino_id}`) e o template `area_aluno/treino_detalhe.html`, ambos já existentes e só-leitura. O serviço (issue 01) já entrega `agrupar_itens_por_fase` e os itens com `fase`/`fase_label`/`observacao`; a apresentação é `detalhe["observacao"]`.

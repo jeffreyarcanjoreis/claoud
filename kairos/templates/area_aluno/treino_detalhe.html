@@ -9,41 +9,50 @@
 {% block content %}
 <section class="cad-card">
   <h1>{{ treino.nome }}</h1>
-  {% if treino.observacao %}
-  <p class="cad-sub">{{ treino.observacao }}</p>
+  {% if treino.apresentacao %}
+  <p class="cad-sub">{{ treino.apresentacao }}</p>
   {% endif %}
 
-  {% if treino.itens %}
-  <div class="table-wrap">
-    <table class="planilha">
-      <thead>
-        <tr>
-          <th>Exercício</th>
-          <th>Grupo</th>
-          <th>Séries</th>
-          <th>Reps</th>
-          <th>Carga</th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for i in treino.itens %}
-        <tr>
-          <td>
-            {{ i.exercicio_nome }}
-            {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
-          </td>
-          <td>{{ i.grupo_muscular or '—' }}</td>
-          <td>{{ i.series or '—' }}</td>
-          <td>{{ i.reps or '—' }}</td>
-          <td>{{ i.carga or '—' }}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+  {% for g in fases %}
+  <div class="fase-bloco">
+    <div class="fase-titulo">
+      {{ g.fase_label }}
+      {% if g.fase_pergunta %}<span class="fase-pergunta">{{ g.fase_pergunta }}</span>{% endif %}
+    </div>
+
+    {% if g.itens %}
+    <div class="table-wrap">
+      <table class="planilha">
+        <thead>
+          <tr>
+            <th>Exercício</th>
+            <th>Grupo</th>
+            <th>Séries</th>
+            <th>Reps</th>
+            <th>Carga</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in g.itens %}
+          <tr>
+            <td>
+              {{ i.exercicio_nome }}
+              {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
+            </td>
+            <td>{{ i.grupo_muscular or '—' }}</td>
+            <td>{{ i.series or '—' }}</td>
+            <td>{{ i.reps or '—' }}</td>
+            <td>{{ i.carga or '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="aluno-vazio">nenhum exercício nesta fase</p>
+    {% endif %}
   </div>
-  {% else %}
-  <p class="aluno-vazio">Este treino ainda não tem exercícios.</p>
-  {% endif %}
+  {% endfor %}
 
   <p><a href="/aluno">&larr; Voltar</a></p>
 </section>

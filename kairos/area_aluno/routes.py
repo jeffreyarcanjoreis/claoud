@@ -26,7 +26,12 @@ from kairos.checkin.service import checkin_de_hoje
 from kairos.financeiro.service import get_plano, pagamentos_do_aluno
 from kairos.mensagens.service import contar_nao_lidas, ultima_do_coach
 from kairos.registro_treino.service import list_registros
-from kairos.treinos.service import get_treino, get_treino_detail, list_treinos
+from kairos.treinos.service import (
+    agrupar_itens_por_fase,
+    get_treino,
+    get_treino_detail,
+    list_treinos,
+)
 from kairos.web import formatar_reais, templates
 
 router = APIRouter()
@@ -402,7 +407,7 @@ async def foto(request: Request):
 
 @router.get("/aluno/treinos/{treino_id}")
 async def treino_detalhe(request: Request, treino_id: int):
-    """Render one of the aluno's own workouts (read-only).
+    """Render one of the aluno's own workouts (read-only), grouped by fase.
 
     404 (never 403) when the workout doesn't exist or belongs to another
     aluno.
@@ -413,8 +418,17 @@ async def treino_detalhe(request: Request, treino_id: int):
         return _nao_encontrado(request)
 
     detalhe = get_treino_detail(treino_id)
+    fases = agrupar_itens_por_fase(detalhe["itens"])
     return templates.TemplateResponse(
-        request, "area_aluno/treino_detalhe.html", {"treino": detalhe}
+        request,
+        "area_aluno/treino_detalhe.html",
+        {
+            "treino": {
+                "nome": detalhe["nome"],
+                "apresentacao": detalhe["observacao"] or None,
+            },
+            "fases": fases,
+        },
     )
 
 
