@@ -27,6 +27,7 @@ import kairos.agenda.models  # noqa: E402,F401
 import kairos.alunos.models  # noqa: E402,F401
 import kairos.auth.models  # noqa: E402,F401
 import kairos.avaliacoes.models  # noqa: E402,F401
+import kairos.execucao.models  # noqa: E402,F401
 
 config = context.config
 

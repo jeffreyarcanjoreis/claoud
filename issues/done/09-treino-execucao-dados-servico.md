@@ -7,7 +7,7 @@ A base para o aluno registrar a execução de um exercício: marcar como feito, 
 nenhuma
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 A execução é **por item do treino, por data**: uma linha por `(treino_item_id, data)` — o histórico é a sucessão de datas. Marcar/registrar de novo no mesmo dia **atualiza** a linha daquele dia (upsert); dias diferentes = linhas diferentes (histórico). Fidelidade ao método (regras 11–14): o registro é do aluno, sobre o que ele realmente fez; o "verbo é dele" na observação (regra 20). Regra 6: campos vazios = NULL = "sem registro".
