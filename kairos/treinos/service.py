@@ -33,6 +33,13 @@ FASE_PERGUNTAS = {
     "volta_a_calma": "O que mudou?",
 }
 
+VARIACAO_OPCOES = ("base", "regressao", "progressao")
+VARIACAO_LABELS = {
+    "base": "Base",
+    "regressao": "Regressão",
+    "progressao": "Progressão",
+}
+
 
 class ValidationError(Exception):
     """Raised when user-supplied data is invalid.
@@ -291,6 +298,12 @@ def get_treino_detail(treino_id: int) -> Optional[Dict[str, Any]]:
                 "variacao_base": item.variacao_base,
                 "variacao_regressao": item.variacao_regressao,
                 "variacao_progressao": item.variacao_progressao,
+                "variacao_escolhida": item.variacao_escolhida,
+                "variacao_escolhida_label": (
+                    VARIACAO_LABELS.get(item.variacao_escolhida)
+                    if item.variacao_escolhida
+                    else None
+                ),
             }
             for item, exercicio_nome, grupo_muscular, video_filename in rows
         ]
@@ -437,6 +450,58 @@ def update_item(
         }
 
     logger.info("TreinoItem updated: id=%s", item_id)
+    return result
+
+
+def escolher_variacao(
+    item_id: int, escolha: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """Set (or clear) the student's own choice of "where I recognize myself
+    today" among the workout item's variations.
+
+    ``escolha`` is normalized (empty/whitespace -> None, meaning "rever":
+    clear the choice, rule 6). When not None, it must be one of
+    :data:`VARIACAO_OPCOES`, otherwise :class:`ValidationError` is raised
+    before the session is touched. The chosen variation is not required to
+    have a description from the coach — the student recognizes themself
+    regardless; the UI is what only offers the described ones. Returns None
+    when the item does not exist (the caller route handles the 404).
+    """
+    parsed_escolha = _normalize(escolha)
+    if parsed_escolha is not None and parsed_escolha not in VARIACAO_OPCOES:
+        raise ValidationError("Variação inválida.")
+
+    with session_scope() as session:
+        item = session.get(TreinoItem, item_id)
+        if item is None:
+            return None
+
+        item.variacao_escolhida = parsed_escolha
+        session.flush()
+        session.refresh(item)
+        result = {
+            "id": item.id,
+            "treino_id": item.treino_id,
+            "exercicio_id": item.exercicio_id,
+            "ordem": item.ordem,
+            "series": item.series,
+            "reps": item.reps,
+            "carga": item.carga,
+            "observacao": item.observacao,
+            "fase": item.fase,
+            "fase_label": FASE_LABELS.get(item.fase) if item.fase else None,
+            "variacao_base": item.variacao_base,
+            "variacao_regressao": item.variacao_regressao,
+            "variacao_progressao": item.variacao_progressao,
+            "variacao_escolhida": item.variacao_escolhida,
+            "variacao_escolhida_label": (
+                VARIACAO_LABELS.get(parsed_escolha) if parsed_escolha else None
+            ),
+        }
+
+    logger.info(
+        "TreinoItem variação escolhida: id=%s escolha=%s", item_id, parsed_escolha
+    )
     return result
 
 

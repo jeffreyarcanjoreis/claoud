@@ -13,8 +13,8 @@ from __future__ import annotations
 import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Request, status
-from fastapi.responses import FileResponse, HTMLResponse, Response
+from fastapi import APIRouter, Form, Request, status
+from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, Response
 
 from kairos import config
 from kairos.acompanhamento.service import get_sessao_realizada, list_sessoes_realizadas
@@ -27,7 +27,10 @@ from kairos.financeiro.service import get_plano, pagamentos_do_aluno
 from kairos.mensagens.service import contar_nao_lidas, ultima_do_coach
 from kairos.registro_treino.service import list_registros
 from kairos.treinos.service import (
+    ValidationError,
     agrupar_itens_por_fase,
+    escolher_variacao,
+    get_item,
     get_treino,
     get_treino_detail,
     list_treinos,
@@ -424,11 +427,46 @@ async def treino_detalhe(request: Request, treino_id: int):
         "area_aluno/treino_detalhe.html",
         {
             "treino": {
+                "id": detalhe["id"],
                 "nome": detalhe["nome"],
                 "apresentacao": detalhe["observacao"] or None,
             },
             "fases": fases,
         },
+    )
+
+
+@router.post("/aluno/treinos/{treino_id}/itens/{item_id}/variacao")
+async def escolher_variacao_do_item(
+    request: Request,
+    treino_id: int,
+    item_id: int,
+    escolha: Optional[str] = Form(None),
+):
+    """Record the aluno's own choice of "where I recognize myself today"
+    for one workout item (rules 11-14: autodetermined, revisable, no grade).
+
+    404 (never 403) when the workout doesn't exist, doesn't belong to the
+    requester, or the item doesn't belong to the workout. A tampered
+    ``escolha`` (outside the valid options) is a no-op -- redirects back
+    without changing anything, never a 500.
+    """
+    aluno_id = _aluno_id_da_sessao(request)
+    treino = get_treino(treino_id)
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return _nao_encontrado(request)
+
+    item = get_item(item_id)
+    if item is None or item["treino_id"] != treino_id:
+        return _nao_encontrado(request)
+
+    try:
+        escolher_variacao(item_id, escolha)
+    except ValidationError:
+        pass
+
+    return RedirectResponse(
+        url=f"/aluno/treinos/{treino_id}", status_code=status.HTTP_303_SEE_OTHER
     )
 
 

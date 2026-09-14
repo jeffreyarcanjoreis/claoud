@@ -64,6 +64,9 @@
                             {% endif %}
                         </div>
                         {% endif %}
+                        {% if i.variacao_escolhida %}
+                        <p class="meu-lugar-espelho">O aluno se reconheceu em: {{ i.variacao_escolhida_label }}</p>
+                        {% endif %}
                         <details class="video-details">
                             <summary>Vídeo de demonstração</summary>
                             {% if i.video_filename %}

@@ -79,6 +79,9 @@ class TreinoItem(Base):
     variacao_base: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     variacao_regressao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     variacao_progressao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    variacao_escolhida: Mapped[Optional[str]] = mapped_column(
+        String(20), nullable=True
+    )
 
     def __repr__(self) -> str:
         return (

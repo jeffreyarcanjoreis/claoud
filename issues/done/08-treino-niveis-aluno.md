@@ -7,7 +7,7 @@ O aluno escolhe, entre base/regressão/progressão, a variação em que se recon
 07 (o coach precisa ter descrito as variações)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 A escolha é **por item do treino** (`TreinoItem`): uma única escolha corrente, revisável (trocar apenas sobrescreve; nada de histórico nesta fatia). Fidelidade ao método (regras 11–14): quem escolhe é o **aluno**, sobre si mesmo, em primeira pessoa ("onde eu me reconheço hoje"); o coach não gradua nem trava — apenas **vê** a escolha. Guardar o dado nunca inventado (regra 6): sem escolha = NULL = "ainda não me reconheci".

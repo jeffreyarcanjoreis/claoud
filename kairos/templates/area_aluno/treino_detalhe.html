@@ -51,6 +51,36 @@
                 <p class="variacao-item"><span class="variacao-rotulo">Progressão</span>{{ i.variacao_progressao }}</p>
                 {% endif %}
               </div>
+              <div class="meu-lugar">
+                <span class="meu-lugar-titulo">Onde eu me reconheço hoje?</span>
+                <p class="meu-lugar-legenda">Não é uma nota — é eu percebendo o meu momento agora.</p>
+                <div class="meu-lugar-opcoes">
+                  {% if i.variacao_base %}
+                  <form method="post" action="/aluno/treinos/{{ treino.id }}/itens/{{ i.id }}/variacao">
+                    <input type="hidden" name="escolha" value="base">
+                    <button type="submit" class="meu-lugar-opcao{% if i.variacao_escolhida == 'base' %} is-escolhida{% endif %}" aria-pressed="{{ 'true' if i.variacao_escolhida == 'base' else 'false' }}">Base</button>
+                  </form>
+                  {% endif %}
+                  {% if i.variacao_regressao %}
+                  <form method="post" action="/aluno/treinos/{{ treino.id }}/itens/{{ i.id }}/variacao">
+                    <input type="hidden" name="escolha" value="regressao">
+                    <button type="submit" class="meu-lugar-opcao{% if i.variacao_escolhida == 'regressao' %} is-escolhida{% endif %}" aria-pressed="{{ 'true' if i.variacao_escolhida == 'regressao' else 'false' }}">Regressão</button>
+                  </form>
+                  {% endif %}
+                  {% if i.variacao_progressao %}
+                  <form method="post" action="/aluno/treinos/{{ treino.id }}/itens/{{ i.id }}/variacao">
+                    <input type="hidden" name="escolha" value="progressao">
+                    <button type="submit" class="meu-lugar-opcao{% if i.variacao_escolhida == 'progressao' %} is-escolhida{% endif %}" aria-pressed="{{ 'true' if i.variacao_escolhida == 'progressao' else 'false' }}">Progressão</button>
+                  </form>
+                  {% endif %}
+                </div>
+                {% if i.variacao_escolhida %}
+                <form method="post" action="/aluno/treinos/{{ treino.id }}/itens/{{ i.id }}/variacao" class="meu-lugar-rever">
+                  <input type="hidden" name="escolha" value="">
+                  <button type="submit" class="meu-lugar-rever-btn">rever minha escolha</button>
+                </form>
+                {% endif %}
+              </div>
               {% endif %}
               {% if i.video_filename %}
               <video controls preload="metadata" class="exercicio-video">

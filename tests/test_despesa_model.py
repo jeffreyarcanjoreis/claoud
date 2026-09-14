@@ -27,7 +27,7 @@ from kairos.db import session_scope
 from kairos.financeiro.models import Despesa
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0027"  # bumped by migration 0027_add_variacoes_to_treino_itens
+HEAD_REVISION = "0028"  # bumped by migration 0028_add_variacao_escolhida_to_treino_itens
 
 
 @pytest.fixture

@@ -173,6 +173,8 @@ def _to_item_display(item: Dict[str, Any]) -> Dict[str, Any]:
         "variacao_base": item["variacao_base"] or None,
         "variacao_regressao": item["variacao_regressao"] or None,
         "variacao_progressao": item["variacao_progressao"] or None,
+        "variacao_escolhida": item["variacao_escolhida"] or None,
+        "variacao_escolhida_label": item["variacao_escolhida_label"] or None,
     }
 
 
