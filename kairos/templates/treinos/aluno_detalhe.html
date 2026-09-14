@@ -60,6 +60,14 @@
                         <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/remover">
                             <button type="submit" class="button-danger-sm">Remover</button>
                         </form>
+                        <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/mover">
+                            <input type="hidden" name="direcao" value="cima">
+                            <button type="submit" class="button-move-sm" aria-label="Mover para cima">&uarr;</button>
+                        </form>
+                        <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/mover">
+                            <input type="hidden" name="direcao" value="baixo">
+                            <button type="submit" class="button-move-sm" aria-label="Mover para baixo">&darr;</button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}

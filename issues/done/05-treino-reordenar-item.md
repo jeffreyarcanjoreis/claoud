@@ -7,7 +7,7 @@ Na planilha do coach, o coach reordena os exercícios dentro de uma fase (mover 
 nenhuma (usa a coluna `ordem` já existente)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Reordenar por passos (mover ↑/↓), trocando a posição com o vizinho **da mesma fase**. Simples e testável; sem arrastar (drag) nesta fatia.

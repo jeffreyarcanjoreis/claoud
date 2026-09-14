@@ -496,3 +496,59 @@ def set_apresentacao(treino_id: int, texto: Optional[str] = None) -> Optional[Di
 
     logger.info("Apresentação do treino definida: id=%s", treino_id)
     return result
+
+
+def mover_item(item_id: int, direcao: str) -> bool:
+    """Move a workout item one step up or down within its phase.
+
+    ``direcao`` must be ``"cima"`` or ``"baixo"``; anything else raises
+    :class:`ValidationError` before the session is opened. Swaps ``ordem``
+    with the immediate neighbour in the same treino and phase (``fase`` may
+    be None, meaning "Sem fase"). Returns False when the item does not exist
+    or when it is already at that end of its phase (no-op); returns True
+    when the swap happened.
+    """
+    if direcao not in ("cima", "baixo"):
+        raise ValidationError("Direção inválida.")
+
+    with session_scope() as session:
+        item = session.get(TreinoItem, item_id)
+        if item is None:
+            return False
+
+        fase_filter = (
+            TreinoItem.fase.is_(None) if item.fase is None else TreinoItem.fase == item.fase
+        )
+
+        if direcao == "cima":
+            query = (
+                select(TreinoItem)
+                .where(
+                    TreinoItem.treino_id == item.treino_id,
+                    fase_filter,
+                    TreinoItem.ordem < item.ordem,
+                )
+                .order_by(TreinoItem.ordem.desc())
+                .limit(1)
+            )
+        else:
+            query = (
+                select(TreinoItem)
+                .where(
+                    TreinoItem.treino_id == item.treino_id,
+                    fase_filter,
+                    TreinoItem.ordem > item.ordem,
+                )
+                .order_by(TreinoItem.ordem.asc())
+                .limit(1)
+            )
+
+        vizinho = session.execute(query).scalar_one_or_none()
+        if vizinho is None:
+            return False
+
+        item.ordem, vizinho.ordem = vizinho.ordem, item.ordem
+        session.flush()
+
+    logger.info("TreinoItem moved: id=%s direcao=%s", item_id, direcao)
+    return True

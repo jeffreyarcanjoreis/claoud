@@ -573,6 +573,31 @@ details form {
   transform: none;
 }
 
+.button-move-sm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  line-height: 1;
+  color: var(--bone-dim);
+  background: transparent;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.2s var(--ease), color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+.button-move-sm:hover {
+  color: var(--bone);
+  background: var(--sage);
+  border-color: var(--sage);
+  transform: none;
+}
+
 /* ===== acoes da ficha do aluno (arquivar / reativar / excluir) ===== */
 .ficha-acoes {
   display: flex;

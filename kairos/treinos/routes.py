@@ -28,6 +28,7 @@ from kairos.treinos.service import (
     get_treino_detail,
     list_exercicios,
     list_treinos,
+    mover_item,
     remove_item,
     set_apresentacao,
     update_item,
@@ -336,6 +337,45 @@ async def remove_item_route(
         return _aluno_nao_encontrado(request)
 
     remove_item(item_id)
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}/treino/{treino_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/alunos/{aluno_id}/treino/{treino_id}/itens/{item_id}/mover")
+async def move_item_route(
+    request: Request,
+    aluno_id: int,
+    treino_id: int,
+    item_id: int,
+    direcao: Optional[str] = Form(None),
+):
+    """Move an item up/down within its phase, checking ownership (404 otherwise).
+
+    No-op edge cases (item already first/last in its phase, or a tampered
+    ``direcao``) simply redirect back without raising an error.
+    """
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return _aluno_nao_encontrado(request)
+
+    treino = get_treino(treino_id)
+    item = get_item(item_id)
+    if (
+        treino is None
+        or treino["aluno_id"] != aluno_id
+        or item is None
+        or item["treino_id"] != treino_id
+    ):
+        return _aluno_nao_encontrado(request)
+
+    try:
+        mover_item(item_id, direcao)
+    except ValidationError:
+        # Tampered/invalid "direcao": treat as a no-op, same as an edge move.
+        pass
+
     return RedirectResponse(
         url=f"/alunos/{aluno_id}/treino/{treino_id}",
         status_code=status.HTTP_303_SEE_OTHER,
