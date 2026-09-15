@@ -1,0 +1,86 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Minha área{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  {% if primeiro_nome %}
+  <h1>Olá, {{ primeiro_nome }}</h1>
+  {% else %}
+  <h1>Olá!</h1>
+  {% endif %}
+  <p class="cad-sub">Esta é a sua área no Kairos.</p>
+
+  {% if recado %}
+  <a class="recado-card" href="/aluno/mensagens">
+    <span class="recado-topo">
+      <span class="recado-titulo">Recado do coach</span>
+      {% if recado_novo %}<span class="badge badge-recado-novo">novo</span>{% endif %}
+    </span>
+    <p class="recado-texto">{{ recado.texto_trecho }}</p>
+    <span class="recado-data">{{ recado.data }}</span>
+  </a>
+  {% endif %}
+
+  <section class="aluno-secao">
+    <h2>Check-in de hoje</h2>
+    {% if checkin_hoje %}
+    {% set partes = [] %}
+    {% if checkin_hoje.sono_horas is not none %}{% set _ = partes.append('Sono: ' ~ checkin_hoje.sono_horas ~ 'h') %}{% endif %}
+    {% if checkin_hoje.energia is not none %}{% set _ = partes.append('Energia: ' ~ checkin_hoje.energia ~ '/10') %}{% endif %}
+    {% if checkin_hoje.humor_label %}{% set _ = partes.append('Humor: ' ~ checkin_hoje.humor_label) %}{% endif %}
+    <div class="checkin-card">
+      <p class="checkin-resumo">{% if partes %}{{ partes|join(' · ') }}{% else %}Registrado hoje.{% endif %}</p>
+      <a href="/aluno/checkin">editar</a>
+    </div>
+    {% else %}
+    <a class="checkin-cta" href="/aluno/checkin">Como você está hoje? Fazer check-in</a>
+    {% endif %}
+  </section>
+
+  <section class="aluno-secao">
+    <h2>Treino de hoje</h2>
+    {% if treino_hoje %}
+    <div class="aluno-lista-item">
+      <span class="aluno-item-principal">{{ treino_hoje.hora }}</span>
+      <span class="aluno-item-meta">{{ treino_hoje.tipo_label }}</span>
+      {% if treino_hoje.treino_id %}
+      <a href="/aluno/treinos/{{ treino_hoje.treino_id }}">ver treino{% if treino_hoje.treino_nome %}: {{ treino_hoje.treino_nome }}{% endif %}</a>
+      {% endif %}
+    </div>
+    {% else %}
+    <p class="aluno-vazio">Nenhum treino marcado para hoje.</p>
+    {% endif %}
+    {% if pode_registrar_hoje %}
+    <a class="registro-cta" href="/aluno/registro">Como foi o treino de hoje? Registrar</a>
+    {% endif %}
+  </section>
+
+  <section class="aluno-secao">
+    <h2>Próxima sessão</h2>
+    {% if proxima_sessao %}
+    <div class="aluno-lista-item">
+      <span class="aluno-item-principal">{{ proxima_sessao.data }} às {{ proxima_sessao.hora }}</span>
+      <span class="aluno-item-meta">{{ proxima_sessao.tipo_label }}</span>
+      {% if proxima_sessao.treino_id %}
+      <a href="/aluno/treinos/{{ proxima_sessao.treino_id }}">ver treino{% if proxima_sessao.treino_nome %}: {{ proxima_sessao.treino_nome }}{% endif %}</a>
+      {% endif %}
+    </div>
+    {% else %}
+    <p class="aluno-vazio">Nenhuma sessão agendada.</p>
+    {% endif %}
+  </section>
+
+  <section class="aluno-secao">
+    <h2>Atalhos</h2>
+    <div class="aluno-atalhos">
+      <a class="aluno-atalho" href="/aluno/perfil">Perfil</a>
+      <a class="aluno-atalho" href="/aluno/treinos">Treinos</a>
+      <a class="aluno-atalho" href="/aluno/avaliacoes">Avaliações</a>
+      <a class="aluno-atalho" href="/aluno/agenda">Agenda</a>
+      <a class="aluno-atalho" href="/aluno/financeiro">Financeiro</a>
+      <a class="aluno-atalho" href="/aluno/acompanhamento">Acompanhamento</a>
+    </div>
+  </section>
+</section>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p><a href="/alunos/{{ aluno_id }}">&larr; Voltar para o perfil</a></p>
+
+<h1>Editar aluno</h1>
+
+{% include "alunos/_form.html" %}
+{% endblock %}

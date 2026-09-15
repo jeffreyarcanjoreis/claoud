@@ -1,0 +1,497 @@
+/* Kairos — vitrine (hero público + seções)
+   Depende de tokens.css + base.css (carregados antes deste arquivo).
+   Hero em tela cheia com o logo 3D protagonista (nítido, sem blur); abaixo,
+   seções opacas que passam por cima do canvas fixo conforme se rola. */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--void);
+  overflow-x: hidden;
+}
+
+/* glow quente atrás do logo (só some sob as seções opacas) */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 46%, rgba(194, 97, 63, 0.22), transparent 52%),
+    radial-gradient(circle at 50% 46%, rgba(200, 155, 74, 0.12), transparent 40%);
+}
+
+/* o logo 3D fica fixo atrás de tudo; nunca bloqueia cliques */
+#vitrine-logo {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* ===== hero (primeira tela) ===== */
+.hero {
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-5) 6vw 0;
+}
+
+.word {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+}
+
+.word .o {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+}
+
+.nav .cta {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 0.6rem 1.4rem;
+  transition: background 0.22s var(--ease), transform 0.22s var(--ease);
+}
+
+.nav .cta:hover {
+  background: var(--clay);
+  color: var(--bone);
+  transform: translateY(-1px);
+}
+
+.nav .entrar {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.nav .entrar:hover {
+  color: var(--gold);
+}
+
+.nav .nav-link {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  transition: color 0.22s var(--ease);
+}
+
+.nav .nav-link:hover {
+  color: var(--gold);
+}
+
+.center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  text-align: center;
+  padding: 0 6vw 13vh;
+}
+
+.center .slogan {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(30px, 6.4vw, 74px);
+  line-height: 1.02;
+  letter-spacing: -0.03em;
+  max-width: 16ch;
+  color: var(--bone);
+  text-shadow: 0 2px 40px rgba(20, 19, 15, 0.8);
+}
+
+.center .slogan em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.center .sub {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(15px, 2.2vw, 22px);
+  color: var(--bone-dim);
+  margin-top: var(--sp-3);
+}
+
+.hint {
+  position: absolute;
+  bottom: 26px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  pointer-events: none;
+}
+
+.hint::after {
+  content: '';
+  width: 1px;
+  height: 38px;
+  background: linear-gradient(var(--bone-dim), transparent);
+  animation: vitrine-hint-pulse 2s ease-in-out infinite;
+}
+
+@keyframes vitrine-hint-pulse {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 1; }
+}
+
+/* ===== seções (rolam por cima do canvas) ===== */
+.v-secao {
+  position: relative;
+  z-index: 2;
+  /* véu translúcido: deixa o logo 3D aparecer atrás, mantendo o texto legível */
+  background: rgba(20, 19, 15, 0.6);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  padding: clamp(64px, 13vh, 150px) 6vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.v-secao > * {
+  width: 100%;
+  max-width: 42rem;
+}
+
+/* Suaviza a emenda entre o hero (transparente) e a primeira seção: em vez de o
+   véu (fundo translúcido + blur) começar numa linha dura horizontal, ele entra
+   por um gradiente. A máscara afeta o topo (zona de padding, sem texto), então
+   aumentamos o padding-top para o conteúdo sempre passar do trecho esmaecido. */
+#metodo {
+  padding-top: clamp(140px, 16vh, 190px);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 120px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 120px);
+}
+
+.v-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: var(--sp-3);
+}
+
+.v-titulo {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(28px, 4.6vw, 52px);
+  line-height: 1.06;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  margin-bottom: var(--sp-4);
+}
+
+.v-titulo em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.v-texto {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: clamp(16px, 2vw, 19px);
+  line-height: 1.7;
+  color: var(--bone-dim);
+  margin-bottom: var(--sp-4);
+}
+
+.v-destaque {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(20px, 2.8vw, 28px);
+  line-height: 1.3;
+  color: var(--bone);
+  margin-bottom: var(--sp-4);
+}
+
+.v-destaque em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* a seção de convite é centrada */
+.v-cta {
+  text-align: center;
+}
+
+.v-cta-botao {
+  display: inline-block;
+  margin-top: var(--sp-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 0.9rem 2.4rem;
+  transition: background 0.22s var(--ease), transform 0.22s var(--ease);
+}
+
+.v-cta-botao:hover {
+  background: var(--clay);
+  color: var(--bone);
+  transform: translateY(-2px);
+}
+
+/* estado desabilitado do CTA (Form ainda não configurado): nunca parece clicável */
+.v-cta-botao.is-soon {
+  background: var(--line);
+  color: var(--bone-dim);
+  cursor: default;
+}
+
+.v-cta-botao.is-soon:hover {
+  background: var(--line);
+  color: var(--bone-dim);
+  transform: none;
+}
+
+/* âncoras do menu não devem colar as seções no topo */
+#metodo,
+#profissionais,
+#vamos-comecar {
+  scroll-margin-top: 80px;
+}
+
+/* ===== método: sub-blocos, cards, listas ===== */
+.v-bloco {
+  width: 100%;
+  margin-top: var(--sp-5);
+}
+
+.v-sub {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(19px, 2.6vw, 24px);
+  color: var(--bone);
+  margin-top: var(--sp-2);
+  margin-bottom: var(--sp-3);
+}
+
+.v-cards {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.v-card {
+  display: flex;
+  gap: var(--sp-3);
+  align-items: flex-start;
+  background: rgba(28, 26, 20, 0.55);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+}
+
+.v-card-num {
+  flex: none;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.v-card-titulo {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-lead);
+  color: var(--bone);
+  margin-bottom: var(--sp-1);
+}
+
+.v-card-texto {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  color: var(--bone-dim);
+}
+
+.v-conquistas {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-4);
+}
+
+.v-conquistas li {
+  position: relative;
+  padding-left: var(--sp-4);
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-lead);
+  color: var(--bone-dim);
+}
+
+.v-conquistas li::before {
+  content: '—';
+  position: absolute;
+  left: 0;
+  color: var(--gold);
+}
+
+.v-passos {
+  list-style: none;
+  counter-reset: v-passo;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.v-passos li {
+  position: relative;
+  padding-left: 2.4rem;
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  line-height: 1.65;
+  color: var(--bone-dim);
+}
+
+.v-passos li strong {
+  color: var(--bone);
+  font-weight: 500;
+}
+
+.v-passos li::before {
+  counter-increment: v-passo;
+  content: counter(v-passo);
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 20px;
+  color: var(--gold);
+  line-height: 1.3;
+}
+
+/* ===== profissionais ===== */
+#profissionais .v-prof-grid {
+  max-width: 60rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--sp-4);
+}
+
+.v-prof-card {
+  background: rgba(28, 26, 20, 0.55);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  text-align: left;
+}
+
+.v-prof-avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-serif);
+  font-size: 24px;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  margin-bottom: var(--sp-3);
+}
+
+.v-prof-nome {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  color: var(--bone);
+  margin-bottom: 4px;
+}
+
+.v-prof-papel {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: var(--sp-3);
+}
+
+/* ===== revelação no scroll (só quando o JS está ativo) ===== */
+.reveal {
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+.js .reveal {
+  opacity: 0;
+  transform: translateY(26px);
+}
+
+.js .reveal.in-view {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .hint::after { animation: none; opacity: 0.6; }
+  .js .reveal { opacity: 1; transform: none; transition: none; }
+}
+
+@media (max-width: 640px) {
+  .top { padding: var(--sp-4) 5vw 0; }
+  .nav { gap: var(--sp-3); }
+  .center { padding-bottom: 16vh; }
+
+  .v-card { flex-direction: column; padding: var(--sp-3); gap: var(--sp-2); }
+  .v-bloco { margin-top: var(--sp-4); }
+  #profissionais .v-prof-grid { grid-template-columns: 1fr; }
+  .v-prof-card { padding: var(--sp-3); }
+}

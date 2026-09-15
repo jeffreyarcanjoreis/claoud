@@ -1,0 +1,58 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Avaliação{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/css/components.css?v={{ asset_ver }}">
+{% endblock %}
+
+{% block content %}
+{% set metricas = [
+  ("peso", "Peso (kg)"),
+  ("altura", "Altura (cm)"),
+  ("gordura_pct", "% Gordura"),
+  ("massa_magra", "Massa magra (kg)"),
+  ("massa_gorda", "Massa gorda (kg)")
+] %}
+
+{% macro valor_fmt(v) %}{% if v is none %}<span class="none">sem registro</span>{% else %}{{ (v|string).replace('.', ',') }}{% endif %}{% endmacro %}
+
+{% macro delta_fmt(d) %}{% if d is not none %}{% if d > 0 %}<span class="delta delta-up">+{{ (d|string).replace('.', ',') }}</span>{% elif d < 0 %}<span class="delta delta-down">−{{ ((-d)|string).replace('.', ',') }}</span>{% else %}<span class="delta delta-same">0</span>{% endif %}{% endif %}{% endmacro %}
+
+<section class="cad-card">
+  <h1>Avaliação — {{ avaliacao.data.strftime('%d/%m/%Y') }}</h1>
+
+  <div class="profile">
+    {% for field, label in metricas %}
+    <div class="row">
+      <span class="k">{{ label }}</span>
+      <span class="v">{{ valor_fmt(avaliacao[field]) }}{{ delta_fmt(avaliacao.deltas[field]) }}</span>
+    </div>
+    {% endfor %}
+    <div class="row">
+      <span class="k">IMC</span>
+      <span class="v">{{ valor_fmt(avaliacao.imc) }}</span>
+    </div>
+  </div>
+
+  {% if not avaliacao.has_previous %}
+  <p class="none">Primeira avaliação — sem comparação anterior.</p>
+  {% endif %}
+
+  <h3>Perimetria (cm)</h3>
+  {% if avaliacao.perimetria %}
+  <dl class="profile">
+    {% for p in avaliacao.perimetria %}
+    <div class="row">
+      <dt class="k">{{ p.segmento }}</dt>
+      <dd class="v">{{ valor_fmt(p.valor) }}{{ delta_fmt(p.delta) }}</dd>
+    </div>
+    {% endfor %}
+  </dl>
+  {% else %}
+  <p><span class="none">sem registro</span></p>
+  {% endif %}
+
+  <p><a href="/aluno">&larr; Voltar</a></p>
+</section>
+{% endblock %}

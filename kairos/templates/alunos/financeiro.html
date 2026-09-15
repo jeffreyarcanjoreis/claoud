@@ -1,0 +1,105 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Financeiro</h2>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+{% if plano %}
+<ul class="card-list">
+    <li class="card">
+        <p class="card-line"><strong>Formato:</strong> {{ plano.formato_label }}</p>
+        <p class="card-line"><strong>Valor mensal:</strong> {{ plano.valor }}</p>
+        <p class="card-line">
+            <strong>Ciclo:</strong>
+            {% if plano.ciclo == 'sem registro' %}
+            <span class="none">{{ plano.ciclo }}</span>
+            {% else %}
+            {{ plano.ciclo }}
+            {% endif %}
+        </p>
+        <p class="card-line">
+            <strong>Início:</strong>
+            {% if plano.inicio == 'sem registro' %}
+            <span class="none">{{ plano.inicio }}</span>
+            {% else %}
+            {{ plano.inicio }}
+            {% endif %}
+        </p>
+        <p class="card-line">
+            <strong>Observação:</strong>
+            {% if plano.observacao %}
+            {{ plano.observacao }}
+            {% else %}
+            <span class="none">sem registro</span>
+            {% endif %}
+        </p>
+    </li>
+</ul>
+
+<form method="post" action="/alunos/{{ aluno.id }}/financeiro/remover">
+    <button type="submit" class="button-danger-sm">Remover plano</button>
+</form>
+{% else %}
+<p class="none">Ainda sem plano definido.</p>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/financeiro">
+    <div class="field">
+        <label for="formato">Formato *</label>
+        <select id="formato" name="formato">
+            <option value="digital"{% if values and values.formato == 'digital' %} selected{% endif %}>Digital</option>
+            <option value="grupo"{% if values and values.formato == 'grupo' %} selected{% endif %}>Grupo</option>
+            <option value="individual"{% if values and values.formato == 'individual' %} selected{% endif %}>Individual (1-a-1)</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="valor">Valor mensal (R$) *</label>
+        <input type="number" step="0.01" inputmode="decimal" id="valor" name="valor" value="{{ (values.valor if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="ciclo_meses">Ciclo (meses)</label>
+        <input type="number" min="1" id="ciclo_meses" name="ciclo_meses" placeholder="ex.: 6" value="{{ (values.ciclo_meses if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="inicio">Início</label>
+        <input type="date" id="inicio" name="inicio" value="{{ (values.inicio if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="observacao">Observação</label>
+        <textarea id="observacao" name="observacao">{{ (values.observacao if values else '') or '' }}</textarea>
+    </div>
+
+    <button type="submit">Salvar plano</button>
+</form>
+
+<h3>Recebimentos</h3>
+
+{% if pagamentos %}
+<ul class="card-list">
+    {% for p in pagamentos %}
+    <li class="card">
+        <p class="card-line">{{ p.competencia }} · {{ p.valor }}</p>
+        <p class="card-line">
+            Pago em
+            {% if p.data == 'sem registro' %}
+            <span class="none">{{ p.data }}</span>
+            {% else %}
+            {{ p.data }}
+            {% endif %}
+        </p>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<p class="none">Nenhum recebimento registrado.</p>
+{% endif %}
+
+<p><a href="/alunos/{{ aluno.id }}">&larr; Voltar</a></p>
+{% endblock %}

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kairos — Redefinir senha</title>
+  <link rel="stylesheet" href="/static/css/tokens.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/base.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/cadastro.css?v={{ asset_ver }}">
+</head>
+<body>
+  <canvas id="fundo3d" aria-hidden="true"></canvas>
+  <div id="fundo3d-scrim" aria-hidden="true"></div>
+
+  <header class="cad-top">
+    <a class="word" href="/vitrine">Kair<span class="o">o</span>s</a>
+  </header>
+
+  <main class="cad-main">
+    <section class="cad-card login-card">
+      <h1>Defina uma nova senha</h1>
+
+      {% if erro %}
+      <div class="message-error">{{ erro }}</div>
+      {% endif %}
+
+      <form method="post" action="" class="cad-form login-form" id="form-redefinir">
+        <input type="hidden" id="access_token" name="access_token" value="{{ access_token or '' }}">
+
+        <div class="field">
+          <label for="senha">Nova senha</label>
+          <input type="password" id="senha" name="senha" required autocomplete="new-password">
+        </div>
+        <div class="field">
+          <label for="confirmar">Confirmar nova senha</label>
+          <input type="password" id="confirmar" name="confirmar" required autocomplete="new-password">
+        </div>
+        <p class="form-nota">Mínimo de 8 caracteres.</p>
+
+        <button type="submit" class="button-primary">Redefinir senha</button>
+      </form>
+
+      <div id="sem-token" hidden>
+        <div class="message-error">Link inválido ou expirado. Peça um novo.</div>
+        <a class="link-voltar" href="/esqueci-senha">Ir para "Esqueci minha senha"</a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var params = new URLSearchParams(location.hash.slice(1));
+      var accessToken = params.get('access_token');
+      var tipo = params.get('type');
+      var campo = document.getElementById('access_token');
+
+      if (accessToken && (!tipo || tipo === 'recovery')) {
+        campo.value = accessToken;
+      }
+
+      if (location.hash) {
+        history.replaceState(null, '', location.pathname + location.search);
+      }
+
+      if (!campo.value) {
+        // O form tem .cad-form { display:flex }, que ganha do atributo [hidden]
+        // por especificidade; escondemos por style inline pra vencer a classe.
+        document.getElementById('form-redefinir').style.display = 'none';
+        document.getElementById('sem-token').hidden = false;
+      }
+    })();
+  </script>
+  <script type="module" src="/static/js/painel-fundo.js?v={{ asset_ver }}"></script>
+</body>
+</html>

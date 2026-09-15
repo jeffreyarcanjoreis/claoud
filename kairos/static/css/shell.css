@@ -1,0 +1,194 @@
+/* Kairos — shell do painel
+   Depende de tokens.css (custom properties) e base.css (carregados antes deste arquivo).
+   Fonte de verdade visual: mockups/painel-coach.html (barra do topo + abas). */
+
+/* ===== fundo 3D ambiente (logo do Kairos) =====
+   Doc 07: apagado, desfocado, lento, atrás do conteúdo legível, pausável. */
+#fundo3d {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.24;          /* apagado */
+  filter: blur(2px);      /* desfocado */
+  pointer-events: none;
+}
+
+#fundo3d-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* protege a leitura: escurece por cima do logo sem o apagar de todo */
+  background:
+    radial-gradient(circle at 50% 42%, rgba(20, 19, 15, 0.25), rgba(20, 19, 15, 0.62) 72%);
+}
+
+/* conteúdo do shell sempre por cima do fundo */
+.topbar,
+.tabs,
+.content {
+  position: relative;
+  z-index: 1;
+}
+
+#fundo-toggle {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 5;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  color: var(--bone-dim);
+  background: rgba(20, 19, 15, 0.72);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  text-transform: none;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease), background 0.2s var(--ease);
+}
+
+#fundo-toggle:hover {
+  color: var(--bone);
+  border-color: var(--gold);
+  background: rgba(20, 19, 15, 0.9);
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #fundo3d { opacity: 0.16; } /* ainda mais discreto quando se pede menos movimento */
+}
+
+/* ===== barra do topo ===== */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-3) 5vw;
+  border-bottom: 1px solid var(--line);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+}
+
+/* o logo + wordmark levam de volta à vitrine */
+.brand-home {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  text-decoration: none;
+  transition: opacity 0.2s var(--ease);
+}
+
+.brand-home .word {
+  transition: color 0.2s var(--ease);
+}
+
+.brand-home:hover .word {
+  color: var(--gold);
+}
+
+.brand svg {
+  width: 30px;
+  height: 30px;
+  overflow: visible;
+}
+
+.ring {
+  transform-origin: center;
+  animation: spin 40s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.brand .word {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+}
+
+.brand .word .o {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.brand .sub {
+  font-size: var(--fs-eyebrow);
+  color: var(--bone-dim);
+  letter-spacing: 0.06em;
+  border-left: 1px solid var(--line);
+  padding-left: var(--sp-2);
+}
+
+.topbar .coach {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+}
+
+/* ===== navegacao por abas ===== */
+.tabs {
+  display: flex;
+  gap: var(--sp-1);
+  padding: 0 5vw;
+  border-bottom: 1px solid var(--line);
+  overflow-x: auto;
+}
+
+.tab {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  letter-spacing: 0.03em;
+  color: var(--bone-dim);
+  padding: var(--sp-3) var(--sp-3);
+  position: relative;
+  white-space: nowrap;
+  transition: color 0.2s var(--ease);
+}
+
+.tab:hover {
+  color: var(--bone);
+}
+
+.tab.on {
+  color: var(--bone);
+}
+
+.tab.on::after {
+  content: '';
+  position: absolute;
+  left: var(--sp-3);
+  right: var(--sp-3);
+  bottom: -1px;
+  height: 2px;
+  background: var(--gold);
+}
+
+.tab .soon {
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--sage);
+  margin-left: 7px;
+  vertical-align: middle;
+}
+
+/* ===== conteudo ===== */
+.content {
+  max-width: 1060px;
+  width: 100%;
+  margin: 0 auto;
+  padding: var(--sp-6) 5vw var(--sp-6);
+}

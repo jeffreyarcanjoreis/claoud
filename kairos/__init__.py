@@ -1,0 +1,1 @@
+"""Kairos - coaching management system."""

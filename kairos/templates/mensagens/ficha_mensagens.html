@@ -1,0 +1,31 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Mensagens</h2>
+
+{% if erro %}
+<div class="message-error">{{ erro }}</div>
+{% endif %}
+
+{% if mensagens %}
+<ul class="msg-lista">
+  {% for m in mensagens %}
+  <li class="msg-item {% if m.autor == 'coach' %}msg-coach{% else %}msg-aluno{% endif %}">
+    <span class="msg-autor">{% if m.autor == 'coach' %}Você{% else %}{{ aluno.name }}{% endif %}</span>
+    <p class="msg-texto">{{ m.texto }}</p>
+    <span class="msg-data">{{ m.data }}</span>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="none">Nenhuma mensagem ainda.</p>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/mensagens" class="msg-form">
+    <div class="field">
+        <label for="texto">Responder</label>
+        <textarea id="texto" name="texto" required></textarea>
+    </div>
+    <button type="submit">Responder</button>
+</form>
+{% endblock %}

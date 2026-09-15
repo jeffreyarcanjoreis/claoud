@@ -1,0 +1,370 @@
+/* Kairos — cadastro público (/comecar)
+   Depende de tokens.css + base.css (carregados antes deste arquivo).
+   Página pública standalone (sem shell do painel): fundo escuro da marca,
+   header simples com a wordmark e um formulário centralizado. */
+
+body {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== fundo 3D ambiente (logo do Kairos) =====
+   Ativa só quando a página traz o canvas #fundo3d (ex.: /login), pra o logo
+   aparecer atrás como no painel. Espelha shell.css: apagado, desfocado, atrás,
+   com um scrim que protege a leitura. O conteúdo (header + main) fica por cima. */
+#fundo3d {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  opacity: 0.36;          /* na tela de login o logo aparece mais (tela mais vazia) */
+  filter: blur(2px);
+  pointer-events: none;
+}
+
+#fundo3d-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 42%, rgba(20, 19, 15, 0.25), rgba(20, 19, 15, 0.62) 72%);
+}
+
+.cad-top,
+.cad-main {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #fundo3d { opacity: 0.24; }
+}
+
+/* ===== header ===== */
+.cad-top {
+  padding: var(--sp-5) 6vw var(--sp-3);
+}
+
+.cad-top .word {
+  display: inline-block;
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+}
+
+.cad-top .word:hover {
+  color: var(--bone);
+}
+
+.cad-top .word .o {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* ===== layout ===== */
+.cad-main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  padding: var(--sp-4) 6vw var(--sp-6);
+}
+
+.cad-card {
+  width: 100%;
+  max-width: 40rem;
+}
+
+.cad-card h1 {
+  margin-bottom: var(--sp-2);
+}
+
+.cad-sub {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-lead);
+  line-height: 1.6;
+  color: var(--bone-dim);
+  margin-bottom: var(--sp-5);
+}
+
+/* ===== estado de sucesso ===== */
+.cad-enviado {
+  margin: auto 0;
+  padding: var(--sp-6) 0;
+  text-align: center;
+}
+
+.cad-enviado .cad-sub {
+  margin-bottom: var(--sp-4);
+}
+
+/* ===== formulario ===== */
+.cad-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.form-bloco {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  margin: 0;
+  min-width: 0;
+}
+
+.form-bloco-titulo {
+  padding: 0 var(--sp-2);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  color: var(--bone);
+}
+
+.form-bloco-intro {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  color: var(--sage);
+  margin: var(--sp-2) 0 var(--sp-3);
+}
+
+.form-bloco .field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-3);
+}
+
+.form-bloco .field:last-child {
+  margin-bottom: 0;
+}
+
+.form-bloco .field label {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.form-bloco .field input,
+.form-bloco .field textarea,
+.form-bloco .field select {
+  width: 100%;
+}
+
+.form-bloco .field textarea {
+  min-height: 5.5rem;
+}
+
+.field-row {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.field-row .field {
+  flex: 1 1 160px;
+  margin-bottom: 0;
+}
+
+.form-bloco > .field-row:not(:last-child) {
+  margin-bottom: var(--sp-3);
+}
+
+/* ===== mensagens (error/success) =====
+   Paginas publicas standalone (cadastro, login) nao carregam components.css;
+   repete aqui a mesma regra pra manter o token/estilo consistente. */
+.message-error,
+.message-success {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-2) var(--sp-3);
+  margin-bottom: var(--sp-3);
+  font-size: var(--fs-small);
+}
+
+.message-error {
+  color: var(--clay);
+  border-color: var(--clay);
+}
+
+.message-success {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+/* ===== login (/login) =====
+   Card mais estreito, sem fieldsets: so os dois campos + botao. */
+.login-card {
+  max-width: 26rem;
+}
+
+.login-form {
+  gap: var(--sp-4);
+}
+
+.login-form .field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.login-form .field label {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.login-form .button-primary {
+  align-self: stretch;
+  text-align: center;
+}
+
+/* dois caminhos de entrada: coach (primário) e aluno (contorno) */
+.login-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  align-self: stretch;
+}
+
+.login-actions .button-primary,
+.login-actions .button-secondary {
+  align-self: stretch;
+  text-align: center;
+}
+
+.button-secondary {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--gold);
+  background: transparent;
+  border: 1px solid var(--gold);
+  border-radius: var(--radius-lg);
+  padding: var(--sp-3) var(--sp-5);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.22s var(--ease), color 0.22s var(--ease), transform 0.22s var(--ease);
+}
+
+.button-secondary:hover {
+  background: var(--gold);
+  color: var(--void);
+  transform: translateY(-2px);
+}
+
+/* ===== consentimento ===== */
+.consent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  cursor: pointer;
+}
+
+.consent input[type="checkbox"] {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  accent-color: var(--gold);
+}
+
+.consent span {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--bone);
+}
+
+.form-nota {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--sage);
+  margin-top: calc(var(--sp-3) * -1);
+}
+
+/* ===== botoes ===== */
+.button-link,
+.button-primary {
+  display: inline-block;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--gold);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-2) var(--sp-4);
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.22s var(--ease), color 0.22s var(--ease), transform 0.22s var(--ease);
+}
+
+.button-link:hover,
+.button-primary:hover {
+  background: var(--clay);
+  color: var(--bone);
+  transform: translateY(-2px);
+}
+
+.button-primary {
+  align-self: flex-start;
+  padding: var(--sp-3) var(--sp-5);
+}
+
+/* ===== link discreto (voltar / recuperar senha) ===== */
+.link-voltar {
+  display: inline-block;
+  margin-top: var(--sp-4);
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  color: var(--sage);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition: color 0.22s var(--ease);
+}
+
+.link-voltar:hover {
+  color: var(--gold);
+}
+
+@media (max-width: 640px) {
+  .cad-top {
+    padding: var(--sp-4) 5vw var(--sp-2);
+  }
+
+  .cad-main {
+    padding: var(--sp-3) 5vw var(--sp-5);
+  }
+
+  .field-row {
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .button-primary {
+    align-self: stretch;
+    text-align: center;
+  }
+}

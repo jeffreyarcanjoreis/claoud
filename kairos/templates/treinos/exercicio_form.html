@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Treinos</p>
+<h1>Novo exercício</h1>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/treinos">
+    <div class="field">
+        <label for="nome">Nome *</label>
+        <input type="text" id="nome" name="nome" value="{{ (values.nome if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="grupo_muscular">Grupo muscular</label>
+        <input type="text" id="grupo_muscular" name="grupo_muscular" placeholder="ex.: Peito, Quadríceps" value="{{ (values.grupo_muscular if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="observacao">Observação</label>
+        <textarea id="observacao" name="observacao" rows="3">{{ (values.observacao if values else '') or '' }}</textarea>
+    </div>
+
+    <button type="submit">Salvar exercício</button>
+</form>
+
+<p><a href="/treinos">&larr; Voltar à biblioteca</a></p>
+{% endblock %}

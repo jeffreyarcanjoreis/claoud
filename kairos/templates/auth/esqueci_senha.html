@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kairos — Esqueci minha senha</title>
+  <link rel="stylesheet" href="/static/css/tokens.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/base.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/cadastro.css?v={{ asset_ver }}">
+</head>
+<body>
+  <canvas id="fundo3d" aria-hidden="true"></canvas>
+  <div id="fundo3d-scrim" aria-hidden="true"></div>
+
+  <header class="cad-top">
+    <a class="word" href="/vitrine">Kair<span class="o">o</span>s</a>
+  </header>
+
+  <main class="cad-main">
+    <section class="cad-card login-card">
+      {% if enviado %}
+      <h1>Verifique seu e-mail</h1>
+      <p class="cad-sub">Se houver uma conta com esse e-mail, enviamos um link para redefinir a senha.</p>
+
+      <a class="link-voltar" href="/login">Voltar para o login</a>
+      {% else %}
+      <h1>Esqueci minha senha</h1>
+      <p class="cad-sub">Informe seu e-mail e enviaremos um link para redefinir a senha.</p>
+
+      {% if erro %}
+      <div class="message-error">{{ erro }}</div>
+      {% endif %}
+
+      <form method="post" action="" class="cad-form login-form">
+        <div class="field">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" required autocomplete="email">
+        </div>
+
+        <button type="submit" class="button-primary">Enviar link</button>
+      </form>
+
+      <a class="link-voltar" href="/login">Voltar para o login</a>
+      {% endif %}
+    </section>
+  </main>
+
+  <script type="module" src="/static/js/painel-fundo.js?v={{ asset_ver }}"></script>
+</body>
+</html>

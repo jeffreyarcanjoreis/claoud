@@ -1,0 +1,56 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>Agendar sessão</h2>
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="/alunos/{{ aluno.id }}/agenda">
+    <div class="field">
+        <label for="data">Data *</label>
+        <input type="date" id="data" name="data" value="{{ (values.data if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="hora">Hora *</label>
+        <input type="time" id="hora" name="hora" value="{{ (values.hora if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="duracao_min">Duração (min)</label>
+        <input type="number" min="1" id="duracao_min" name="duracao_min" value="{{ (values.duracao_min if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="tipo">Tipo</label>
+        <select id="tipo" name="tipo">
+            <option value="individual"{% if not values or values.tipo != 'grupo' %} selected{% endif %}>Individual</option>
+            <option value="grupo"{% if values and values.tipo == 'grupo' %} selected{% endif %}>Grupo</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="treino_id">Treino</label>
+        <select id="treino_id" name="treino_id">
+            <option value="">— sem treino —</option>
+            {% for t in treinos %}
+            <option value="{{ t.id }}"{% if values and values.treino_id == t.id|string %} selected{% endif %}>{{ t.nome }}</option>
+            {% endfor %}
+        </select>
+        {% if not treinos %}
+        <span class="field-hint">Este aluno ainda não tem treinos. <a href="/alunos/{{ aluno.id }}/treino/novo">Crie um treino</a> para poder associar.</span>
+        {% endif %}
+    </div>
+
+    <div class="field">
+        <label for="observacao">Observação</label>
+        <textarea id="observacao" name="observacao">{{ (values.observacao if values else '') or '' }}</textarea>
+    </div>
+
+    <button type="submit">Agendar</button>
+</form>
+
+<p><a href="/alunos/{{ aluno.id }}/agenda">&larr; Voltar à agenda</a></p>
+{% endblock %}

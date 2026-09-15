@@ -1,0 +1,128 @@
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+<form method="post" action="{{ action }}" enctype="multipart/form-data">
+    <div class="field">
+        <label for="name">Nome *</label>
+        <input type="text" id="name" name="name" value="{{ (values.name if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="contact">Contato</label>
+        <input type="text" id="contact" name="contact" placeholder="telefone / @ / e-mail" value="{{ (values.contact if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" name="email" placeholder="email@exemplo.com" value="{{ (values.email if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="sex">Sexo</label>
+        <select id="sex" name="sex">
+            <option value="" {% if not values or not values.sex %}selected{% endif %}>— selecione —</option>
+            <option value="masculino" {% if values and values.sex == "masculino" %}selected{% endif %}>Masculino</option>
+            <option value="feminino" {% if values and values.sex == "feminino" %}selected{% endif %}>Feminino</option>
+            <option value="outro" {% if values and values.sex == "outro" %}selected{% endif %}>Outro</option>
+            <option value="nao_informado" {% if values and values.sex == "nao_informado" %}selected{% endif %}>Prefiro não informar</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="birth_date">Data de nascimento</label>
+        <input type="date" id="birth_date" name="birth_date" value="{{ (values.birth_date if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="age_reported">Idade informada</label>
+        <input type="number" id="age_reported" name="age_reported" min="1" max="120" value="{{ (values.age_reported if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="weekly_frequency">Frequência semanal</label>
+        <select id="weekly_frequency" name="weekly_frequency">
+            <option value="" {% if not values or not values.weekly_frequency %}selected{% endif %}>— selecione —</option>
+            <option value="1-2" {% if values and values.weekly_frequency == "1-2" %}selected{% endif %}>1 a 2 dias</option>
+            <option value="3-4" {% if values and values.weekly_frequency == "3-4" %}selected{% endif %}>3 a 4 dias</option>
+            <option value="5+" {% if values and values.weekly_frequency == "5+" %}selected{% endif %}>5+ dias</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="objective">Objetivo</label>
+        <textarea id="objective" name="objective">{{ (values.objective if values else '') or '' }}</textarea>
+    </div>
+
+    <div class="field">
+        <label for="phase">Fase atual</label>
+        <input type="text" id="phase" name="phase" value="{{ (values.phase if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="plan_start">Início do plano</label>
+        <input type="date" id="plan_start" name="plan_start" value="{{ (values.plan_start if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="plan_end">Término do plano</label>
+        <input type="date" id="plan_end" name="plan_end" value="{{ (values.plan_end if values else '') or '' }}">
+    </div>
+
+    <div class="field">
+        <label for="health_conditions">Condições / patologias</label>
+        <textarea id="health_conditions" name="health_conditions">{{ (values.health_conditions if values else '') or '' }}</textarea>
+    </div>
+
+    <div class="field">
+        <label for="restrictions">Restrições físicas</label>
+        <textarea id="restrictions" name="restrictions">{{ (values.restrictions if values else '') or '' }}</textarea>
+    </div>
+
+    <div class="field">
+        <label for="medications">Medicamentos</label>
+        <textarea id="medications" name="medications">{{ (values.medications if values else '') or '' }}</textarea>
+    </div>
+
+    <div class="field">
+        <label for="conditioning_level">Nível de condicionamento</label>
+        <select id="conditioning_level" name="conditioning_level">
+            <option value="" {% if not values or not values.conditioning_level %}selected{% endif %}>— selecione —</option>
+            <option value="sedentario" {% if values and values.conditioning_level == "sedentario" %}selected{% endif %}>Sedentário</option>
+            <option value="iniciante" {% if values and values.conditioning_level == "iniciante" %}selected{% endif %}>Iniciante</option>
+            <option value="intermediario" {% if values and values.conditioning_level == "intermediario" %}selected{% endif %}>Intermediário</option>
+            <option value="avancado" {% if values and values.conditioning_level == "avancado" %}selected{% endif %}>Avançado</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="alert">Alerta</label>
+        <textarea id="alert" name="alert">{{ (values.alert if values else '') or '' }}</textarea>
+    </div>
+
+    <div class="field">
+        <label for="status">Status</label>
+        <select id="status" name="status">
+            <option value="active" {% if not values or values.status != "inactive" %}selected{% endif %}>Ativo</option>
+            <option value="inactive" {% if values and values.status == "inactive" %}selected{% endif %}>Inativo</option>
+        </select>
+    </div>
+
+    <div class="field">
+        <label for="notes">Observações</label>
+        <textarea id="notes" name="notes">{{ (values.notes if values else '') or '' }}</textarea>
+    </div>
+
+    {% if show_foto %}
+    <div class="field foto-field">
+        <label>Foto</label>
+        {% if has_foto %}
+        <img class="foto-atual" src="/alunos/{{ aluno_id }}/foto" alt="Foto do aluno">
+        <label class="foto-remove"><input type="checkbox" name="remover_foto" value="1"> Remover foto</label>
+        {% endif %}
+        <input type="file" id="foto" name="foto" accept="image/png,image/jpeg,image/webp">
+    </div>
+    {% endif %}
+
+    <button type="submit">{{ submit_label }}</button>
+</form>

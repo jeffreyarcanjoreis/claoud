@@ -1,0 +1,22 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Minhas avaliações{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Minhas avaliações</h1>
+
+  {% if avaliacoes %}
+  <ul class="aluno-lista">
+    {% for a in avaliacoes %}
+    <li class="aluno-lista-item">
+      <span class="aluno-item-principal">{{ a.data }}</span>
+      <a href="/aluno/avaliacoes/{{ a.id }}">ver</a>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="aluno-vazio">Nenhuma avaliação registrada ainda.</p>
+  {% endif %}
+</section>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Check-in de hoje{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Check-in de hoje</h1>
+  <p class="cad-sub">Como você chegou hoje? Leva menos de um minuto.</p>
+
+  {% if erro %}
+  <div class="message-error">{{ erro }}</div>
+  {% endif %}
+
+  <form method="post" action="/aluno/checkin" class="checkin-form">
+    <div class="field-row">
+      <div class="field">
+        <label for="sono_horas">Horas de sono</label>
+        <input
+          type="number"
+          id="sono_horas"
+          name="sono_horas"
+          step="0.5"
+          min="0"
+          max="24"
+          value="{% if checkin and checkin.sono_horas is not none %}{{ checkin.sono_horas }}{% endif %}"
+        >
+      </div>
+      <div class="field">
+        <label for="sono_qualidade">Qualidade do sono</label>
+        <select id="sono_qualidade" name="sono_qualidade">
+          <option value="">—</option>
+          {% for valor, label in qualidade_opcoes %}
+          <option value="{{ valor }}" {% if checkin and checkin.sono_qualidade == valor %}selected{% endif %}>{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="estresse">Estresse (0–10)</label>
+        <input
+          type="number"
+          id="estresse"
+          name="estresse"
+          min="0"
+          max="10"
+          value="{% if checkin and checkin.estresse is not none %}{{ checkin.estresse }}{% endif %}"
+        >
+      </div>
+      <div class="field">
+        <label for="energia">Energia (0–10)</label>
+        <input
+          type="number"
+          id="energia"
+          name="energia"
+          min="0"
+          max="10"
+          value="{% if checkin and checkin.energia is not none %}{{ checkin.energia }}{% endif %}"
+        >
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="humor">Humor</label>
+      <select id="humor" name="humor">
+        <option value="">—</option>
+        {% for valor, label in humor_opcoes %}
+        <option value="{{ valor }}" {% if checkin and checkin.humor == valor %}selected{% endif %}>{{ label }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="field-row">
+      <div class="field">
+        <label for="dor_local">Onde dói? (opcional)</label>
+        <input
+          type="text"
+          id="dor_local"
+          name="dor_local"
+          value="{% if checkin and checkin.dor_local %}{{ checkin.dor_local }}{% endif %}"
+        >
+      </div>
+      <div class="field">
+        <label for="dor_intensidade">Intensidade da dor (0–10)</label>
+        <input
+          type="number"
+          id="dor_intensidade"
+          name="dor_intensidade"
+          min="0"
+          max="10"
+          value="{% if checkin and checkin.dor_intensidade is not none %}{{ checkin.dor_intensidade }}{% endif %}"
+        >
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="observacao">Observação (opcional)</label>
+      <textarea id="observacao" name="observacao">{% if checkin and checkin.observacao %}{{ checkin.observacao }}{% endif %}</textarea>
+    </div>
+
+    <p class="form-nota">Você pode editar o check-in de hoje até o fim do dia.</p>
+
+    <button type="submit" class="button-primary">Salvar check-in</button>
+  </form>
+</section>
+{% endblock %}

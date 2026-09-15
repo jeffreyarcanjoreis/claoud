@@ -1,0 +1,79 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Meu perfil{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/css/components.css?v={{ asset_ver }}">
+{% endblock %}
+
+{% macro campo(v) %}{% if v %}{{ v }}{% else %}<span class="none">sem registro</span>{% endif %}{% endmacro %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Meu perfil</h1>
+
+  {% if aluno %}
+  {% if aluno.foto %}
+  <p><img class="aluno-foto" src="/aluno/foto" alt="Foto de {{ aluno.name }}"></p>
+  {% endif %}
+
+  <h2>Dados gerais</h2>
+  <dl class="profile">
+    <div class="row">
+      <dt class="k">Nome</dt>
+      <dd class="v">{{ campo(aluno.name) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Sexo</dt>
+      <dd class="v">{{ campo(aluno.sex_label) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Idade</dt>
+      <dd class="v">{{ campo(aluno.age) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Idade informada</dt>
+      <dd class="v">{{ campo(aluno.age_reported) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Contato</dt>
+      <dd class="v">{{ campo(aluno.contact) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">E-mail</dt>
+      <dd class="v">{{ campo(aluno.email) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Objetivo</dt>
+      <dd class="v">{{ campo(aluno.objective) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Frequência semanal</dt>
+      <dd class="v">{{ campo(aluno.weekly_frequency_label) }}</dd>
+    </div>
+  </dl>
+
+  <h2>Saúde</h2>
+  <dl class="profile">
+    <div class="row">
+      <dt class="k">Condições / patologias</dt>
+      <dd class="v">{{ campo(aluno.health_conditions) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Restrições físicas</dt>
+      <dd class="v">{{ campo(aluno.restrictions) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Medicamentos</dt>
+      <dd class="v">{{ campo(aluno.medications) }}</dd>
+    </div>
+    <div class="row">
+      <dt class="k">Nível de condicionamento</dt>
+      <dd class="v">{{ campo(aluno.conditioning_label) }}</dd>
+    </div>
+  </dl>
+  {% else %}
+  <p class="aluno-vazio">Não encontramos os seus dados de perfil.</p>
+  {% endif %}
+</section>
+{% endblock %}

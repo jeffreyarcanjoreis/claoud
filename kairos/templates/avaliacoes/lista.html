@@ -1,0 +1,88 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<div class="avaliacoes-layout">
+    <div class="avaliacoes-lista">
+        <p><a class="button-link" href="/alunos/{{ aluno.id }}/avaliacoes/nova">Registar avaliação</a></p>
+
+        {% if avaliacoes %}
+        <ul class="card-list">
+            {% for a in avaliacoes %}
+            <li class="card">
+                <a class="card-title" href="/alunos/{{ aluno.id }}/avaliacoes/{{ a.id }}">{{ a.data }}</a>
+                <p class="card-line"><strong>Peso:</strong> {{ a.peso }}</p>
+                <p class="card-line"><strong>% Gordura:</strong> {{ a.gordura_pct }}</p>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="coming-soon">
+            <h2>Avaliações físicas</h2>
+            <p>Ainda não há avaliações registadas.</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="chart-panel">
+        {% if chart.empty %}
+        <p class="chart-empty">Sem dados para o gráfico.</p>
+        {% else %}
+        {% set btn_labels = {'peso':'Peso','massa_magra':'Massa magra','gordura_pct':'% Gordura','imc':'IMC'} %}
+        <div class="metric-selector">
+            {% for m in chart.metrics %}
+            <button type="button" class="metric-btn{% if m.visible %} on{% endif %}" data-metric-btn="{{ m.key }}" aria-pressed="{{ 'true' if m.visible else 'false' }}">{{ btn_labels[m.key] }}</button>
+            {% endfor %}
+        </div>
+        <svg viewBox="0 0 {{ chart.vb_w }} {{ chart.vb_h }}" class="evolucao-chart" role="img" aria-label="Evolução das avaliações">
+            {% for l in chart.x_labels %}
+            <text class="axis-label" x="{{ l.x }}" y="{{ chart.vb_h - 10 }}" text-anchor="middle">{{ l.text }}</text>
+            {% endfor %}
+
+            {% for m in chart.metrics %}
+            <g data-metric="{{ m.key }}" class="metric {{ m.css }}"{% if not m.visible %} style="display:none"{% endif %}>
+                {% if m.no_data %}
+                <text class="chart-nodata" x="{{ chart.vb_w / 2 }}" y="{{ chart.vb_h / 2 }}" text-anchor="middle">Sem dados para esta métrica.</text>
+                {% else %}
+                {% for yl in m.y_labels %}
+                <text class="axis-label" x="8" y="{{ yl.y }}">{{ yl.text }}</text>
+                <line class="grid" x1="46" y1="{{ yl.y }}" x2="{{ chart.vb_w - 14 }}" y2="{{ yl.y }}"/>
+                {% endfor %}
+
+                {% for seg in m.segments %}
+                <polyline class="chart-line" points="{{ seg }}"/>
+                {% endfor %}
+
+                {% for p in m.points %}
+                <circle class="chart-dot" cx="{{ p.x }}" cy="{{ p.y }}" r="4"/>
+                <text class="dot-label" x="{{ p.x }}" y="{{ p.y - 9 }}" text-anchor="middle">{{ p.value }}</text>
+                {% endfor %}
+                {% endif %}
+            </g>
+            {% endfor %}
+        </svg>
+        <script>
+        (function () {
+            document.querySelectorAll('.chart-panel').forEach(function (panel) {
+                var buttons = panel.querySelectorAll('.metric-btn');
+                var groups = panel.querySelectorAll('g[data-metric]');
+                buttons.forEach(function (btn) {
+                    btn.addEventListener('click', function () {
+                        var key = btn.getAttribute('data-metric-btn');
+                        groups.forEach(function (g) {
+                            g.style.display = (g.getAttribute('data-metric') === key) ? '' : 'none';
+                        });
+                        buttons.forEach(function (b) {
+                            b.classList.remove('on');
+                            b.setAttribute('aria-pressed', 'false');
+                        });
+                        btn.classList.add('on');
+                        btn.setAttribute('aria-pressed', 'true');
+                    });
+                });
+            });
+        })();
+        </script>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

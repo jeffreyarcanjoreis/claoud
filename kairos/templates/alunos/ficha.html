@@ -1,0 +1,110 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+{% set NONE = "sem registro" %}
+{% if subtab == 'perfil' %}
+<h2 class="lead-secao-titulo">Dados gerais</h2>
+<dl class="profile">
+    <div class="row">
+        <dt class="k">Contato</dt>
+        <dd class="v">{% if aluno.contact_display == NONE %}<span class="none">{{ aluno.contact_display }}</span>{% else %}{{ aluno.contact_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">E-mail</dt>
+        <dd class="v">{% if aluno.email_display == NONE %}<span class="none">{{ aluno.email_display }}</span>{% else %}{{ aluno.email_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Acesso ao app</dt>
+        <dd class="v"><span class="badge badge-acesso-{{ acesso_status }}">{{ acesso_label }}</span></dd>
+    </div>
+    {% if link_ativacao %}
+    <div class="row row-full">
+        <dt class="k">Link de ativação</dt>
+        <dd class="v">
+            <p class="link-ativacao-hint">Envie este link para o aluno criar o acesso (validade: {{ link_validade_dias }} dias):</p>
+            <input type="text" class="link-copiavel" readonly value="{{ link_ativacao }}" onclick="this.select()">
+        </dd>
+    </div>
+    {% endif %}
+    <div class="row">
+        <dt class="k">Sexo</dt>
+        <dd class="v">{% if aluno.sex_label == NONE %}<span class="none">{{ aluno.sex_label }}</span>{% else %}{{ aluno.sex_label }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Data de nascimento</dt>
+        <dd class="v">{% if aluno.birth_date_display == NONE %}<span class="none">{{ aluno.birth_date_display }}</span>{% else %}{{ aluno.birth_date_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Idade</dt>
+        <dd class="v">{% if aluno.age_display == NONE %}<span class="none">{{ aluno.age_display }}</span>{% else %}{{ aluno.age_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Idade informada</dt>
+        <dd class="v">{% if aluno.age_reported_display == NONE %}<span class="none">{{ aluno.age_reported_display }}</span>{% else %}{{ aluno.age_reported_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Frequência semanal</dt>
+        <dd class="v">{% if aluno.weekly_frequency_label == NONE %}<span class="none">{{ aluno.weekly_frequency_label }}</span>{% else %}{{ aluno.weekly_frequency_label }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Objetivo</dt>
+        <dd class="v">{% if aluno.objective_display == NONE %}<span class="none">{{ aluno.objective_display }}</span>{% else %}{{ aluno.objective_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Fase atual</dt>
+        <dd class="v">{% if aluno.phase_display == NONE %}<span class="none">{{ aluno.phase_display }}</span>{% else %}{{ aluno.phase_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Início do plano</dt>
+        <dd class="v">{% if aluno.plan_start_display == NONE %}<span class="none">{{ aluno.plan_start_display }}</span>{% else %}{{ aluno.plan_start_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Término do plano</dt>
+        <dd class="v">{% if aluno.plan_end_display == NONE %}<span class="none">{{ aluno.plan_end_display }}</span>{% else %}{{ aluno.plan_end_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Observações</dt>
+        <dd class="v">{% if aluno.notes_display == NONE %}<span class="none">{{ aluno.notes_display }}</span>{% else %}{{ aluno.notes_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Cadastrado em</dt>
+        <dd class="v">{% if aluno.created_at_display == NONE %}<span class="none">{{ aluno.created_at_display }}</span>{% else %}{{ aluno.created_at_display }}{% endif %}</dd>
+    </div>
+</dl>
+
+<h2 class="lead-secao-titulo">Saúde</h2>
+<dl class="profile">
+    <div class="row">
+        <dt class="k">Condições / patologias</dt>
+        <dd class="v">{% if aluno.health_conditions_display == NONE %}<span class="none">{{ aluno.health_conditions_display }}</span>{% else %}{{ aluno.health_conditions_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Restrições físicas</dt>
+        <dd class="v">{% if aluno.restrictions_display == NONE %}<span class="none">{{ aluno.restrictions_display }}</span>{% else %}{{ aluno.restrictions_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Medicamentos</dt>
+        <dd class="v">{% if aluno.medications_display == NONE %}<span class="none">{{ aluno.medications_display }}</span>{% else %}{{ aluno.medications_display }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Nível de condicionamento</dt>
+        <dd class="v">{% if aluno.conditioning_label == NONE %}<span class="none">{{ aluno.conditioning_label }}</span>{% else %}{{ aluno.conditioning_label }}{% endif %}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Alerta</dt>
+        <dd class="v">{% if aluno.alert_display == NONE %}<span class="none">{{ aluno.alert_display }}</span>{% else %}{{ aluno.alert_display }}{% endif %}</dd>
+    </div>
+</dl>
+{% else %}
+{% set labels = {
+    'avaliacoes': 'Avaliações físicas',
+    'feedback': 'Feedback',
+    'agenda': 'Agenda',
+    'financeiro': 'Financeiro do aluno'
+} %}
+<div class="coming-soon">
+    <h2>{{ labels[subtab] }}</h2>
+    <p>Esta área ainda está por construir.</p>
+</div>
+{% endif %}
+{% endblock %}

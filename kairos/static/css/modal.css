@@ -1,0 +1,332 @@
+/* Kairos — modal genérico (compartilhado entre a vitrine e o painel)
+   Depende de tokens.css + base.css (carregados antes deste arquivo).
+   Progressive enhancement: sem JS, [hidden] nunca some — quem abre o modal
+   define seu próprio fallback (link direto, checkbox nativo, etc). Com JS,
+   o modal aparece sobre a tela atual. */
+.v-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sp-4) 5vw;
+}
+
+.v-modal[hidden] {
+  display: none;
+}
+
+.v-modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 19, 15, 0.82);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+
+.v-modal-card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 40rem;
+  max-height: 90vh;
+  overflow: hidden; /* o corpo (.v-modal-body) é quem rola */
+  background: var(--void);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 24px 64px rgba(20, 19, 15, 0.55);
+}
+
+/* cabeçalho fixo: título + fechar não rolam com o conteúdo */
+.v-modal-header {
+  position: relative;
+  flex: none;
+  padding: var(--sp-5) var(--sp-5) var(--sp-4);
+  border-bottom: 1px solid var(--line);
+}
+
+.v-modal-kicker {
+  font-family: var(--font-sans);
+  font-size: var(--fs-eyebrow);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: var(--sp-2);
+}
+
+.v-modal-titulo {
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-size: clamp(26px, 3.4vw, 34px);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--bone);
+  padding-right: 2.5rem; /* espaço pro botão fechar */
+  margin-bottom: var(--sp-2);
+}
+
+.v-modal-intro {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-small);
+  line-height: 1.55;
+  color: var(--bone-dim);
+}
+
+/* corpo rolável, com barra fina e discreta no tom da marca */
+.v-modal-body {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  padding: var(--sp-4) var(--sp-5) var(--sp-5);
+  scrollbar-width: thin;
+  scrollbar-color: var(--line) transparent;
+}
+
+.v-modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.v-modal-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.v-modal-body::-webkit-scrollbar-thumb {
+  background: var(--line);
+  border: 3px solid var(--void); /* recuo: a barra parece fina e flutuante */
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.v-modal-body::-webkit-scrollbar-thumb:hover {
+  background: var(--bone-dim);
+  background-clip: padding-box;
+}
+
+.v-modal-fechar {
+  position: absolute;
+  top: var(--sp-4);
+  right: var(--sp-4);
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-sans);
+  font-size: 20px;
+  line-height: 1;
+  color: var(--bone-dim);
+  background: rgba(240, 235, 224, 0.04);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.22s var(--ease), border-color 0.22s var(--ease), background 0.22s var(--ease);
+}
+
+.v-modal-fechar:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+  background: rgba(200, 155, 74, 0.10);
+}
+
+.v-modal-sucesso {
+  text-align: center;
+  padding: var(--sp-5) 0;
+}
+
+.v-modal-sucesso h3 {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  color: var(--gold);
+  margin-bottom: var(--sp-2);
+}
+
+.v-modal-sucesso p {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  font-size: var(--fs-body);
+  color: var(--bone-dim);
+}
+
+/* campos do formulário dentro do modal — o mesmo visual do cadastro público
+   (cad-form em cadastro.css), reproduzido aqui porque nem toda tela que usa
+   o modal carrega cadastro.css. Inputs/textarea/select já herdam
+   color-scheme dark de base.css. */
+.v-modal-card .cad-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+}
+
+.v-modal-card .form-bloco {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: var(--sp-4);
+  margin: 0;
+  min-width: 0;
+}
+
+.v-modal-card .form-bloco-titulo {
+  padding: 0 var(--sp-2);
+  font-family: var(--font-serif);
+  font-weight: 400;
+  font-size: var(--fs-h3);
+  color: var(--bone);
+}
+
+.v-modal-card .form-bloco-intro {
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+  color: var(--sage);
+  margin: var(--sp-2) 0 var(--sp-3);
+}
+
+.v-modal-card .form-bloco .field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  margin-bottom: var(--sp-3);
+}
+
+.v-modal-card .form-bloco .field:last-child {
+  margin-bottom: 0;
+}
+
+.v-modal-card .form-bloco .field label {
+  font-size: var(--fs-eyebrow);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.v-modal-card .form-bloco .field input,
+.v-modal-card .form-bloco .field textarea,
+.v-modal-card .form-bloco .field select {
+  width: 100%;
+}
+
+.v-modal-card .form-bloco .field textarea {
+  min-height: 5.5rem;
+}
+
+.v-modal-card .field-row {
+  display: flex;
+  gap: var(--sp-3);
+  flex-wrap: wrap;
+}
+
+.v-modal-card .field-row .field {
+  flex: 1 1 160px;
+  margin-bottom: 0;
+}
+
+.v-modal-card .form-bloco > .field-row:not(:last-child) {
+  margin-bottom: var(--sp-3);
+}
+
+.v-modal-card .consent {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  cursor: pointer;
+}
+
+.v-modal-card .consent input[type="checkbox"] {
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  accent-color: var(--gold);
+}
+
+.v-modal-card .consent span {
+  font-family: var(--font-sans);
+  font-size: var(--fs-body);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--bone);
+}
+
+.v-modal-card .form-nota {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--sage);
+  margin-top: calc(var(--sp-3) * -1);
+}
+
+.v-modal-card .message-error {
+  border: 1px solid var(--clay);
+  border-radius: var(--radius);
+  color: var(--clay);
+  padding: var(--sp-2) var(--sp-3);
+  margin-bottom: var(--sp-3);
+  font-family: var(--font-sans);
+  font-size: var(--fs-small);
+}
+
+.v-modal-card .button-primary {
+  display: inline-block;
+  align-self: flex-start;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: var(--fs-small);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--gold);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--sp-3) var(--sp-5);
+  cursor: pointer;
+  transition: background 0.22s var(--ease), color 0.22s var(--ease), transform 0.22s var(--ease);
+}
+
+.v-modal-card .button-primary:hover {
+  background: var(--clay);
+  color: var(--bone);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 640px) {
+  .v-modal {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .v-modal-card {
+    max-width: none;
+    width: 100%;
+    max-height: 92vh;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  }
+
+  .v-modal-header {
+    padding: var(--sp-4) var(--sp-4) var(--sp-3);
+  }
+
+  .v-modal-body {
+    padding: var(--sp-3) var(--sp-4) var(--sp-4);
+  }
+
+  .v-modal-card .field-row {
+    flex-direction: column;
+    gap: var(--sp-3);
+  }
+
+  .v-modal-card .button-primary {
+    align-self: stretch;
+    text-align: center;
+  }
+}

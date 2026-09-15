@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<p class="eyebrow">Agenda</p>
+<h1>Agenda de hoje</h1>
+
+{% include "painel/_agenda_subnav.html" %}
+
+{% if sessoes %}
+<ul class="card-list">
+    {% for s in sessoes %}
+    <li class="card">
+        <a class="card-title" href="/alunos/{{ s.aluno_id }}/agenda">{{ s.aluno_nome }}</a>
+        <p class="card-line">{{ s.hora }} · {{ s.tipo_label }}</p>
+        {% if s.treino_nome %}
+        <p class="card-line">
+            <strong>Treino:</strong>
+            <a href="/alunos/{{ s.aluno_id }}/treino/{{ s.treino_id }}">{{ s.treino_nome }}</a>
+        </p>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+<div class="coming-soon">
+    <p>Nenhuma sessão hoje.</p>
+</div>
+{% endif %}
+{% endblock %}

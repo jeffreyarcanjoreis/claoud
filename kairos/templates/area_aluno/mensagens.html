@@ -1,0 +1,35 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Contato com o coach{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Contato com o coach</h1>
+
+  {% if erro %}
+  <div class="message-error">{{ erro }}</div>
+  {% endif %}
+
+  {% if mensagens %}
+  <ul class="msg-lista">
+    {% for m in mensagens %}
+    <li class="msg-item {% if m.autor == 'aluno' %}msg-aluno{% else %}msg-coach{% endif %}">
+      <span class="msg-autor">{% if m.autor == 'aluno' %}Você{% else %}Coach{% endif %}</span>
+      <p class="msg-texto">{{ m.texto }}</p>
+      <span class="msg-data">{{ m.data }}</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="aluno-vazio">Nenhuma mensagem ainda. Escreva pro seu treinador.</p>
+  {% endif %}
+
+  <form method="post" action="/aluno/mensagens" class="msg-form">
+    <div class="field">
+      <label for="texto">Sua mensagem</label>
+      <textarea id="texto" name="texto" required></textarea>
+    </div>
+    <button type="submit" class="button-primary">Enviar</button>
+  </form>
+</section>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% macro campo(valor) %}{% if valor %}{{ valor }}{% else %}<span class="none">sem registro</span>{% endif %}{% endmacro %}
+
+<p class="eyebrow">Novo contato</p>
+<h1>{{ lead.nome }}</h1>
+
+<p><a href="/">&larr; Voltar</a></p>
+
+{% if lead.status != "virou_aluno" %}
+<div class="contatos-central">
+    {% if duplicado is defined and duplicado %}
+    <div class="message-error">
+        Já existe um aluno chamado '{{ duplicado.aluno_existente_nome }}'.
+    </div>
+    <p><a class="button-link" href="/alunos/{{ duplicado.aluno_existente_id }}">Ver aluno existente</a></p>
+    <form method="post" action="/contatos/{{ lead.id }}/converter">
+        <input type="hidden" name="force" value="1">
+        <button type="submit" class="button-danger-sm">Criar novo aluno mesmo assim</button>
+    </form>
+    {% else %}
+    <form method="post" action="/contatos/{{ lead.id }}/converter">
+        <button type="submit" class="button-link">Transformar em aluno</button>
+    </form>
+    <p class="contatos-central-nota">Cria a ficha do aluno já com estes dados.</p>
+    {% endif %}
+</div>
+{% endif %}
+
+<dl class="profile">
+    <div class="row">
+        <dt class="k">Contato</dt>
+        <dd class="v">{{ campo(lead.contato) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Idade</dt>
+        <dd class="v">{{ campo(lead.idade) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Sexo</dt>
+        <dd class="v">{{ campo(lead.sexo_label) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Origem</dt>
+        <dd class="v">{{ campo(lead.origem_label) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Status</dt>
+        <dd class="v">{{ campo(lead.status_label) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Enviado em</dt>
+        <dd class="v">{{ lead.created_at.strftime('%d/%m/%Y') }}</dd>
+    </div>
+</dl>
+
+<h2 class="lead-secao-titulo">Objetivos</h2>
+<dl class="profile">
+    <div class="row">
+        <dt class="k">Objetivo principal</dt>
+        <dd class="v">{{ campo(lead.objetivo) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Objetivos secundários</dt>
+        <dd class="v">{{ campo(lead.objetivos_secundarios) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Prazo desejado</dt>
+        <dd class="v">{{ campo(lead.prazo_desejado) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Frequência</dt>
+        <dd class="v">{{ campo(lead.frequencia_label) }}</dd>
+    </div>
+</dl>
+
+<h2 class="lead-secao-titulo">Saúde</h2>
+<dl class="profile">
+    <div class="row">
+        <dt class="k">Condições / patologias</dt>
+        <dd class="v">{{ campo(lead.condicoes) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Lesões / restrições</dt>
+        <dd class="v">{{ campo(lead.lesoes) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Medicamentos</dt>
+        <dd class="v">{{ campo(lead.medicamentos) }}</dd>
+    </div>
+    <div class="row">
+        <dt class="k">Nível</dt>
+        <dd class="v">{{ campo(lead.nivel_label) }}</dd>
+    </div>
+</dl>
+
+<h2 class="lead-secao-titulo">Consentimento</h2>
+<p class="lead-consentimento {% if lead.consentimento %}ok{% else %}pendente{% endif %}">
+    {% if lead.consentimento %}Autorizado{% else %}Não autorizado{% endif %}
+</p>
+{% endblock %}

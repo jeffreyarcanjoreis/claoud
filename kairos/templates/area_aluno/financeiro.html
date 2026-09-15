@@ -1,0 +1,69 @@
+{% extends "area_aluno/base.html" %}
+
+{% block title %}Kairos — Meu financeiro{% endblock %}
+
+{% block head_extra %}
+<link rel="stylesheet" href="/static/css/components.css?v={{ asset_ver }}">
+{% endblock %}
+
+{% block content %}
+<section class="cad-card">
+  <h1>Meu financeiro</h1>
+
+  <section class="aluno-secao">
+    <h2>Meu plano</h2>
+    {% if plano %}
+    <dl class="profile">
+      <div class="row">
+        <dt class="k">Formato</dt>
+        <dd class="v">{{ plano.formato_label }}</dd>
+      </div>
+      <div class="row">
+        <dt class="k">Valor</dt>
+        <dd class="v">{{ plano.valor }}</dd>
+      </div>
+      <div class="row">
+        <dt class="k">Ciclo</dt>
+        <dd class="v">{{ plano.ciclo_meses }} {{ 'mês' if plano.ciclo_meses == 1 else 'meses' }}</dd>
+      </div>
+      <div class="row">
+        <dt class="k">Início</dt>
+        <dd class="v">{% if plano.inicio %}{{ plano.inicio }}{% else %}<span class="none">sem registro</span>{% endif %}</dd>
+      </div>
+    </dl>
+    {% else %}
+    <p class="aluno-vazio">Você ainda não tem um plano registrado.</p>
+    {% endif %}
+  </section>
+
+  <section class="aluno-secao">
+    <h2>Pagamentos</h2>
+    {% if pagamentos %}
+    <div class="table-wrap">
+      <table class="planilha">
+        <thead>
+          <tr>
+            <th>Competência</th>
+            <th>Valor</th>
+            <th>Data</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in pagamentos %}
+          <tr>
+            <td>{{ p.competencia }}</td>
+            <td>{{ p.valor }}</td>
+            <td>{{ p.data_pagamento }}</td>
+            <td>{{ p.status_label }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% else %}
+    <p class="aluno-vazio">Nenhum pagamento registrado ainda.</p>
+    {% endif %}
+  </section>
+</section>
+{% endblock %}

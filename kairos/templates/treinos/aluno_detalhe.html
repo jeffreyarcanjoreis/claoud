@@ -1,0 +1,100 @@
+{% extends "alunos/ficha_layout.html" %}
+
+{% block ficha_content %}
+<h2>{{ treino.nome }}</h2>
+{% if treino.observacao %}
+<p class="card-line card-line-dim">{{ treino.observacao }}</p>
+{% endif %}
+
+{% if error %}
+<div class="message-error">{{ error }}</div>
+{% endif %}
+
+{% if itens %}
+<div class="table-wrap">
+    <table class="planilha">
+        <thead>
+            <tr>
+                <th>Exercício</th>
+                <th>Grupo</th>
+                <th>Séries</th>
+                <th>Reps</th>
+                <th>Carga</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for i in itens %}
+            <tr>
+                <td>
+                    {{ i.exercicio_nome }}
+                    {% if i.observacao %}<span class="item-obs">{{ i.observacao }}</span>{% endif %}
+                </td>
+                <td>{{ i.grupo_muscular or '—' }}</td>
+                <td>{{ i.series }}</td>
+                <td>{{ i.reps }}</td>
+                <td>{{ i.carga }}</td>
+                <td>
+                    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens/{{ i.id }}/remover">
+                        <button type="submit" class="button-danger-sm">Remover</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="coming-soon">
+    <p>Este treino ainda não tem exercícios. Adicione o primeiro abaixo.</p>
+</div>
+{% endif %}
+
+<h3>Adicionar exercício</h3>
+{% if exercicios %}
+<form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/itens">
+    <div class="field">
+        <label for="exercicio_id">Exercício *</label>
+        <select id="exercicio_id" name="exercicio_id">
+            <option value="">— escolher da biblioteca —</option>
+            {% for e in exercicios %}
+            <option value="{{ e.id }}">{{ e.nome }}{% if e.grupo_muscular %} ({{ e.grupo_muscular }}){% endif %}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="field-row">
+        <div class="field">
+            <label for="series">Séries</label>
+            <input type="number" inputmode="numeric" id="series" name="series" min="1">
+        </div>
+        <div class="field">
+            <label for="reps">Reps</label>
+            <input type="text" id="reps" name="reps" placeholder="ex.: 8-10">
+        </div>
+        <div class="field">
+            <label for="carga">Carga</label>
+            <input type="text" id="carga" name="carga" placeholder="ex.: 40 kg">
+        </div>
+    </div>
+
+    <div class="field">
+        <label for="observacao">Observação</label>
+        <input type="text" id="observacao" name="observacao" placeholder="ex.: cadência lenta">
+    </div>
+
+    <button type="submit">Adicionar exercício</button>
+</form>
+{% else %}
+<div class="coming-soon">
+    <p>A biblioteca de exercícios está vazia. <a href="/treinos">Adicione exercícios</a> primeiro, depois volte aqui para montar o treino.</p>
+</div>
+{% endif %}
+
+<p class="treino-acoes">
+    <a href="/alunos/{{ aluno.id }}/treino">&larr; Voltar aos treinos</a>
+    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/apagar" onsubmit="return confirm('Apagar este treino e todos os seus exercícios?');">
+        <button type="submit" class="button-danger-sm">Apagar treino</button>
+    </form>
+</p>
+{% endblock %}

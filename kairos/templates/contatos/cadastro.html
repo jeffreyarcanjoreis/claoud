@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kairos — Comece pela Avaliação Inicial</title>
+  <link rel="stylesheet" href="/static/css/tokens.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/base.css?v={{ asset_ver }}">
+  <link rel="stylesheet" href="/static/css/cadastro.css?v={{ asset_ver }}">
+</head>
+<body>
+  <header class="cad-top">
+    <a class="word" href="/vitrine">Kair<span class="o">o</span>s</a>
+  </header>
+
+  <main class="cad-main">
+    {% if enviado %}
+    <section class="cad-card cad-enviado">
+      <h1>Recebido!</h1>
+      <p class="cad-sub">Obrigado por se cadastrar. Em breve entro em contato com você.</p>
+      <a class="button-link" href="/vitrine">Voltar ao início</a>
+    </section>
+    {% else %}
+    <section class="cad-card">
+      <h1>Comece pela Avaliação Inicial</h1>
+      <p class="cad-sub">É o primeiro passo — me conta sobre você pra eu desenhar o treino certo pro seu momento.</p>
+
+      {% if error %}
+      <div class="message-error">{{ error }}</div>
+      {% endif %}
+
+      <form method="post" action="/comecar" class="cad-form">
+        {% include "contatos/_cadastro_campos.html" %}
+
+        <button type="submit" class="button-primary">Enviar cadastro</button>
+      </form>
+    </section>
+    {% endif %}
+  </main>
+</body>
+</html>
