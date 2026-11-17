@@ -23,6 +23,11 @@ from kairos.alunos.service import get_aluno
 from kairos.auth.middleware import current_user
 from kairos.avaliacoes.service import get_avaliacao, get_avaliacao_detail, list_avaliacoes
 from kairos.checkin.service import checkin_de_hoje
+from kairos.execucao.service import (
+    execucoes_do_treino,
+    progresso_sessao,
+    registrar_execucao,
+)
 from kairos.financeiro.service import get_plano, pagamentos_do_aluno
 from kairos.mensagens.service import contar_nao_lidas, ultima_do_coach
 from kairos.registro_treino.service import list_registros
@@ -421,6 +426,9 @@ async def treino_detalhe(request: Request, treino_id: int):
         return _nao_encontrado(request)
 
     detalhe = get_treino_detail(treino_id)
+    mapa = execucoes_do_treino(treino_id)
+    for item in detalhe["itens"]:
+        item["execucao"] = mapa.get(item["id"])
     fases = agrupar_itens_por_fase(detalhe["itens"])
     return templates.TemplateResponse(
         request,
@@ -432,7 +440,50 @@ async def treino_detalhe(request: Request, treino_id: int):
                 "apresentacao": detalhe["observacao"] or None,
             },
             "fases": fases,
+            "progresso": progresso_sessao(treino_id),
         },
+    )
+
+
+@router.post("/aluno/treinos/{treino_id}/itens/{item_id}/execucao")
+async def registrar_execucao_do_item(
+    request: Request,
+    treino_id: int,
+    item_id: int,
+    feito: Optional[str] = Form(None),
+    carga_real: Optional[str] = Form(None),
+    reps_real: Optional[str] = Form(None),
+    observacao: Optional[str] = Form(None),
+):
+    """Record what the aluno actually did today for one workout item.
+
+    404 (never 403) when the workout isn't the requester's or the item isn't
+    part of the workout. ``feito`` is a checkbox: present means done, absent
+    means not done. Invalid values (``ValidationError``) are a no-op --
+    redirects back without changing anything, never a 500.
+    """
+    aluno_id = _aluno_id_da_sessao(request)
+    treino = get_treino(treino_id)
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return _nao_encontrado(request)
+
+    item = get_item(item_id)
+    if item is None or item["treino_id"] != treino_id:
+        return _nao_encontrado(request)
+
+    try:
+        registrar_execucao(
+            item_id,
+            feito=feito is not None,
+            carga_real=carga_real,
+            reps_real=reps_real,
+            observacao=observacao,
+        )
+    except ValidationError:
+        pass
+
+    return RedirectResponse(
+        url=f"/aluno/treinos/{treino_id}", status_code=status.HTTP_303_SEE_OTHER
     )
 
 

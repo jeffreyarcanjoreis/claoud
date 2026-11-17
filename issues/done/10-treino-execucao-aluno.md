@@ -7,7 +7,7 @@ Na página do treino do aluno, o aluno marca cada exercício como feito (com pro
 09 (dados + serviço da execução)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Só UI + rota do aluno; toda regra já está no serviço da fatia 09 (`registrar_execucao`, `execucoes_do_treino`, `progresso_sessao`). Tudo é do **dia de hoje** (a data default do serviço). Fidelidade ao método (regras 11–14): é o aluno registrando o que realmente fez, em primeira pessoa; nada de nota/cobrança — é o espelho do que aconteceu hoje.

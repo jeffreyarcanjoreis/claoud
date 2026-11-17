@@ -1589,3 +1589,85 @@ label.stat-toggle:hover .l {
 .lead-consentimento.pendente {
   color: var(--clay);
 }
+
+/* ===== treino (aluno): progresso da sessao e execucao ===== */
+.progresso {
+  margin: var(--sp-3) 0 var(--sp-4);
+}
+
+.progresso-texto {
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+  margin-bottom: var(--sp-1);
+}
+
+.progresso-barra {
+  height: 4px;
+  background: var(--line);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.progresso-preenchido {
+  height: 100%;
+  background: var(--sage);
+  border-radius: var(--radius-lg);
+  transition: width 0.4s var(--ease);
+}
+
+.execucao {
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--line);
+}
+
+.execucao-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-2);
+  margin-bottom: var(--sp-2);
+}
+
+.execucao-feito {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  font-size: var(--fs-small);
+  color: var(--bone);
+  cursor: pointer;
+}
+
+.execucao-feito input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--gold);
+  cursor: pointer;
+}
+
+.execucao-selo {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: var(--fs-small);
+  color: var(--sage);
+}
+
+.execucao-campos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+
+.execucao-campos .field {
+  flex: 1 1 140px;
+}
+
+.execucao textarea {
+  resize: vertical;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progresso-preenchido {
+    transition: none;
+  }
+}

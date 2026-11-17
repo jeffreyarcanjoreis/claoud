@@ -13,6 +13,15 @@
   <p class="cad-sub">{{ treino.apresentacao }}</p>
   {% endif %}
 
+  <div class="progresso">
+    <p class="progresso-texto">Meu progresso de hoje — Feitos: {{ progresso.feitos }} de {{ progresso.total }}</p>
+    {% if progresso.total %}
+    <div class="progresso-barra" role="progressbar" aria-valuemin="0" aria-valuemax="{{ progresso.total }}" aria-valuenow="{{ progresso.feitos }}">
+      <div class="progresso-preenchido" style="width: {{ (progresso.feitos / progresso.total * 100) | round | int }}%"></div>
+    </div>
+    {% endif %}
+  </div>
+
   {% for g in fases %}
   <div class="fase-bloco">
     <div class="fase-titulo">
@@ -87,6 +96,30 @@
                 <source src="/exercicios/{{ i.exercicio_id }}/video">
               </video>
               {% endif %}
+              <form method="post" action="/aluno/treinos/{{ treino.id }}/itens/{{ i.id }}/execucao" class="execucao">
+                <div class="execucao-cabecalho">
+                  <label class="execucao-feito" for="feito-{{ i.id }}">
+                    <input type="checkbox" id="feito-{{ i.id }}" name="feito" {% if i.execucao and i.execucao.feito %}checked{% endif %}>
+                    Feito hoje
+                  </label>
+                  {% if i.execucao %}<span class="execucao-selo">registrado hoje</span>{% endif %}
+                </div>
+                <div class="execucao-campos">
+                  <div class="field">
+                    <label for="carga-{{ i.id }}">o que usei hoje</label>
+                    <input type="text" id="carga-{{ i.id }}" name="carga_real" value="{{ i.execucao.carga_real if i.execucao and i.execucao.carga_real else '' }}">
+                  </div>
+                  <div class="field">
+                    <label for="reps-{{ i.id }}">reps que fiz</label>
+                    <input type="text" id="reps-{{ i.id }}" name="reps_real" value="{{ i.execucao.reps_real if i.execucao and i.execucao.reps_real else '' }}">
+                  </div>
+                </div>
+                <div class="field">
+                  <label for="obs-{{ i.id }}">como foi para mim hoje</label>
+                  <textarea id="obs-{{ i.id }}" name="observacao" rows="2">{{ i.execucao.observacao if i.execucao and i.execucao.observacao else '' }}</textarea>
+                </div>
+                <button type="submit">Registrar</button>
+              </form>
             </td>
             <td>{{ i.grupo_muscular or '—' }}</td>
             <td>{{ i.series or '—' }}</td>
