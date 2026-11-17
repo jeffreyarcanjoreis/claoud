@@ -15,7 +15,11 @@ from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
 from kairos import config
 from kairos.alunos.service import get_aluno
-from kairos.execucao.service import anexos_do_treino, get_anexo
+from kairos.execucao.service import (
+    anexos_do_treino,
+    get_anexo,
+    set_feedback_anexo,
+)
 from kairos.treinos.service import (
     FASE_LABELS,
     FASE_OPCOES,
@@ -636,6 +640,35 @@ async def aluno_anexo(request: Request, aluno_id: int, anexo_id: int):
     ext = anexo["filename"].rsplit(".", 1)[-1].lower()
     media_type = _ANEXO_MEDIA_TYPES.get(ext, "application/octet-stream")
     return FileResponse(path, media_type=media_type)
+
+
+@router.post("/alunos/{aluno_id}/anexos/{anexo_id}/feedback")
+async def anexo_feedback_route(
+    aluno_id: int,
+    anexo_id: int,
+    feedback: Optional[str] = Form(None),
+):
+    """Save the coach's feedback on an aluno's anexo, then back to the planilha.
+
+    Same ownership gate as :func:`aluno_anexo` (anexo -> item -> treino must
+    belong to this aluno); any failure is a plain 404.
+    """
+    if get_aluno(aluno_id) is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    anexo = get_anexo(anexo_id)
+    if anexo is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+    item = get_item(anexo["treino_item_id"])
+    treino = get_treino(item["treino_id"]) if item is not None else None
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    set_feedback_anexo(anexo_id, feedback)
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}/treino/{item['treino_id']}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
 
 
 def _render_planilha_com_video_erro(

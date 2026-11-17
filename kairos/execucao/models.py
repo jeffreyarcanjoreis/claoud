@@ -87,6 +87,7 @@ class AnexoExecucao(Base):
     filename: Mapped[str] = mapped_column(String(64), nullable=False)
     tipo: Mapped[str] = mapped_column(String(10), nullable=False)
     observacao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    feedback_coach: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()
     )

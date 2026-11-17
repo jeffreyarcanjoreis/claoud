@@ -7,7 +7,7 @@ O coach vê o anexo enviado pelo aluno e deixa um feedback naquele exercício; o
 11 (o anexo que o coach analisa)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 O feedback é **por anexo** (`AnexoExecucao`): o coach responde ao que o aluno enviou (vídeo/foto + observação daquele anexo). Um feedback corrente por anexo, revisável (sobrescreve; sem histórico). Fidelidade ao método (regras 11–14): o coach **acolhe/educa/espelha** — orienta, não gradua nem pune. Regra 6: feedback vazio = NULL = "sem feedback ainda".

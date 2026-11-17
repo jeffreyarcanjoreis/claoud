@@ -75,6 +75,11 @@
                                 <li class="anexo-item">
                                     {% if anexo.tipo == 'imagem' %}<img src="/alunos/{{ aluno.id }}/anexos/{{ anexo.id }}" class="anexo-midia" alt="anexo do aluno">{% else %}<video src="/alunos/{{ aluno.id }}/anexos/{{ anexo.id }}" class="anexo-midia" controls preload="metadata"></video>{% endif %}
                                     {% if anexo.observacao %}<p class="anexo-obs">{{ anexo.observacao }}</p>{% endif %}
+                                    <form method="post" action="/alunos/{{ aluno.id }}/anexos/{{ anexo.id }}/feedback" class="anexo-feedback-form">
+                                        <label for="feedback-{{ anexo.id }}">Seu retorno ao aluno sobre este registro</label>
+                                        <textarea id="feedback-{{ anexo.id }}" name="feedback" rows="3" placeholder="Oriente e acolha: o que você viu e o que sugere ajustar.">{{ anexo.feedback_coach or '' }}</textarea>
+                                        <button type="submit" class="button-link">Salvar feedback</button>
+                                    </form>
                                 </li>
                                 {% endfor %}
                             </ul>

@@ -1720,3 +1720,43 @@ label.stat-toggle:hover .l {
 .anexo-form textarea {
   resize: vertical;
 }
+
+/* feedback do coach sobre o anexo (aluno le; coach edita) */
+.anexo-feedback {
+  align-self: stretch;
+  padding: var(--sp-2) var(--sp-3);
+  border-left: 3px solid var(--clay);
+  border-radius: var(--radius);
+  background: color-mix(in srgb, var(--clay) 8%, transparent);
+}
+
+.anexo-feedback-rotulo {
+  display: block;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clay);
+  margin-bottom: var(--sp-1);
+}
+
+.anexo-feedback p {
+  margin: 0;
+  font-size: var(--fs-small);
+  white-space: pre-line;
+}
+
+.anexo-feedback-form {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.anexo-feedback-form label {
+  font-size: var(--fs-small);
+  color: var(--bone-dim);
+}
+
+.anexo-feedback-form textarea {
+  resize: vertical;
+}

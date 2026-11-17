@@ -128,6 +128,7 @@
                   <li class="anexo-item">
                     {% if anexo.tipo == 'imagem' %}<img src="/aluno/anexos/{{ anexo.id }}" class="anexo-midia" alt="anexo da execução">{% else %}<video src="/aluno/anexos/{{ anexo.id }}" class="anexo-midia" controls preload="metadata"></video>{% endif %}
                     {% if anexo.observacao %}<p class="anexo-obs">{{ anexo.observacao }}</p>{% endif %}
+                    {% if anexo.feedback_coach %}<div class="anexo-feedback"><span class="anexo-feedback-rotulo">Feedback do coach</span><p>{{ anexo.feedback_coach }}</p></div>{% endif %}
                     <form method="post" action="/aluno/anexos/{{ anexo.id }}/remover">
                       <button type="submit" class="button-danger-sm">remover</button>
                     </form>

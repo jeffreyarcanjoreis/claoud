@@ -2,7 +2,7 @@
 
 Covers the functional specification (issue 11):
 - after migrating, the "anexos_execucao" table exists and the database is
-  stamped at the head revision ("0030");
+  stamped at the head revision ("0031");
 - the table has exactly the expected columns and an index on treino_item_id;
 - inserting an AnexoExecucao with only the required fields round-trips, with
   observacao as None and created_at populated by the server.
@@ -21,7 +21,7 @@ from kairos.execucao.models import AnexoExecucao
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio, Treino, TreinoItem
 
-HEAD_REVISION = "0030"  # bumped by migration 0030_create_anexos_execucao
+HEAD_REVISION = "0031"  # bumped by migration 0031_add_feedback_to_anexos
 
 
 @pytest.fixture
@@ -93,6 +93,7 @@ def test_anexos_execucao_table_has_expected_columns(data_dir: Path) -> None:
         "tipo",
         "observacao",
         "created_at",
+        "feedback_coach",
     }
 
 

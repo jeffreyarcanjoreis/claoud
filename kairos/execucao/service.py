@@ -219,6 +219,7 @@ def _anexo_to_dict(anexo: AnexoExecucao) -> Dict[str, Any]:
         "filename": anexo.filename,
         "tipo": anexo.tipo,
         "observacao": anexo.observacao,
+        "feedback_coach": anexo.feedback_coach,
         "created_at": anexo.created_at,
     }
 
@@ -285,6 +286,29 @@ def get_anexo(anexo_id: int) -> Optional[Dict[str, Any]]:
         if anexo is None:
             return None
         return _anexo_to_dict(anexo)
+
+
+def set_feedback_anexo(
+    anexo_id: int, feedback: Optional[str] = None
+) -> Optional[Dict[str, Any]]:
+    """Set (or clear) the coach's feedback on an attachment.
+
+    Empty/blank feedback is stored as NULL ("no feedback yet"). Returns the
+    attachment as a dict, or None when it does not exist.
+    """
+    parsed = _normalize(feedback)
+
+    with session_scope() as session:
+        anexo = session.get(AnexoExecucao, anexo_id)
+        if anexo is None:
+            return None
+        anexo.feedback_coach = parsed
+        session.flush()
+        session.refresh(anexo)
+        result = _anexo_to_dict(anexo)
+
+    logger.info("Feedback do anexo definido: id=%s", anexo_id)
+    return result
 
 
 def remove_anexo(anexo_id: int) -> bool:

@@ -32,7 +32,7 @@ from kairos.avaliacoes.service import create_avaliacao
 from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0030"  # bumped by migration 0030_create_anexos_execucao
+HEAD_REVISION = "0031"  # bumped by migration 0031_add_feedback_to_anexos
 
 
 @pytest.fixture
