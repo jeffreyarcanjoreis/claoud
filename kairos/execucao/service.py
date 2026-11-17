@@ -22,7 +22,8 @@ from typing import Any, Dict, List, Optional
 from sqlalchemy import func, select
 
 from kairos.db import session_scope
-from kairos.execucao.models import ExecucaoItem
+from kairos.execucao.anexos import delete_anexo_file, save_anexo
+from kairos.execucao.models import AnexoExecucao, ExecucaoItem
 from kairos.treinos.models import TreinoItem
 from kairos.treinos.service import ValidationError
 
@@ -205,3 +206,120 @@ def progresso_sessao(
         ).scalar_one()
 
         return {"total": total, "feitos": feitos}
+
+
+def _anexo_to_dict(anexo: AnexoExecucao) -> Dict[str, Any]:
+    """Extract an AnexoExecucao's fields into a dict of primitives.
+
+    Must be called while the session is still open.
+    """
+    return {
+        "id": anexo.id,
+        "treino_item_id": anexo.treino_item_id,
+        "filename": anexo.filename,
+        "tipo": anexo.tipo,
+        "observacao": anexo.observacao,
+        "created_at": anexo.created_at,
+    }
+
+
+def adicionar_anexo(
+    treino_item_id: int,
+    file_bytes: bytes,
+    content_type: str,
+    original_filename: str,
+    observacao: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Store an uploaded photo/video and attach it to a workout item.
+
+    Raises :class:`ValidationError` when the item does not exist (checked
+    before saving the file, so no orphan file is left) or when the file is
+    invalid (see :func:`kairos.execucao.anexos.save_anexo`); nothing is
+    persisted to the database in either case.
+    """
+    parsed_observacao = _normalize(observacao)
+
+    with session_scope() as session:
+        if session.get(TreinoItem, treino_item_id) is None:
+            raise ValidationError("Exercício não encontrado.")
+
+        filename, tipo = save_anexo(file_bytes, content_type, original_filename)
+
+        anexo = AnexoExecucao(
+            treino_item_id=treino_item_id,
+            filename=filename,
+            tipo=tipo,
+            observacao=parsed_observacao,
+        )
+        session.add(anexo)
+        session.flush()
+        session.refresh(anexo)
+        result = _anexo_to_dict(anexo)
+
+    logger.info(
+        "Anexo adicionado: id=%s treino_item_id=%s tipo=%s filename=%s",
+        result["id"],
+        treino_item_id,
+        tipo,
+        filename,
+    )
+    return result
+
+
+def list_anexos(treino_item_id: int) -> List[Dict[str, Any]]:
+    """Return a workout item's attachments, most recent first. Read-only."""
+    with session_scope() as session:
+        query = (
+            select(AnexoExecucao)
+            .where(AnexoExecucao.treino_item_id == treino_item_id)
+            .order_by(AnexoExecucao.created_at.desc(), AnexoExecucao.id.desc())
+        )
+        rows = session.execute(query).scalars().all()
+        return [_anexo_to_dict(anexo) for anexo in rows]
+
+
+def get_anexo(anexo_id: int) -> Optional[Dict[str, Any]]:
+    """Return one attachment as a dict, or None when not found. Read-only."""
+    with session_scope() as session:
+        anexo = session.get(AnexoExecucao, anexo_id)
+        if anexo is None:
+            return None
+        return _anexo_to_dict(anexo)
+
+
+def remove_anexo(anexo_id: int) -> bool:
+    """Delete an attachment (row and file). Returns False when not found."""
+    with session_scope() as session:
+        anexo = session.get(AnexoExecucao, anexo_id)
+        if anexo is None:
+            return False
+        filename = anexo.filename
+        treino_item_id = anexo.treino_item_id
+        session.delete(anexo)
+
+    delete_anexo_file(filename)
+    logger.info(
+        "Anexo removido: id=%s treino_item_id=%s filename=%s",
+        anexo_id,
+        treino_item_id,
+        filename,
+    )
+    return True
+
+
+def anexos_do_treino(treino_id: int) -> Dict[int, List[Dict[str, Any]]]:
+    """Return a map of treino_item_id -> attachments (most recent first) for
+    every item of the treino that has any. Read-only: no log.
+    """
+    with session_scope() as session:
+        query = (
+            select(AnexoExecucao)
+            .join(TreinoItem, AnexoExecucao.treino_item_id == TreinoItem.id)
+            .where(TreinoItem.treino_id == treino_id)
+            .order_by(AnexoExecucao.created_at.desc(), AnexoExecucao.id.desc())
+        )
+        rows = session.execute(query).scalars().all()
+        result: Dict[int, List[Dict[str, Any]]] = {}
+        for anexo in rows:
+            result.setdefault(anexo.treino_item_id, []).append(_anexo_to_dict(anexo))
+        return result

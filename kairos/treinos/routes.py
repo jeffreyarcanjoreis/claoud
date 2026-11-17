@@ -15,6 +15,7 @@ from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse
 
 from kairos import config
 from kairos.alunos.service import get_aluno
+from kairos.execucao.service import anexos_do_treino, get_anexo
 from kairos.treinos.service import (
     FASE_LABELS,
     FASE_OPCOES,
@@ -44,6 +45,16 @@ router = APIRouter()
 _NO_RECORD = "sem registro"
 
 _VIDEO_MEDIA_TYPES = {
+    "mp4": "video/mp4",
+    "webm": "video/webm",
+    "mov": "video/quicktime",
+}
+
+_ANEXO_MEDIA_TYPES = {
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "png": "image/png",
+    "webp": "image/webp",
     "mp4": "video/mp4",
     "webm": "video/webm",
     "mov": "video/quicktime",
@@ -158,9 +169,15 @@ def _to_treino_list_display(treino: Dict[str, Any]) -> Dict[str, Any]:
     }
 
 
-def _to_item_display(item: Dict[str, Any]) -> Dict[str, Any]:
-    """Map a service-layer treino item to ready-to-print detail fields."""
+def _to_item_display(
+    item: Dict[str, Any], anexos: Optional[list] = None
+) -> Dict[str, Any]:
+    """Map a service-layer treino item to ready-to-print detail fields.
+
+    ``anexos`` is the item's list of aluno attachments (possibly empty).
+    """
     return {
+        "anexos": anexos or [],
         "id": item["id"],
         "exercicio_nome": item["exercicio_nome"],
         "grupo_muscular": item["grupo_muscular"] or None,
@@ -184,12 +201,16 @@ _FASE_OPCOES_DISPLAY = [(v, FASE_LABELS[v]) for v in FASE_OPCOES]
 def _fases_display(detalhe: Dict[str, Any]) -> list:
     """Group a workout's items by phase, ready to print."""
     grupos = agrupar_itens_por_fase(detalhe["itens"])
+    mapa_anexos = anexos_do_treino(detalhe["id"])
     return [
         {
             "fase": g["fase"],
             "fase_label": g["fase_label"],
             "fase_pergunta": g["fase_pergunta"],
-            "itens": [_to_item_display(i) for i in g["itens"]],
+            "itens": [
+                _to_item_display(i, mapa_anexos.get(i["id"], []))
+                for i in g["itens"]
+            ],
         }
         for g in grupos
     ]
@@ -588,6 +609,32 @@ async def exercicio_video(exercicio_id: int):
 
     ext = filename.rsplit(".", 1)[-1].lower()
     media_type = _VIDEO_MEDIA_TYPES.get(ext, "application/octet-stream")
+    return FileResponse(path, media_type=media_type)
+
+
+@router.get("/alunos/{aluno_id}/anexos/{anexo_id}")
+async def aluno_anexo(request: Request, aluno_id: int, anexo_id: int):
+    """Serve an aluno's execution anexo to the coach, or a plain 404.
+
+    The anexo must belong (anexo -> item -> treino) to this aluno's workout.
+    """
+    if get_aluno(aluno_id) is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    anexo = get_anexo(anexo_id)
+    if anexo is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+    item = get_item(anexo["treino_item_id"])
+    treino = get_treino(item["treino_id"]) if item is not None else None
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    path = config.anexos_dir() / anexo["filename"]
+    if not path.exists():
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    ext = anexo["filename"].rsplit(".", 1)[-1].lower()
+    media_type = _ANEXO_MEDIA_TYPES.get(ext, "application/octet-stream")
     return FileResponse(path, media_type=media_type)
 
 

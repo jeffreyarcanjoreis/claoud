@@ -22,7 +22,7 @@ from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio, Treino, TreinoItem
 
-HEAD_REVISION = "0029"  # bumped by migration 0029_create_execucoes_item
+HEAD_REVISION = "0030"  # bumped by migration 0030_create_anexos_execucao
 
 
 @pytest.fixture

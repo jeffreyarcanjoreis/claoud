@@ -67,6 +67,19 @@
                         {% if i.variacao_escolhida %}
                         <p class="meu-lugar-espelho">O aluno se reconheceu em: {{ i.variacao_escolhida_label }}</p>
                         {% endif %}
+                        {% if i.anexos %}
+                        <div class="anexos">
+                            <span class="anexos-titulo">Anexos do aluno</span>
+                            <ul class="anexos-lista">
+                                {% for anexo in i.anexos %}
+                                <li class="anexo-item">
+                                    {% if anexo.tipo == 'imagem' %}<img src="/alunos/{{ aluno.id }}/anexos/{{ anexo.id }}" class="anexo-midia" alt="anexo do aluno">{% else %}<video src="/alunos/{{ aluno.id }}/anexos/{{ anexo.id }}" class="anexo-midia" controls preload="metadata"></video>{% endif %}
+                                    {% if anexo.observacao %}<p class="anexo-obs">{{ anexo.observacao }}</p>{% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
                         <details class="video-details">
                             <summary>Vídeo de demonstração</summary>
                             {% if i.video_filename %}

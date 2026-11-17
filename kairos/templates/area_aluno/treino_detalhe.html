@@ -120,6 +120,33 @@
                 </div>
                 <button type="submit">Registrar</button>
               </form>
+              <div class="anexos">
+                <span class="anexos-titulo">Anexos para o coach</span>
+                {% if i.anexos %}
+                <ul class="anexos-lista">
+                  {% for anexo in i.anexos %}
+                  <li class="anexo-item">
+                    {% if anexo.tipo == 'imagem' %}<img src="/aluno/anexos/{{ anexo.id }}" class="anexo-midia" alt="anexo da execução">{% else %}<video src="/aluno/anexos/{{ anexo.id }}" class="anexo-midia" controls preload="metadata"></video>{% endif %}
+                    {% if anexo.observacao %}<p class="anexo-obs">{{ anexo.observacao }}</p>{% endif %}
+                    <form method="post" action="/aluno/anexos/{{ anexo.id }}/remover">
+                      <button type="submit" class="button-danger-sm">remover</button>
+                    </form>
+                  </li>
+                  {% endfor %}
+                </ul>
+                {% endif %}
+                <form method="post" action="/aluno/treinos/{{ treino.id }}/itens/{{ i.id }}/anexo" enctype="multipart/form-data" class="anexo-form">
+                  <div class="field">
+                    <label for="anexo-{{ i.id }}">foto ou vídeo</label>
+                    <input type="file" id="anexo-{{ i.id }}" name="anexo" accept="image/*,video/*">
+                  </div>
+                  <div class="field">
+                    <label for="anexo-obs-{{ i.id }}">o que quero que o coach veja</label>
+                    <textarea id="anexo-obs-{{ i.id }}" name="observacao" rows="2"></textarea>
+                  </div>
+                  <button type="submit">Enviar anexo</button>
+                </form>
+              </div>
             </td>
             <td>{{ i.grupo_muscular or '—' }}</td>
             <td>{{ i.series or '—' }}</td>

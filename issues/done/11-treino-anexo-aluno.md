@@ -7,7 +7,7 @@ O aluno anexa um vídeo/foto da execução de um exercício, por **upload de arq
 09 (a execução do exercício onde o anexo se prende)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 O anexo é **por item do treino** (`TreinoItem`): o aluno envia um arquivo (foto OU vídeo) da execução daquele exercício, com uma observação escrita (o verbo é dele; regras 11–14). Pode haver **vários anexos** por item (histórico). Guardado localmente, nome de arquivo gerado pelo servidor (nunca o do cliente). Regra 6: observação vazia = NULL. O feedback do coach é a fatia **12** (não entra aqui).

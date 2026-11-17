@@ -25,7 +25,7 @@ import kairos.db
 from kairos.main import app
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0029"  # bumped by migration 0029_create_execucoes_item
+HEAD_REVISION = "0030"  # bumped by migration 0030_create_anexos_execucao
 
 
 @pytest.fixture

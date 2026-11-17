@@ -2,7 +2,7 @@
 
 Covers the functional specification (issue 09):
 - after migrating, the "execucoes_item" table exists and the database is
-  stamped at the head revision ("0029");
+  stamped at the head revision ("0030");
 - the table has exactly the expected columns -- no derived columns;
 - inserting an ExecucaoItem with only the required fields round-trips, with
   the optional fields (carga_real, reps_real, observacao) as None and
@@ -29,7 +29,7 @@ from kairos.execucao.models import ExecucaoItem
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio, Treino, TreinoItem
 
-HEAD_REVISION = "0029"  # bumped by migration 0029_create_execucoes_item
+HEAD_REVISION = "0030"  # bumped by migration 0030_create_anexos_execucao
 
 
 @pytest.fixture

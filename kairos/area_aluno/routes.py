@@ -13,7 +13,7 @@ from __future__ import annotations
 import datetime
 from typing import Any, Dict, List, Optional
 
-from fastapi import APIRouter, Form, Request, status
+from fastapi import APIRouter, File, Form, Request, UploadFile, status
 from fastapi.responses import FileResponse, HTMLResponse, RedirectResponse, Response
 
 from kairos import config
@@ -24,7 +24,11 @@ from kairos.auth.middleware import current_user
 from kairos.avaliacoes.service import get_avaliacao, get_avaliacao_detail, list_avaliacoes
 from kairos.checkin.service import checkin_de_hoje
 from kairos.execucao.service import (
+    adicionar_anexo,
+    anexos_do_treino,
     execucoes_do_treino,
+    get_anexo,
+    remove_anexo,
     progresso_sessao,
     registrar_execucao,
 )
@@ -63,6 +67,16 @@ _FOTO_MEDIA_TYPES = {
     "jpeg": "image/jpeg",
     "png": "image/png",
     "webp": "image/webp",
+}
+
+_ANEXO_MEDIA_TYPES = {
+    "jpg": "image/jpeg",
+    "jpeg": "image/jpeg",
+    "png": "image/png",
+    "webp": "image/webp",
+    "mp4": "video/mp4",
+    "webm": "video/webm",
+    "mov": "video/quicktime",
 }
 
 
@@ -427,8 +441,10 @@ async def treino_detalhe(request: Request, treino_id: int):
 
     detalhe = get_treino_detail(treino_id)
     mapa = execucoes_do_treino(treino_id)
+    mapa_anexos = anexos_do_treino(treino_id)
     for item in detalhe["itens"]:
         item["execucao"] = mapa.get(item["id"])
+        item["anexos"] = mapa_anexos.get(item["id"], [])
     fases = agrupar_itens_por_fase(detalhe["itens"])
     return templates.TemplateResponse(
         request,
@@ -484,6 +500,100 @@ async def registrar_execucao_do_item(
 
     return RedirectResponse(
         url=f"/aluno/treinos/{treino_id}", status_code=status.HTTP_303_SEE_OTHER
+    )
+
+
+def _anexo_do_aluno(
+    aluno_id: Optional[int], anexo_id: int
+) -> Optional[tuple]:
+    """Return ``(anexo, treino)`` when the anexo belongs to one of the aluno's
+    workouts (anexo -> item -> treino), otherwise None (caller answers 404).
+    """
+    anexo = get_anexo(anexo_id)
+    if anexo is None:
+        return None
+    item = get_item(anexo["treino_item_id"])
+    if item is None:
+        return None
+    treino = get_treino(item["treino_id"])
+    if treino is None or aluno_id is None or treino["aluno_id"] != aluno_id:
+        return None
+    return anexo, treino
+
+
+@router.post("/aluno/treinos/{treino_id}/itens/{item_id}/anexo")
+async def enviar_anexo_do_item(
+    request: Request,
+    treino_id: int,
+    item_id: int,
+    anexo: UploadFile = File(...),
+    observacao: Optional[str] = Form(None),
+):
+    """Upload a photo/video of the execution of one workout item.
+
+    404 (never 403) when the workout isn't the requester's or the item isn't
+    part of it. Invalid files (``ValidationError``) are a no-op: nothing is
+    stored and the aluno is redirected back.
+    """
+    aluno_id = _aluno_id_da_sessao(request)
+    treino = get_treino(treino_id)
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return _nao_encontrado(request)
+
+    item = get_item(item_id)
+    if item is None or item["treino_id"] != treino_id:
+        return _nao_encontrado(request)
+
+    data = await anexo.read()
+    try:
+        adicionar_anexo(
+            item_id,
+            data,
+            anexo.content_type or "",
+            anexo.filename or "",
+            observacao=observacao,
+        )
+    except ValidationError:
+        pass
+
+    return RedirectResponse(
+        url=f"/aluno/treinos/{treino_id}", status_code=status.HTTP_303_SEE_OTHER
+    )
+
+
+@router.get("/aluno/anexos/{anexo_id}")
+async def servir_anexo(request: Request, anexo_id: int):
+    """Serve an anexo file, only when it belongs to the aluno's own workout.
+
+    Plain 404 for unknown anexo, another aluno's anexo, or a file missing
+    from disk.
+    """
+    achado = _anexo_do_aluno(_aluno_id_da_sessao(request), anexo_id)
+    if achado is None:
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+    anexo, _treino = achado
+
+    path = config.anexos_dir() / anexo["filename"]
+    if not path.exists():
+        return Response(status_code=status.HTTP_404_NOT_FOUND)
+
+    ext = anexo["filename"].rsplit(".", 1)[-1].lower()
+    media_type = _ANEXO_MEDIA_TYPES.get(ext, "application/octet-stream")
+    return FileResponse(path, media_type=media_type)
+
+
+@router.post("/aluno/anexos/{anexo_id}/remover")
+async def remover_anexo(request: Request, anexo_id: int):
+    """Remove one of the aluno's own anexos; 404 if it isn't theirs."""
+    achado = _anexo_do_aluno(_aluno_id_da_sessao(request), anexo_id)
+    if achado is None:
+        return _nao_encontrado(request)
+    _anexo, treino = achado
+
+    remove_anexo(anexo_id)
+    return RedirectResponse(
+        url=f"/aluno/treinos/{treino['id']}",
+        status_code=status.HTTP_303_SEE_OTHER,
     )
 
 

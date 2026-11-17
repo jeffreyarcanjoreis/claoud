@@ -82,6 +82,11 @@ def videos_dir() -> Path:
     return data_dir() / "videos"
 
 
+def anexos_dir() -> Path:
+    """Directory where uploaded workout attachments are stored."""
+    return data_dir() / "anexos"
+
+
 def database_url() -> str:
     """SQLAlchemy database URL.
 

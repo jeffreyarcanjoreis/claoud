@@ -66,3 +66,33 @@ class ExecucaoItem(Base):
             f"ExecucaoItem(id={self.id!r}, treino_item_id={self.treino_item_id!r}, "
             f"data={self.data!r})"
         )
+
+
+class AnexoExecucao(Base):
+    """A file (image or video) a student attached to a workout item.
+
+    Several attachments per workout item are allowed (history). The file is
+    stored locally under a server-generated name (``filename``), never the
+    client's; ``tipo`` ("imagem" or "video") is validated at the service
+    layer, not in the database. ``observacao`` is NULL when the student wrote
+    nothing.
+    """
+
+    __tablename__ = "anexos_execucao"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    treino_item_id: Mapped[int] = mapped_column(
+        ForeignKey("treino_itens.id"), nullable=False, index=True
+    )
+    filename: Mapped[str] = mapped_column(String(64), nullable=False)
+    tipo: Mapped[str] = mapped_column(String(10), nullable=False)
+    observacao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[datetime.datetime] = mapped_column(
+        DateTime, nullable=False, server_default=func.now()
+    )
+
+    def __repr__(self) -> str:
+        return (
+            f"AnexoExecucao(id={self.id!r}, treino_item_id={self.treino_item_id!r}, "
+            f"tipo={self.tipo!r})"
+        )
