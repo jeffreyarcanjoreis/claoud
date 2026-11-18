@@ -23,9 +23,11 @@ from kairos.execucao.service import (
 from kairos.treinos.service import (
     FASE_LABELS,
     FASE_OPCOES,
+    DURACAO_OPCOES,
     ValidationError,
     add_item_to_treino,
     agrupar_itens_por_fase,
+    arco_da_sessao,
     create_exercicio,
     create_treino,
     delete_treino,
@@ -39,6 +41,7 @@ from kairos.treinos.service import (
     remove_exercicio_video,
     remove_item,
     set_apresentacao,
+    set_duracao,
     set_exercicio_video,
     update_item,
 )
@@ -220,6 +223,15 @@ def _fases_display(detalhe: Dict[str, Any]) -> list:
     ]
 
 
+def _arco_context(detalhe: Dict[str, Any]) -> Dict[str, Any]:
+    """Session-arc template context: arc phases, current duration, options."""
+    return {
+        "arco": arco_da_sessao(detalhe["id"]),
+        "duracao_min": detalhe.get("duracao_min"),
+        "duracao_opcoes": list(DURACAO_OPCOES),
+    }
+
+
 @router.get("/alunos/{aluno_id}/treino", response_class=HTMLResponse)
 async def aluno_treinos(request: Request, aluno_id: int) -> HTMLResponse:
     """Render the student's "Treino" sub-tab: their workouts, or a 404 page."""
@@ -313,6 +325,7 @@ async def treino_detail(
             "fase_opcoes": _FASE_OPCOES_DISPLAY,
             "apresentacao": detalhe["observacao"] or None,
             "exercicios": list_exercicios(),
+            **_arco_context(detalhe),
         },
     )
 
@@ -364,6 +377,7 @@ async def add_item_route(
                 "fase_opcoes": _FASE_OPCOES_DISPLAY,
                 "apresentacao": detalhe["observacao"] or None,
                 "exercicios": list_exercicios(),
+                **_arco_context(detalhe),
                 "error": str(exc),
             },
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -569,6 +583,35 @@ async def set_apresentacao_route(
     )
 
 
+@router.post("/alunos/{aluno_id}/treino/{treino_id}/duracao")
+async def set_duracao_route(
+    request: Request,
+    aluno_id: int,
+    treino_id: int,
+    duracao: Optional[str] = Form(None),
+):
+    """Set (or clear) the session duration, checking ownership (404 otherwise)."""
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return _aluno_nao_encontrado(request)
+
+    treino = get_treino(treino_id)
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return _aluno_nao_encontrado(request)
+
+    try:
+        set_duracao(treino_id, duracao)
+    except ValidationError:
+        # Tampered/invalid "duracao": the selector only sends valid values, so
+        # treat anything else as a no-op.
+        pass
+
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}/treino/{treino_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
 @router.post("/alunos/{aluno_id}/treino/{treino_id}/apagar")
 async def delete_treino_route(
     request: Request, aluno_id: int, treino_id: int
@@ -697,6 +740,7 @@ def _render_planilha_com_video_erro(
             "fase_opcoes": _FASE_OPCOES_DISPLAY,
             "apresentacao": detalhe["observacao"] or None,
             "exercicios": list_exercicios(),
+            **_arco_context(detalhe),
             "error": erro,
         },
         status_code=status.HTTP_400_BAD_REQUEST,

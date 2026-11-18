@@ -7,7 +7,7 @@ Na planilha do coach, o coach define a duração da sessão (30/45/60 ou limpar)
 13 (dados + serviço: `set_duracao`, `arco_da_sessao`, `duracao_min`)
 
 ## Status
-pendente
+concluída
 
 ## Especificação funcional
 Só UI + rota do coach; a regra está no serviço da 13. O componente de arco (faixa das 5 fases proporcional ao tempo) nasce aqui e é reusado read-only na 15.

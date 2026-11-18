@@ -20,6 +20,37 @@
     </form>
 </details>
 
+<h3>Duração da sessão</h3>
+<div class="duracao-seletor" role="group" aria-label="Duração da sessão">
+    <span class="duracao-rotulo">Duração da sessão</span>
+    {% for d in duracao_opcoes %}
+    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/duracao" class="duracao-form">
+        <input type="hidden" name="duracao" value="{{ d }}">
+        <button type="submit" class="duracao-opcao{% if duracao_min == d %} is-ativa{% endif %}" aria-pressed="{{ 'true' if duracao_min == d else 'false' }}">{{ d }} min</button>
+    </form>
+    {% endfor %}
+    {% if duracao_min %}
+    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/duracao" class="duracao-form">
+        <input type="hidden" name="duracao" value="">
+        <button type="submit" class="duracao-limpar">sem arco</button>
+    </form>
+    {% endif %}
+</div>
+
+{% if arco %}
+<div class="arco" role="list" aria-label="Arco da sessão">
+    {% for f in arco %}
+    <div class="arco-fase" role="listitem" style="flex: {{ f.minutos }}">
+        <span class="arco-fase-nome">{{ f.fase_label }}</span>
+        {% if f.fase_pergunta %}<span class="arco-fase-pergunta">{{ f.fase_pergunta }}</span>{% endif %}
+        <span class="arco-fase-min">{{ f.minutos }} min</span>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p class="arco-convite">Defina a duração para ver o arco da sessão.</p>
+{% endif %}
+
 {% if error %}
 <div class="message-error">{{ error }}</div>
 {% endif %}
