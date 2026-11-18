@@ -13,6 +13,18 @@
   <p class="cad-sub">{{ treino.apresentacao }}</p>
   {% endif %}
 
+  {% if arco %}
+  <div class="arco" role="list" aria-label="Arco da sessão">
+    {% for f in arco %}
+    <div class="arco-fase" role="listitem" style="flex: {{ f.minutos }}">
+      <span class="arco-fase-nome">{{ f.fase_label }}</span>
+      {% if f.fase_pergunta %}<span class="arco-fase-pergunta">{{ f.fase_pergunta }}</span>{% endif %}
+      <span class="arco-fase-min">{{ f.minutos }} min</span>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
   <div class="progresso">
     <p class="progresso-texto">Meu progresso de hoje — Feitos: {{ progresso.feitos }} de {{ progresso.total }}</p>
     {% if progresso.total %}

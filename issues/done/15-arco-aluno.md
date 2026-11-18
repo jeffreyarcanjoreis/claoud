@@ -7,7 +7,7 @@ Na página do treino do aluno, o arco das 5 fases com os minutos proporcionais a
 13 (serviço `arco_da_sessao`), 14 (o componente de arco já existe)
 
 ## Status
-pendente
+concluída
 
 ## Especificação funcional
 Só UI do aluno; reusa o componente de arco criado na 14 (mesma marcação/CSS). Read-only — o aluno não define duração.

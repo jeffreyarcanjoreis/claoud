@@ -38,6 +38,7 @@ from kairos.registro_treino.service import list_registros
 from kairos.treinos.service import (
     ValidationError,
     agrupar_itens_por_fase,
+    arco_da_sessao,
     escolher_variacao,
     get_item,
     get_treino,
@@ -457,6 +458,7 @@ async def treino_detalhe(request: Request, treino_id: int):
             },
             "fases": fases,
             "progresso": progresso_sessao(treino_id),
+            "arco": arco_da_sessao(treino_id),
         },
     )
 
