@@ -32,7 +32,7 @@ from kairos.db import session_scope
 from kairos.financeiro.models import Pagamento
 from kairos.migrations_runner import run_migrations
 
-HEAD_REVISION = "0031"  # bumped by migration 0031_add_feedback_to_anexos
+HEAD_REVISION = "0032"  # bumped by migration 0032_add_duracao_to_treinos
 
 
 @pytest.fixture

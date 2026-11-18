@@ -7,7 +7,7 @@ Dar a um treino uma duração de sessão (30/45/60 min) e derivar os minutos de 
 nenhuma (usa as fases já existentes)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 Só dados + serviço; a UI é 14 (coach) e 15 (aluno). Regra 6: sem duração = NULL = "sem arco". Os minutos são **derivados** da tabela canônica (nunca digitados/inventados).

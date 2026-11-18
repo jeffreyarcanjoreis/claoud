@@ -29,7 +29,7 @@ from kairos.execucao.models import ExecucaoItem
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio, Treino, TreinoItem
 
-HEAD_REVISION = "0031"  # bumped by migration 0031_add_feedback_to_anexos
+HEAD_REVISION = "0032"  # bumped by migration 0032_add_duracao_to_treinos
 
 
 @pytest.fixture

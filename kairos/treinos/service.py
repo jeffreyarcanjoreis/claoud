@@ -33,6 +33,14 @@ FASE_PERGUNTAS = {
     "volta_a_calma": "O que mudou?",
 }
 
+DURACAO_OPCOES = (30, 45, 60)
+# Canonical minutes per phase for each session duration (each row sums to its key).
+PROPORCOES_FASE = {
+    30: {"preparacao": 3, "aquecimento": 5, "skill": 7, "apice": 10, "volta_a_calma": 5},
+    45: {"preparacao": 4, "aquecimento": 7, "skill": 11, "apice": 16, "volta_a_calma": 7},
+    60: {"preparacao": 5, "aquecimento": 9, "skill": 15, "apice": 22, "volta_a_calma": 9},
+}
+
 VARIACAO_OPCOES = ("base", "regressao", "progressao")
 VARIACAO_LABELS = {
     "base": "Base",
@@ -197,6 +205,7 @@ def _treino_to_dict(treino: Treino) -> Dict[str, Any]:
         "aluno_id": treino.aluno_id,
         "nome": treino.nome,
         "observacao": treino.observacao,
+        "duracao_min": treino.duracao_min,
         "created_at": treino.created_at,
     }
 
@@ -584,6 +593,75 @@ def set_apresentacao(treino_id: int, texto: Optional[str] = None) -> Optional[Di
 
     logger.info("Apresentação do treino definida: id=%s", treino_id)
     return result
+
+
+def _parse_duracao(duracao: Any) -> Optional[int]:
+    """Parse a raw session duration; empty/None becomes None ("sem arco").
+
+    Raises :class:`ValidationError` when it is not one of ``DURACAO_OPCOES``.
+    """
+    if isinstance(duracao, str):
+        duracao = _normalize(duracao)
+        if duracao is None:
+            return None
+        try:
+            parsed = int(duracao)
+        except ValueError:
+            raise ValidationError("Duração inválida.")
+    elif duracao is None:
+        return None
+    elif isinstance(duracao, int) and not isinstance(duracao, bool):
+        parsed = duracao
+    else:
+        raise ValidationError("Duração inválida.")
+    if parsed not in DURACAO_OPCOES:
+        raise ValidationError("Duração inválida.")
+    return parsed
+
+
+def set_duracao(treino_id: int, duracao: Any = None) -> Optional[Dict[str, Any]]:
+    """Set (or clear) a workout's session duration in minutes.
+
+    Accepts an int or numeric string in ``DURACAO_OPCOES``; None/empty clears
+    it (NULL, "sem arco"). Invalid values raise :class:`ValidationError`
+    before the session is opened. Returns the updated workout as a dict, or
+    None when it does not exist.
+    """
+    parsed = _parse_duracao(duracao)
+
+    with session_scope() as session:
+        treino = session.get(Treino, treino_id)
+        if treino is None:
+            return None
+        treino.duracao_min = parsed
+        session.flush()
+        session.refresh(treino)
+        result = _treino_to_dict(treino)
+
+    logger.info(
+        "Duração do treino definida: id=%s duracao=%s", treino_id, parsed
+    )
+    return result
+
+
+def arco_da_sessao(treino_id: int) -> Optional[List[Dict[str, Any]]]:
+    """Return the session arc (the 5 phases in canonical order with their
+    minutes) for a workout, or None when it does not exist or has no duration.
+    Read-only: no log."""
+    with session_scope() as session:
+        treino = session.get(Treino, treino_id)
+        if treino is None or treino.duracao_min is None:
+            return None
+        proporcoes = PROPORCOES_FASE[treino.duracao_min]
+    return [
+        {
+            "fase": fase,
+            "fase_label": FASE_LABELS[fase],
+            "fase_pergunta": FASE_PERGUNTAS[fase],
+            "minutos": proporcoes[fase],
+        }
+        for fase in FASE_OPCOES
+    ]
 
 
 def mover_item(item_id: int, direcao: str) -> bool:
