@@ -1,84 +1,55 @@
-# SPEC — Treino do aluno (profundidade completa)
+# SPEC — O arco da sessão (tempo por fase)
 
-> Norte: o mockup aprovado da página de Treino do aluno. Descreve o Treino **inteiro**; construído em fatias pequenas.
-> **Fatia atual (1): Estrutura da planilha** — 5 fases + apresentação do treino + observação por exercício. As demais capacidades (4–8) são fatias futuras, já mapeadas aqui para dar o norte.
-> Base: fatia Frente + nível concluída; **826 testes**, head de migração **0024**. Método: skill `kairos-method` (`references/pratica.md`).
+> Norte: o "mapa de tempo" das 5 fases do método (skill `kairos-method`, `references/pratica.md` §1). Dá à sessão a dimensão **tempo** que faltava.
+> Base: trilha Treino concluída (fases + variações + execução + anexo + feedback); **1093 testes**, head de migração **0031**. Próxima camada por cima: periodização (macro/meso/micro) — fatia futura.
 
 ## Overview
 
-Hoje o treino do aluno é uma **planilha plana** — lista de exercícios sem estrutura nem vida. Esta feature transforma o Treino na **sessão do método**: os exercícios organizados nas 5 fases (cada uma com sua pergunta-guia), com apresentação do coach, vídeo, níveis, observações, execução registrada pelo aluno e feedback do coach sobre o que foi enviado. Dois lados: o **coach monta** a planilha; o **aluno vê e executa**. Coach-primeiro. Construído em fatias — a 1ª entrega a **estrutura** (fases + apresentação + observação por exercício), aproveitando o que já existe no banco.
+Hoje o Treino mostra as 5 fases, mas **sem tempo** — e o tempo é o coração do método (*kairos* = o momento certo; *chronos* = o relógio). Esta feature dá a uma sessão uma **duração** (30/45/60 min) e desenha as 5 fases como um **arco visual** com os minutos proporcionais de cada fase, na planilha do coach e na página do aluno. Princípio do método: **"estrutura fixa, proporções vivas"** — os minutos default vêm da tabela canônica; ajustá-los ao momento é fatia futura. Regra 6: sessão sem duração = "sem arco definido" — nunca inventar minutos.
 
-## Vocabulário fixo (as 5 fases da sessão)
+## Vocabulário fixo — o mapa de tempo (método)
 
-Ordem canônica, cada fase com a sua pergunta-guia:
-1. **Preparação** — "Quem chegou hoje?"
-2. **Aquecimento** — "O corpo está aqui agora?"
-3. **Skill** — "Este corpo está pronto?"
-4. **Ápice** — "Qual o limite de hoje?"
-5. **Volta à calma** — "O que mudou?"
+As 5 fases e seus minutos por duração (proporção fixa; `references/pratica.md` §1):
 
-Exercício sem fase = grupo **"Sem fase"** ao fim (nunca uma fase inventada — regra 6).
+| Fase | Pergunta-guia | 30 min | 45 min | 60 min |
+|------|---------------|:---:|:---:|:---:|
+| Preparação | Quem chegou hoje? | 3 | 4 | 5 |
+| Aquecimento | O corpo está aqui agora? | 5 | 7 | 9 |
+| Skill | Este corpo está pronto? | 7 | 11 | 15 |
+| Ápice | Qual o limite de hoje? | 10 | 16 | 22 |
+| Volta à calma | O que mudou? | 5 | 7 | 9 |
+
+"Estrutura fixa; proporções vivas": ansioso pede mais preparação/aquecimento; radiante pede mais skill/ápice (o ajuste é [F+]).
 
 ## Áreas
 
-- **Planilha do treino (coach)** — `/alunos/{id}/treino/{treino_id}` — o coach monta: adiciona exercícios (com fase, séries/reps/carga, observação), edita, reordena, escreve a apresentação; futuramente vê a execução e o vídeo enviados pelo aluno e dá feedback.
-- **Treino do aluno** — `/aluno/treinos/{treino_id}` — o aluno vê a planilha como sessão em fases; futuramente escolhe o nível, marca feito, registra o que fez, anexa vídeo e lê o feedback.
-- **Biblioteca de exercícios (coach)** — `/treinos` — o acervo compartilhado; futuramente com vídeo de demonstração por exercício.
+- **Planilha do treino (coach)** — `/alunos/{id}/treino/{treino_id}` — o coach define a duração da sessão; o arco aparece acima/junto das fases.
+- **Treino do aluno** — `/aluno/treinos/{treino_id}` — o aluno vê o arco (read-only) no topo do treino.
 
 ## Componentes
 
-- **Bloco de fase** — cabeçalho (nome + pergunta-guia) + os exercícios daquela fase (ou "nenhum exercício nesta fase"); reusado na planilha do coach e do aluno.
-- **Card de exercício** — nome, prescrição (séries/reps/carga), observação; cresce nas fatias futuras com vídeo, níveis, execução e feedback.
-- **Seletor de fase** — as 5 fases (+ "—") no formulário de adicionar exercício.
-- **Apresentação** — o texto do coach no topo do treino.
+- **Arco da sessão** — faixa visual das 5 fases em segmentos proporcionais ao tempo, cada segmento com fase + pergunta-guia + minutos. Reusado nos dois lados (coach e aluno). Sem duração → não aparece (regra 6).
+- **Seletor de duração (coach)** — 30 / 45 / 60 min (ou limpar).
 
 ## Comportamentos
 
-Marcador: **[F1]** = fatia atual (estrutura); **[F+]** = fatia futura (mapeada para o norte).
+### 1. Duração da sessão
+1. **[F1]** O coach define a duração de um treino: **30**, **45** ou **60** min; pode **limpar** (volta a "sem arco").
+2. **[F1]** Dado a duração, as 5 fases recebem os minutos da **tabela canônica** do método (nunca inventados; derivados, não digitados).
 
-### 1. Estrutura em fases
-1. **[F1]** Ao adicionar um exercício ao treino, o coach pode escolher a fase dele entre as 5 (ou deixar sem fase).
-2. **[F1]** Adicionar com uma fase válida grava o exercício naquela fase; uma fase fora do conjunto é recusada (nada gravado).
-3. **[F1]** A planilha do coach mostra os exercícios agrupados nas 5 fases, na ordem canônica, cada fase com o seu nome e a sua pergunta-guia.
-4. **[F1]** Uma fase sem exercícios aparece com "nenhum exercício nesta fase"; exercícios sem fase aparecem no grupo "Sem fase" ao fim (omitido quando não há nenhum).
-5. **[F1]** A planilha do aluno mostra os mesmos exercícios agrupados nas 5 fases, na ordem canônica, com as perguntas-guia (só leitura).
-6. **[F1]** Dentro de cada fase, os exercícios mantêm a ordem em que foram adicionados.
+### 2. O arco visível
+3. **[F1]** Na planilha do coach, o arco aparece: as 5 fases como segmentos proporcionais ao tempo, cada um com fase, pergunta-guia e minutos. Sem duração → sem arco (um convite discreto a definir a duração).
+4. **[F1]** Na página do treino do aluno, o mesmo arco aparece **read-only** no topo.
 
-### 2. Apresentação do treino
-7. **[F1]** O coach escreve/edita a apresentação do treino (um texto de enquadramento); vazio = "sem registro" (regra 6).
-8. **[F1]** O aluno vê a apresentação no topo do treino quando existe.
-
-### 3. Observação por exercício (coach)
-9. **[F1]** Ao adicionar um exercício, o coach pode escrever uma observação para aquele item (ex.: "foco na postura").
-10. **[F1]** A observação do exercício aparece na planilha do coach e na do aluno quando existe; vazia = não aparece.
-
-### 4. Editar e reordenar (coach)
-11. **[F+]** O coach edita séries/reps/carga/observação de um exercício in-place (sem remover e adicionar de novo).
-12. **[F+]** O coach reordena os exercícios dentro de uma fase (mover para cima/baixo ou arrastar).
-13. **[F+]** O coach move um exercício de uma fase para outra sem remover.
-
-### 5. Vídeo do exercício (biblioteca)
-14. **[F+]** Um exercício da biblioteca pode ter um vídeo de demonstração (link ou upload — decisão no /plan).
-15. **[F+]** O vídeo aparece no card do exercício, na planilha do coach e do aluno.
-
-### 6. Níveis por exercício
-16. **[F+]** Um exercício do treino oferece base / regressão / progressão (o coach descreve as variações).
-17. **[F+]** O aluno escolhe "meu lugar hoje" entre as variações (autodeterminado; regras 11–14); a escolha é dele, revisável.
-
-### 7. Execução do aluno
-18. **[F+]** O aluno marca um exercício como feito; o progresso da sessão reflete quantos foram feitos.
-19. **[F+]** O aluno registra o que realmente fez (carga/reps reais) por exercício.
-20. **[F+]** O aluno escreve uma observação da execução do exercício (o "verbo é dele").
-
-### 8. Anexo da execução + feedback do coach
-21. **[F+]** O aluno anexa um vídeo/foto da execução de um exercício para o coach analisar (precisa de armazenamento — decisão no /plan).
-22. **[F+]** O coach vê o anexo enviado e deixa um feedback naquele exercício.
-23. **[F+]** O aluno lê o feedback do coach no card do exercício.
+### 3. Proporções vivas e ajuste (futuro)
+5. **[F+]** O coach ajusta os minutos de cada fase (override por fase), com a soma = duração — "proporções vivas".
+6. **[F+]** Duração livre (além de 30/45/60), com proporções escaladas.
+7. **[F+]** Ajuste ao momento: o arco reage ao check-in do aluno (dia de estresse alto sugere mais preparação/aquecimento).
+8. **[F+]** Timer / sessão guiada ao vivo (conduzir fase a fase, no tempo).
 
 ### Geral
-24. **[F1]** Toda escrita loga (regra 8); textos pt-BR; campo sem dado = "sem registro"/"Sem fase" (regra 6). Os 826 testes anteriores continuam verdes; treinos existentes seguem funcionando (exercícios em "Sem fase", sem apresentação).
+9. **[F1]** Toda escrita loga (regra 8); textos pt-BR; sem duração = "sem arco definido" (regra 6 — nunca minutos inventados). Os **1093 testes** anteriores seguem verdes; treinos existentes seguem funcionando (sem duração, sem arco).
 
 ## Fora do escopo (por ora)
-- Tempos/proporção por fase (ex.: 45min → 4/7/11/16/7) e o **ajuste ao momento** (a sessão que reage ao check-in).
-- **Timer / sessão guiada** (conduzir a sessão fase a fase, ao vivo).
-- **Periodização** (macro/meso/micro) — o "arco" da Tela 1, fatia própria mais adiante.
+- **Periodização** (macro/meso/micro) — a camada por cima das sessões (mesociclos com foco, microciclos, o arco da jornada). Fatia própria, logo a seguir.
+- Timer / sessão guiada ao vivo e o ajuste automático ao check-in (comportamentos 7–8).
