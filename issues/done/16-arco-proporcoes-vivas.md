@@ -7,7 +7,7 @@ O coach ajusta os minutos de cada uma das 5 fases ao momento (ansioso → mais p
 13–15 (arco: duração + `arco_da_sessao` + componente visual)
 
 ## Status
-planejada
+concluída
 
 ## Especificação funcional
 O arco deixa de ser só derivado: o coach pode **sobrescrever** os minutos de cada fase. Com override → o arco usa os minutos salvos; sem override → a tabela canônica (regra 6: nunca minutos inventados; o default é derivado). A estrutura é fixa (as 5 fases sempre presentes, cada uma ≥ 1 min) e a soma dos 5 deve ser exatamente a duração. O lado do aluno já reflete automaticamente (lê `arco_da_sessao`).

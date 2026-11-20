@@ -40,13 +40,35 @@
 {% if arco %}
 <div class="arco" role="list" aria-label="Arco da sessão">
     {% for f in arco %}
-    <div class="arco-fase" role="listitem" style="flex: {{ f.minutos }}">
+    <div class="arco-fase{% if f.ajustado %} is-ajustado{% endif %}" role="listitem" style="flex: {{ f.minutos }}">
         <span class="arco-fase-nome">{{ f.fase_label }}</span>
+        {% if f.ajustado %}<span class="arco-fase-tag">ajustado</span>{% endif %}
         {% if f.fase_pergunta %}<span class="arco-fase-pergunta">{{ f.fase_pergunta }}</span>{% endif %}
         <span class="arco-fase-min">{{ f.minutos }} min</span>
     </div>
     {% endfor %}
 </div>
+
+<details class="proporcoes"{% if error %} open{% endif %}>
+    <summary>Ajustar proporções (ao momento)</summary>
+    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/proporcoes" class="proporcoes-form">
+        <div class="proporcoes-campos">
+            {% for f in arco %}
+            <label class="proporcoes-campo">
+                <span class="proporcoes-rotulo">{{ f.fase_label }}</span>
+                <input type="number" name="min_{{ f.fase }}" min="1" value="{{ f.minutos }}" required>
+            </label>
+            {% endfor %}
+        </div>
+        <p class="proporcoes-dica">Devem somar {{ duracao_min }} min. Ajuste ao momento: ansioso pede mais preparação; radiante, mais ápice.</p>
+        <button type="submit" class="proporcoes-salvar">Salvar proporções</button>
+    </form>
+    {% if arco | selectattr('ajustado') | list %}
+    <form method="post" action="/alunos/{{ aluno.id }}/treino/{{ treino.id }}/proporcoes/resetar" class="proporcoes-form">
+        <button type="submit" class="proporcoes-resetar">voltar ao padrão</button>
+    </form>
+    {% endif %}
+</details>
 {% else %}
 <p class="arco-convite">Defina a duração para ver o arco da sessão.</p>
 {% endif %}

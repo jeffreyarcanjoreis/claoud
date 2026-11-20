@@ -26,7 +26,7 @@ from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 from kairos.tarefas.models import Tarefa
 
-HEAD_REVISION = "0032"  # bumped by migration 0032_add_duracao_to_treinos
+HEAD_REVISION = "0033"  # bumped by migration 0033_add_proporcoes_to_treinos
 
 
 @pytest.fixture

@@ -219,7 +219,13 @@ def test_arco_phases_carry_label_and_question(treino: dict) -> None:
     arco = arco_da_sessao(treino["id"])
 
     for entry in arco:
-        assert set(entry) == {"fase", "fase_label", "fase_pergunta", "minutos"}
+        assert set(entry) == {
+            "fase",
+            "fase_label",
+            "fase_pergunta",
+            "minutos",
+            "ajustado",
+        }
         assert entry["fase_label"] == FASE_LABELS[entry["fase"]]
         assert entry["fase_pergunta"] == FASE_PERGUNTAS[entry["fase"]]
     assert arco[2]["fase_label"] == "Skill"

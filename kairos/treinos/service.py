@@ -41,6 +41,15 @@ PROPORCOES_FASE = {
     60: {"preparacao": 5, "aquecimento": 9, "skill": 15, "apice": 22, "volta_a_calma": 9},
 }
 
+# Treino column holding the custom minutes of each phase (same order as FASE_OPCOES).
+MIN_FASE_COLS = {
+    "preparacao": "min_preparacao",
+    "aquecimento": "min_aquecimento",
+    "skill": "min_skill",
+    "apice": "min_apice",
+    "volta_a_calma": "min_volta_a_calma",
+}
+
 VARIACAO_OPCOES = ("base", "regressao", "progressao")
 VARIACAO_LABELS = {
     "base": "Base",
@@ -206,6 +215,14 @@ def _treino_to_dict(treino: Treino) -> Dict[str, Any]:
         "nome": treino.nome,
         "observacao": treino.observacao,
         "duracao_min": treino.duracao_min,
+        "min_preparacao": treino.min_preparacao,
+        "min_aquecimento": treino.min_aquecimento,
+        "min_skill": treino.min_skill,
+        "min_apice": treino.min_apice,
+        "min_volta_a_calma": treino.min_volta_a_calma,
+        "arco_ajustado": all(
+            getattr(treino, col) is not None for col in MIN_FASE_COLS.values()
+        ),
         "created_at": treino.created_at,
     }
 
@@ -633,6 +650,10 @@ def set_duracao(treino_id: int, duracao: Any = None) -> Optional[Dict[str, Any]]
         treino = session.get(Treino, treino_id)
         if treino is None:
             return None
+        if parsed != treino.duracao_min:
+            # Old custom proportions would violate the new sum.
+            for fase in FASE_OPCOES:
+                setattr(treino, MIN_FASE_COLS[fase], None)
         treino.duracao_min = parsed
         session.flush()
         session.refresh(treino)
@@ -652,16 +673,96 @@ def arco_da_sessao(treino_id: int) -> Optional[List[Dict[str, Any]]]:
         treino = session.get(Treino, treino_id)
         if treino is None or treino.duracao_min is None:
             return None
-        proporcoes = PROPORCOES_FASE[treino.duracao_min]
+        canonico = PROPORCOES_FASE[treino.duracao_min]
+        overrides = {
+            fase: getattr(treino, MIN_FASE_COLS[fase]) for fase in FASE_OPCOES
+        }
+    if all(v is not None for v in overrides.values()):
+        proporcoes = overrides
+    else:
+        proporcoes = canonico
     return [
         {
             "fase": fase,
             "fase_label": FASE_LABELS[fase],
             "fase_pergunta": FASE_PERGUNTAS[fase],
             "minutos": proporcoes[fase],
+            "ajustado": proporcoes[fase] != canonico[fase],
         }
         for fase in FASE_OPCOES
     ]
+
+
+def set_proporcoes(
+    treino_id: int, minutos: Dict[str, Any]
+) -> Optional[Dict[str, Any]]:
+    """Set custom minutes per phase for a workout's session arc.
+
+    ``minutos`` maps each phase in ``FASE_OPCOES`` to an int >= 1 (numeric
+    strings accepted). Requires a duration and the five values must sum to it.
+    All validation happens before any write; failures raise
+    :class:`ValidationError`. Returns the updated workout as a dict, or None
+    when it does not exist.
+    """
+    with session_scope() as session:
+        treino = session.get(Treino, treino_id)
+        if treino is None:
+            return None
+        if treino.duracao_min is None:
+            raise ValidationError(
+                "Defina a duração antes de ajustar as proporções."
+            )
+        validados: Dict[str, int] = {}
+        for fase in FASE_OPCOES:
+            valor = (minutos or {}).get(fase)
+            try:
+                if valor is None or isinstance(valor, bool):
+                    raise ValueError
+                if isinstance(valor, str):
+                    texto = _normalize(valor)
+                    if texto is None:
+                        raise ValueError
+                    valor = int(texto)
+                elif not isinstance(valor, int):
+                    raise ValueError
+            except ValueError:
+                raise ValidationError("Cada fase precisa de ao menos 1 minuto.")
+            if valor < 1:
+                raise ValidationError("Cada fase precisa de ao menos 1 minuto.")
+            validados[fase] = valor
+        total = sum(validados.values())
+        if total != treino.duracao_min:
+            raise ValidationError(
+                f"As proporções devem somar {treino.duracao_min} min "
+                f"(somaram {total})."
+            )
+        for fase in FASE_OPCOES:
+            setattr(treino, MIN_FASE_COLS[fase], validados[fase])
+        session.flush()
+        session.refresh(treino)
+        result = _treino_to_dict(treino)
+
+    logger.info("Proporções do treino ajustadas: id=%s", treino_id)
+    return result
+
+
+def reset_proporcoes(treino_id: int) -> Optional[Dict[str, Any]]:
+    """Clear the custom phase minutes (back to the canonical proportions).
+
+    Returns the updated workout as a dict, or None when it does not exist.
+    """
+    with session_scope() as session:
+        treino = session.get(Treino, treino_id)
+        if treino is None:
+            return None
+        for fase in FASE_OPCOES:
+            setattr(treino, MIN_FASE_COLS[fase], None)
+        session.flush()
+        session.refresh(treino)
+        result = _treino_to_dict(treino)
+
+    logger.info("Proporções do treino resetadas: id=%s", treino_id)
+    return result
 
 
 def mover_item(item_id: int, direcao: str) -> bool:

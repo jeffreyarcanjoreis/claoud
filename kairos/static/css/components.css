@@ -1855,6 +1855,89 @@ label.stat-toggle:hover .l {
   color: var(--gold);
 }
 
+.arco-fase.is-ajustado {
+  border-bottom: 2px solid var(--gold);
+}
+
+.arco-fase-tag {
+  align-self: flex-start;
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.proporcoes {
+  margin-bottom: var(--sp-4);
+  font-size: var(--fs-small);
+}
+
+.proporcoes summary {
+  cursor: pointer;
+  color: var(--bone-dim);
+  transition: color 0.2s var(--ease);
+}
+
+.proporcoes summary:hover {
+  color: var(--gold);
+}
+
+.proporcoes-form {
+  margin: var(--sp-3) 0 0;
+}
+
+.proporcoes-campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: var(--sp-3);
+}
+
+.proporcoes-campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+}
+
+.proporcoes-rotulo {
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--bone-dim);
+}
+
+.proporcoes-campo input[type="number"] {
+  width: 5rem;
+}
+
+.proporcoes-dica {
+  margin: var(--sp-3) 0;
+  font-style: italic;
+  color: var(--sage);
+}
+
+.proporcoes-salvar,
+.proporcoes-resetar {
+  font-size: var(--fs-small);
+  padding: var(--sp-1) var(--sp-3);
+  background: transparent;
+  color: var(--bone-dim);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: color 0.2s var(--ease), border-color 0.2s var(--ease);
+}
+
+.proporcoes-salvar:hover,
+.proporcoes-resetar:hover {
+  color: var(--gold);
+  border-color: var(--gold);
+}
+
+.proporcoes-resetar {
+  border-style: dashed;
+  color: var(--sage);
+}
+
 .arco-convite {
   font-size: var(--fs-small);
   font-style: italic;

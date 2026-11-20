@@ -47,6 +47,11 @@ class Treino(Base):
     nome: Mapped[str] = mapped_column(String(120), nullable=False)
     observacao: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     duracao_min: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    min_preparacao: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    min_aquecimento: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    min_skill: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    min_apice: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    min_volta_a_calma: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(
         DateTime, nullable=False, server_default=func.now()
     )

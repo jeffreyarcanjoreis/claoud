@@ -22,7 +22,7 @@ from kairos.db import session_scope
 from kairos.migrations_runner import run_migrations
 from kairos.treinos.models import Exercicio, Treino, TreinoItem
 
-HEAD_REVISION = "0032"  # bumped by migration 0032_add_duracao_to_treinos
+HEAD_REVISION = "0033"  # bumped by migration 0033_add_proporcoes_to_treinos
 
 
 @pytest.fixture
@@ -79,6 +79,11 @@ def test_treino_tables_have_expected_columns(data_dir: Path) -> None:
         "nome",
         "observacao",
         "duracao_min",
+        "min_preparacao",
+        "min_aquecimento",
+        "min_skill",
+        "min_apice",
+        "min_volta_a_calma",
         "created_at",
     }
     assert _columns(db_file, "treino_itens") == {

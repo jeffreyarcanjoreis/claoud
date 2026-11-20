@@ -40,8 +40,10 @@ from kairos.treinos.service import (
     mover_item,
     remove_exercicio_video,
     remove_item,
+    reset_proporcoes,
     set_apresentacao,
     set_duracao,
+    set_proporcoes,
     set_exercicio_video,
     update_item,
 )
@@ -606,6 +608,83 @@ async def set_duracao_route(
         # treat anything else as a no-op.
         pass
 
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}/treino/{treino_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/alunos/{aluno_id}/treino/{treino_id}/proporcoes")
+async def set_proporcoes_route(
+    request: Request,
+    aluno_id: int,
+    treino_id: int,
+    min_preparacao: Optional[str] = Form(None),
+    min_aquecimento: Optional[str] = Form(None),
+    min_skill: Optional[str] = Form(None),
+    min_apice: Optional[str] = Form(None),
+    min_volta_a_calma: Optional[str] = Form(None),
+):
+    """Set the per-phase minutes; on a validation error re-render with it."""
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return _aluno_nao_encontrado(request)
+
+    detalhe = get_treino_detail(treino_id)
+    if detalhe is None or detalhe["aluno_id"] != aluno_id:
+        return _aluno_nao_encontrado(request)
+
+    minutos = {
+        "preparacao": min_preparacao,
+        "aquecimento": min_aquecimento,
+        "skill": min_skill,
+        "apice": min_apice,
+        "volta_a_calma": min_volta_a_calma,
+    }
+    try:
+        set_proporcoes(treino_id, minutos)
+    except ValidationError as exc:
+        return templates.TemplateResponse(
+            request,
+            "treinos/aluno_detalhe.html",
+            {
+                "aluno": ficha_header(aluno),
+                "subtab": "treino",
+                "treino": {
+                    "id": detalhe["id"],
+                    "nome": detalhe["nome"],
+                    "observacao": detalhe["observacao"] or None,
+                },
+                "fases": _fases_display(detalhe),
+                "fase_opcoes": _FASE_OPCOES_DISPLAY,
+                "apresentacao": detalhe["observacao"] or None,
+                "exercicios": list_exercicios(),
+                **_arco_context(detalhe),
+                "error": str(exc),
+            },
+            status_code=status.HTTP_400_BAD_REQUEST,
+        )
+
+    return RedirectResponse(
+        url=f"/alunos/{aluno_id}/treino/{treino_id}",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/alunos/{aluno_id}/treino/{treino_id}/proporcoes/resetar")
+async def reset_proporcoes_route(
+    request: Request, aluno_id: int, treino_id: int
+):
+    """Restore the default phase proportions, checking ownership (404 otherwise)."""
+    aluno = get_aluno(aluno_id)
+    if aluno is None:
+        return _aluno_nao_encontrado(request)
+
+    treino = get_treino(treino_id)
+    if treino is None or treino["aluno_id"] != aluno_id:
+        return _aluno_nao_encontrado(request)
+
+    reset_proporcoes(treino_id)
     return RedirectResponse(
         url=f"/alunos/{aluno_id}/treino/{treino_id}",
         status_code=status.HTTP_303_SEE_OTHER,
