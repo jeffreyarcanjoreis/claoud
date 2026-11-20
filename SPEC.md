@@ -41,8 +41,8 @@ As 5 fases e seus minutos por duração (proporção fixa; `references/pratica.m
 3. **[F1]** Na planilha do coach, o arco aparece: as 5 fases como segmentos proporcionais ao tempo, cada um com fase, pergunta-guia e minutos. Sem duração → sem arco (um convite discreto a definir a duração).
 4. **[F1]** Na página do treino do aluno, o mesmo arco aparece **read-only** no topo.
 
-### 3. Proporções vivas e ajuste (futuro)
-5. **[F+]** O coach ajusta os minutos de cada fase (override por fase), com a soma = duração — "proporções vivas".
+### 3. Proporções vivas e ajuste
+5. **[F1]** O coach ajusta os minutos de cada fase (override por fase), com a soma = duração — "proporções vivas". Trocar a duração reseta ao padrão; cada fase permanece (mín. 1 min).
 6. **[F+]** Duração livre (além de 30/45/60), com proporções escaladas.
 7. **[F+]** Ajuste ao momento: o arco reage ao check-in do aluno (dia de estresse alto sugere mais preparação/aquecimento).
 8. **[F+]** Timer / sessão guiada ao vivo (conduzir fase a fase, no tempo).
