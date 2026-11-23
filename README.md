@@ -32,6 +32,10 @@ o app roda 100% local no SQLite.
 | `KAIROS_GCAL_ICS_URL` | Link **secreto** iCal (`.ics`) do Google Calendar, para a aba Agenda → Google Calendar (só-leitura). |
 | `KAIROS_DATA_DIR` | Diretório dos dados locais (padrão: `./data`). |
 | `KAIROS_LOG_LEVEL` | Nível de log (padrão: `INFO`). |
+| `KAIROS_ENV` | `production` no servidor. Liga a trava que impede o app de iniciar com configuração insegura e criptografa a conexão com o Postgres. |
+| `KAIROS_DATABASE_SSL` | `require` força TLS na conexão com o Postgres; `disable` desliga (válvula de escape). Sem valor: TLS em produção. |
+
+Para colocar o app no ar (Render + Supabase), siga o [DEPLOY.md](DEPLOY.md).
 
 Exemplo de `.env`:
 

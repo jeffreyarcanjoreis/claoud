@@ -13,13 +13,15 @@ slices. Schema changes happen only through Alembic migrations.
 """
 
 import logging
+import ssl
 from contextlib import contextmanager
-from typing import Iterator, Optional
+from typing import Any, Dict, Iterator, Optional
 
 from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine, make_url
 from sqlalchemy.orm import DeclarativeBase, Session, sessionmaker
 
+from kairos import config
 from kairos.config import database_url
 
 logger = logging.getLogger(__name__)
@@ -36,6 +38,29 @@ def _safe_url(url: str) -> str:
         return make_url(url).render_as_string(hide_password=True)
     except Exception:  # pragma: no cover - defensive, never blocks startup
         return url.split("://", 1)[0] + "://***"
+
+
+def connect_args(url: str) -> Dict[str, Any]:
+    """Driver options for the database at ``url``.
+
+    In production a PostgreSQL connection is encrypted with TLS (the
+    equivalent of libpq's ``sslmode=require``), so student data — including
+    health information — and the database password never cross the internet
+    in plain text. The server certificate is not checked against the system
+    CA store: Supabase's database certificate chains to Supabase's own CA, so
+    full verification would need that CA file. The channel is still
+    encrypted. ``KAIROS_DATABASE_SSL`` overrides the default (see
+    :func:`kairos.config.database_ssl`). SQLite is never affected.
+    """
+    if not url.startswith("postgresql+pg8000://"):
+        return {}
+    modo = config.database_ssl()
+    if modo == "disable" or (modo != "require" and not config.producao()):
+        return {}
+    contexto = ssl.create_default_context()
+    contexto.check_hostname = False
+    contexto.verify_mode = ssl.CERT_NONE
+    return {"ssl_context": contexto}
 
 
 class Base(DeclarativeBase):
@@ -61,7 +86,7 @@ def get_engine() -> Engine:
         if _engine is not None:
             logger.info("Database URL changed; disposing cached engine.")
             _engine.dispose()
-        _engine = create_engine(url)
+        _engine = create_engine(url, connect_args=connect_args(url))
         _engine_url = url
         _session_factory = sessionmaker(
             bind=_engine, autoflush=False, expire_on_commit=False

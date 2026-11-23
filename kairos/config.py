@@ -208,3 +208,63 @@ def dev_aluno_id() -> Optional[int]:
         return int(raw)
     except ValueError:
         return None
+
+
+def producao() -> bool:
+    """True when running as the deployed app (env: KAIROS_ENV=production).
+
+    Also true on Render, which sets ``RENDER`` in every service, as a safety
+    net in case ``KAIROS_ENV`` is forgotten in the deploy settings.
+    """
+    if os.environ.get("KAIROS_ENV", "").strip().lower() in ("production", "producao"):
+        return True
+    return bool(os.environ.get("RENDER", "").strip())
+
+
+def verificar_producao() -> None:
+    """Refuse to start a production deployment with an unsafe configuration.
+
+    Outside production this does nothing (local dev keeps its fallbacks).
+    In production every problem is collected and raised together as a
+    :class:`RuntimeError` (Portuguese message, listing what to fix), so the
+    deploy fails loudly instead of serving student data without login, with a
+    forgeable session secret, or writing to a throwaway SQLite on the server.
+    """
+    if not producao():
+        return
+    problemas = []
+    if dev_no_auth():
+        problemas.append(
+            "KAIROS_DEV_NO_AUTH está ligado (o login ficaria desligado e "
+            "todos os dados abertos)"
+        )
+    secret = os.environ.get("KAIROS_SECRET_KEY", "").strip()
+    if not secret or secret == _DEV_INSECURE_SECRET_KEY:
+        problemas.append("KAIROS_SECRET_KEY não definida")
+    if not os.environ.get("KAIROS_DATABASE_URL", "").strip():
+        problemas.append(
+            "KAIROS_DATABASE_URL não definida (os dados iriam para um SQLite "
+            "no servidor, não para o Supabase)"
+        )
+    if not (supabase_url() and supabase_anon_key()):
+        problemas.append(
+            "KAIROS_SUPABASE_URL / KAIROS_SUPABASE_ANON_KEY não definidas "
+            "(ninguém conseguiria entrar)"
+        )
+    if problemas:
+        raise RuntimeError(
+            "Configuração de produção insegura — o app não vai iniciar:\n- "
+            + "\n- ".join(problemas)
+        )
+
+
+def database_ssl() -> str:
+    """TLS mode for a PostgreSQL connection (env: KAIROS_DATABASE_SSL).
+
+    ``"require"`` encrypts the connection, ``"disable"`` turns encryption off
+    (an escape hatch, in case a provider rejects TLS). Unset means the
+    default: encrypted in production, unchanged elsewhere. Any other value is
+    treated as unset.
+    """
+    raw = os.environ.get("KAIROS_DATABASE_SSL", "").strip().lower()
+    return raw if raw in ("require", "disable") else ""

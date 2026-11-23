@@ -19,7 +19,7 @@ if str(_PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(_PROJECT_ROOT))
 
 from kairos.config import database_url  # noqa: E402
-from kairos.db import Base  # noqa: E402
+from kairos.db import Base, connect_args  # noqa: E402
 
 # Import all model modules so their tables register on Base.metadata
 # (required for autogenerate support).
@@ -61,7 +61,8 @@ def run_migrations_online() -> None:
         _run_with_connection(connection)
         return
 
-    engine = create_engine(database_url())
+    url = database_url()
+    engine = create_engine(url, connect_args=connect_args(url))
     try:
         with engine.connect() as conn:
             _run_with_connection(conn)

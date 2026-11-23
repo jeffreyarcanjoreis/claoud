@@ -1,0 +1,18 @@
+# Segredos e dados locais nunca entram na imagem.
+.env
+.env.*
+data/
+design/
+
+# Ambiente e caches.
+.git/
+.venv/
+**/__pycache__/
+*.pyc
+.pytest_cache/
+
+# Não são necessários para rodar o app.
+tests/
+issues/
+docs/
+.claude/

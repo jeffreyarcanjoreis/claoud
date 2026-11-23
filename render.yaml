@@ -1,0 +1,34 @@
+# Blueprint do Render — cria o serviço web do Kairos.
+# Passo a passo completo em DEPLOY.md.
+services:
+  - type: web
+    name: kairos
+    runtime: docker
+    # Disco persistente exige plano pago (o gratuito não guarda arquivos).
+    plan: starter
+    region: frankfurt
+    healthCheckPath: /health
+    autoDeploy: false
+    disk:
+      name: kairos-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: KAIROS_ENV
+        value: production
+      - key: KAIROS_DATA_DIR
+        value: /var/data
+      # Gerada pelo Render na criação; assina o cookie de sessão.
+      - key: KAIROS_SECRET_KEY
+        generateValue: true
+      # Os três abaixo vêm do seu Supabase (vault "kairos 3.0").
+      # sync: false = o Render pede o valor no painel; nunca fica no repositório.
+      - key: KAIROS_DATABASE_URL
+        sync: false
+      - key: KAIROS_SUPABASE_URL
+        sync: false
+      - key: KAIROS_SUPABASE_ANON_KEY
+        sync: false
+      # Opcional: link secreto iCal do Google Calendar.
+      - key: KAIROS_GCAL_ICS_URL
+        sync: false

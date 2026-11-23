@@ -37,12 +37,14 @@ _STATIC_DIR = Path(__file__).resolve().parent / "static"
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-    """Application lifespan: configure logging and migrate the database.
+    """Application lifespan: configure logging, refuse an unsafe production
+    configuration, and migrate the database.
 
-    Migration errors propagate and abort startup on purpose (project rule:
-    errors are never swallowed).
+    Configuration and migration errors propagate and abort startup on purpose
+    (project rule: errors are never swallowed).
     """
     setup_logging()
+    config.verificar_producao()
     run_migrations()
     if config.dev_no_auth():
         logger.warning(

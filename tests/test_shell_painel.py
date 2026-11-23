@@ -103,19 +103,18 @@ def test_future_tabs_show_em_breve_marker_and_others_do_not(data_dir: Path) -> N
         response = client.get("/alunos")
 
     assert response.status_code == 200
-    assert response.text.count("em breve") == 2
+    # Only Conteúdo & Comunicação is still a future area; Financeiro is live
+    # since issue 15 (plano, recebimentos, despesas, painel do mês).
+    assert response.text.count("em breve") == 1
 
-    inicio_link = re.search(r'<a[^>]*href="/"[^>]*>.*?</a>', response.text, re.S)
-    alunos_link = re.search(r'<a[^>]*href="/alunos"[^>]*>.*?</a>', response.text, re.S)
-    assert inicio_link is not None
-    assert alunos_link is not None
-    assert "em breve" not in inicio_link.group(0)
-    assert "em breve" not in alunos_link.group(0)
-
-    for href in ('href="/financeiro"', 'href="/conteudo"'):
+    for href in ('href="/"', 'href="/alunos"', 'href="/financeiro"'):
         link = re.search(rf'<a[^>]*{re.escape(href)}[^>]*>.*?</a>', response.text, re.S)
         assert link is not None
-        assert "em breve" in link.group(0)
+        assert "em breve" not in link.group(0)
+
+    conteudo_link = re.search(r'<a[^>]*href="/conteudo"[^>]*>.*?</a>', response.text, re.S)
+    assert conteudo_link is not None
+    assert "em breve" in conteudo_link.group(0)
 
 
 def test_shell_css_link_is_present(data_dir: Path) -> None:
